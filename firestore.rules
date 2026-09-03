@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Open read/write access for testing and 24-hour cached educational content
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
