@@ -2,7 +2,7 @@ export type Language = 'hi' | 'en' | 'hinglish';
 
 export type AppRole = 'home' | 'company' | 'skilled' | 'labour';
 
-export type MainTab = AppRole | 'verifiedjobs' | 'ai-interview' | 'agri' | 'iti' | 'iit' | 'school' | 'exam' | 'vacancies' | 'globaljobs' | 'english' | 'prime' | 'doubt' | 'flashcards' | 'admin';
+export type MainTab = AppRole | 'verifiedjobs' | 'companion' | 'ai-interview' | 'agri' | 'iti' | 'iit' | 'school' | 'exam' | 'vacancies' | 'globaljobs' | 'english' | 'prime' | 'doubt' | 'flashcards' | 'admin';
 
 export type ITITabSection =
   | 'overview'
@@ -532,4 +532,221 @@ export interface SyllabusTreeNode {
   examType?: any;
   subjects?: any;
   [key: string]: any;
+}
+
+// ==========================================
+// JITOMNI 360° ON-DEMAND COMPANION & TASK SERVICE TYPES
+// ==========================================
+
+export type CompanionCategoryType = 
+  | 'hospital_care' 
+  | 'event_wedding' 
+  | 'senior_citizen' 
+  | 'daily_errands';
+
+export interface CompanionSubService {
+  id: string;
+  name: { hi: string; en: string; hinglish: string };
+  desc: { hi: string; en: string; hinglish: string };
+  icon: string;
+  recommendedHours: number;
+}
+
+export interface CompanionServiceCategory {
+  id: CompanionCategoryType;
+  title: { hi: string; en: string; hinglish: string };
+  tagline: { hi: string; en: string; hinglish: string };
+  icon: string;
+  visualAnchorBadge: string;
+  themeColor: {
+    badge: string;
+    border: string;
+    bgGlow: string;
+    gradient: string;
+    accent: string;
+  };
+  baseHourlyRate: number;
+  subServices: CompanionSubService[];
+  quickRequirements: string[];
+}
+
+export interface CompanionWorker {
+  id: string;
+  name: string;
+  gender: 'female' | 'male' | 'any';
+  age: number;
+  photoUrl: string;
+  rating: number;
+  reviewsCount: number;
+  tasksCompleted: number;
+  policeVerified: boolean;
+  policeVerificationId: string;
+  aadhaareKYCVerified: boolean;
+  verificationStatus: 'pending_approval' | 'verified_active' | 'rejected';
+  isFlagged?: boolean;
+  flagReason?: string;
+  specialization: { hi: string; en: string; hinglish: string };
+  languages: string[];
+  distanceKm: number;
+  etaMinutes: number;
+  hourlyRate: number;
+  city: string;
+  phone: string;
+  availableNow: boolean;
+  badgeTitle: string;
+  bio: string;
+  documents?: {
+    aadhaar?: {
+      number: string;
+      docName: string;
+      status: 'pending' | 'verified' | 'rejected';
+      uploadedAt: string;
+      fileUrl?: string;
+    };
+    policeVerification?: {
+      certNumber: string;
+      policeStation: string;
+      docName: string;
+      status: 'pending' | 'verified' | 'rejected';
+      uploadedAt: string;
+      fileUrl?: string;
+    };
+    backgroundCheck?: {
+      certId: string;
+      agency: string;
+      docName: string;
+      status: 'pending' | 'verified' | 'rejected';
+      uploadedAt: string;
+      fileUrl?: string;
+    };
+  };
+  wallet?: {
+    availableBalance: number;
+    pendingWeeklyPayout: number;
+    totalEarnings: number;
+    upiId?: string;
+    bankAccountNumber?: string;
+    bankIfsc?: string;
+    bankName?: string;
+  };
+}
+
+export interface CompanionRadarTask {
+  id: string;
+  category: CompanionCategoryType;
+  title: string;
+  customerName: string;
+  customerPhone: string;
+  location: string;
+  distanceKm: number;
+  hours: number;
+  hourlyRate: number;
+  totalGrossFee: number;
+  workerNetEarnings80: number;
+  platformFee20: number;
+  urgency: 'immediate' | 'scheduled' | 'flexible';
+  startTime: string;
+  date: string;
+  requirements: string;
+  genderRequired?: 'female' | 'male' | 'any';
+  otpCode: string;
+  status: 'available' | 'accepted' | 'declined' | 'en_route' | 'arrived' | 'in_progress' | 'completed';
+}
+
+export type CompanionTaskLifecycleStep = 
+  | 'idle' 
+  | 'radar' 
+  | 'start_travel' 
+  | 'reach_location' 
+  | 'start_task' 
+  | 'complete_task' 
+  | 'task_finished';
+
+export interface CompanionTaskCommissionRecord {
+  id: string;
+  taskId: string;
+  taskTitle: string;
+  customerName: string;
+  workerId: string;
+  workerName: string;
+  hours: number;
+  hourlyRate: number;
+  grossFee: number;
+  workerShare80: number;
+  platformShare20: number;
+  status: 'credited' | 'settled';
+  timestamp: string;
+}
+
+export interface CompanionWorkerRatingReview {
+  id: string;
+  taskId: string;
+  workerId: string;
+  customerName: string;
+  rating: number;
+  comment: string;
+  timestamp: string;
+}
+
+export type BookingStatus = 
+  | 'searching'
+  | 'matched'
+  | 'confirmed'
+  | 'dispatched'
+  | 'en_route'
+  | 'arrived'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled';
+
+export interface CompanionBooking {
+  id: string;
+  category: CompanionCategoryType;
+  subServiceId?: string;
+  selectedDate: string;
+  startTime: string;
+  durationHours: number;
+  requirements: string;
+  genderPreference: 'any' | 'female' | 'male';
+  workerCount: number;
+  address: string;
+  landmark: string;
+  city: string;
+  pincode: string;
+  userPhone: string;
+  emergencyContact: string;
+  status: BookingStatus;
+  matchedWorker?: CompanionWorker;
+  hourlyRate: number;
+  baseAmount: number;
+  safetyInsuranceFee: number;
+  taxAmount: number;
+  totalEstimatedAmount: number;
+  startOtp: string;
+  endOtp: string;
+  createdAt: string;
+  trackingCoordinates?: {
+    lat: number;
+    lng: number;
+    destinationLat: number;
+    destinationLng: number;
+    speedKmh: number;
+    batteryLevel: number;
+    updatedAt: string;
+  };
+}
+
+export interface CompanionSOSEvent {
+  id: string;
+  bookingId: string;
+  timestamp: string;
+  latitude: number;
+  longitude: number;
+  userPhone: string;
+  workerName?: string;
+  workerPhone?: string;
+  policeContacted: boolean;
+  emergencyContactsNotified: boolean;
+  sovereignControlRoomAlerted: boolean;
+  sirenActive: boolean;
 }

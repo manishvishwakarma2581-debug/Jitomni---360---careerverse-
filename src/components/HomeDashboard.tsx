@@ -42,6 +42,17 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       features: ['GST वेरिफाइड कंपनियां', '10 MCQ ऑटो स्किल टेस्ट (60%+ Pass)', 'लेबर/कारीगर 5km डायरेक्ट कॉल'],
     },
     {
+      id: 'companion' as MainTab,
+      badge: '100% Police Verified',
+      title: lang === 'hi' ? '🤝 ऑन-डिमांड साथी एवं टास्क सेवा' : '🤝 On-Demand Companion & Task Service',
+      desc: lang === 'hi' ? 'अस्पताल देखभाल, शादी-इवेंट व्यवस्था, बुजुर्गों का सहारा व रोजमर्रा के कार्यों हेतु घंटे के आधार पर प्रमाणित युवा साथी। लाइव जीपीएस ट्रैकिंग व एसओएस सुरक्षा।' : 'On-demand police-verified companions for hospital stay, wedding coordination, elderly assistance & daily errands with live GPS tracking and SOS safety.',
+      icon: <HeartHandshake className="w-8 h-8 text-rose-400" />,
+      color: 'from-rose-950/80 via-[#240813] to-[#0A0205]',
+      border: 'border-rose-500/50 hover:border-rose-400',
+      tag: 'Hospital • Wedding • Elderly • Errands',
+      features: ['4 प्रमुख श्रेणियां (प्रति घंटा आधार)', 'लाइव जीपीएस लोकेशन ट्रैकिंग', '1-टैप इमरजेंसी एसओएस व पुलिस 112'],
+    },
+    {
       id: 'school' as MainTab,
       badge: 'कक्षा 1 से 12',
       title: translations.home.schoolCard.title[lang],

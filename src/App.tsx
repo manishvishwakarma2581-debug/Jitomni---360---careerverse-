@@ -19,6 +19,7 @@ import { FlashcardsModule } from './components/FlashcardsModule';
 import { PrimeManager } from './components/PrimeManager';
 import { AdminSchedulerModule } from './components/AdminSchedulerModule';
 import { AIInterviewerModule } from './components/AIInterviewerModule';
+import { CompanionServiceModule } from './components/companion/CompanionServiceModule';
 import { TopicDetailModal } from './components/TopicDetailModal';
 import { MockTestModal } from './components/MockTestModal';
 import { QuizModal } from './components/QuizModal';
@@ -42,6 +43,7 @@ export default function App() {
       if (path === '/jobs' || path === '/skilled') return 'skilled';
       if (path === '/labour-jobs' || path === '/labour') return 'labour';
       if (path === '/verifiedjobs' || path === '/verified-jobs') return 'verifiedjobs';
+      if (path === '/companion' || path === '/on-demand-companion' || path === '/task-service') return 'companion';
       if (path === '/ai-interview' || path === '/interview') return 'ai-interview';
       if (path === '/agri' || path === '/krishi' || path === '/agriculture') return 'agri';
       if (path === '/iti' || path === '/iti-trades') return 'iti';
@@ -77,6 +79,7 @@ export default function App() {
       else if (tab === 'skilled') path = '/jobs';
       else if (tab === 'labour') path = '/labour-jobs';
       else if (tab === 'verifiedjobs') path = '/verified-jobs';
+      else if (tab === 'companion') path = '/companion';
       else if (tab === 'ai-interview') path = '/ai-interview';
       else if (tab === 'agri') path = '/agri';
       else if (tab === 'iti') path = '/iti';
@@ -103,6 +106,7 @@ export default function App() {
       else if (path === '/jobs' || path === '/skilled') setActiveTab('skilled');
       else if (path === '/labour-jobs' || path === '/labour') setActiveTab('labour');
       else if (path === '/verifiedjobs' || path === '/verified-jobs') setActiveTab('verifiedjobs');
+      else if (path === '/companion' || path === '/on-demand-companion' || path === '/task-service') setActiveTab('companion');
       else if (path === '/ai-interview' || path === '/interview') setActiveTab('ai-interview');
       else if (path === '/agri' || path === '/krishi' || path === '/agriculture') setActiveTab('agri');
       else if (path === '/iti' || path === '/iti-trades') setActiveTab('iti');
@@ -251,6 +255,11 @@ export default function App() {
             onSelectRole={(role) => handleTabChange(role as MainTab)}
             lang={lang}
           />
+        )}
+
+        {/* TAB 2.5: ON-DEMAND COMPANION & TASK SERVICE */}
+        {activeTab === 'companion' && (
+          <CompanionServiceModule lang={lang} />
         )}
 
         {/* TAB 3: COMPANY ROLE */}

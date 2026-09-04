@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Award, Mic, BrainCircuit, Globe, Sparkles, Volume2, Globe2, ShieldCheck, Building2, Info, Flag } from 'lucide-react';
+import { BookOpen, Award, Mic, BrainCircuit, Globe, Sparkles, Volume2, Globe2, ShieldCheck, Building2, Info, Flag, HeartHandshake } from 'lucide-react';
 import { Language, MainTab } from '../types';
 import { translations } from '../data/translations';
 import { JitomniEmblemLogo } from './JitomniEmblemLogo';
@@ -189,6 +189,21 @@ export const Header: React.FC<HeaderProps> = ({
             <ShieldCheck className="w-4 h-4 text-amber-300 animate-pulse" />
             <span>{translations.nav.verifiedjobs?.[currentLang] || '🏢 वेरिफाइड जॉब्स (No Fake)'}</span>
             <span className="px-1.5 py-0.2 rounded text-[10px] bg-amber-400 text-slate-950 font-black">NEW</span>
+          </button>
+
+          {/* Dedicated On-Demand Companion & Task Service Nav Tab */}
+          <button
+            id="nav-companion-btn"
+            onClick={() => onTabChange('companion')}
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              activeTab === 'companion'
+                ? 'bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 text-white shadow-lg shadow-rose-500/40 border border-rose-400/60 font-black'
+                : 'bg-[#0A1931]/80 text-rose-300 hover:text-rose-200 hover:bg-[#102447] border border-rose-500/40'
+            }`}
+          >
+            <HeartHandshake className="w-4 h-4 text-amber-300 animate-pulse" />
+            <span>{currentLang === 'hi' ? '🤝 ऑन-डिमांड साथी एवं टास्क' : currentLang === 'hinglish' ? '🤝 Companion & Task Service' : '🤝 On-Demand Companion'}</span>
+            <span className="px-1.5 py-0.2 rounded text-[10px] bg-rose-500 text-white font-black">100% SAFE</span>
           </button>
 
           {/* Dedicated Krishi 360° Agri-Tech Nav Tab */}

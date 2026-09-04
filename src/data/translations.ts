@@ -24,6 +24,7 @@ export const translations = {
   nav: {
     home: { hi: 'मुख्य पृष्ठ', en: 'Home', hinglish: 'Home' },
     verifiedjobs: { hi: '🏢 वेरिफाइड जॉब्स (No Fake)', en: '🏢 Verified Jobs (No Fake)', hinglish: '🏢 Verified Jobs (No Fake)' },
+    companion: { hi: '🤝 ऑन-डिमांड साथी एवं टास्क', en: '🤝 On-Demand Companion & Tasks', hinglish: '🤝 Companion & Task Service' },
     company: { hi: '🏢 कंपनी डैशबोर्ड', en: '🏢 Company Dashboard', hinglish: '🏢 Company Dashboard' },
     skilled: { hi: '🎓 स्किल्ड जॉब सीकर', en: '🎓 Skilled Candidate', hinglish: '🎓 Skilled Candidate' },
     labour: { hi: '👷 लेबर व कारीगर', en: '👷 Labour & Workers', hinglish: '👷 Labour & Workers' },
