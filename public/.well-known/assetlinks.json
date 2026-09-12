@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.jitomni.careerverse",
+      "sha256_cert_fingerprints": [
+        "14:6D:E9:7E:24:F2:1D:6E:9B:45:32:89:33:55:77:22:98:AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88"
+      ]
+    }
+  }
+]

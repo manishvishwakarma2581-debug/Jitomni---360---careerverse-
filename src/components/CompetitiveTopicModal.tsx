@@ -20,9 +20,11 @@ import {
   RefreshCw,
   Eye,
   Check,
+  Printer
 } from 'lucide-react';
 import { CompetitiveTopicDetail, Language, QuizQuestion } from '../types';
 import { generateTopicPdf } from '../utils/pdfGenerator';
+import { exportStylishVisionIasPdf } from '../utils/stylishPdfExporter';
 
 interface CompetitiveTopicModalProps {
   topic: CompetitiveTopicDetail;
@@ -241,13 +243,60 @@ export const CompetitiveTopicModal: React.FC<CompetitiveTopicModalProps> = ({
             </button>
           </div>
 
-          <button
-            onClick={() => generateTopicPdf({ ...topic, framework: null as any } as any, language)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors"
-          >
-            <FileText className="w-3.5 h-3.5 text-indigo-400" />
-            <span>PDF Export</span>
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => {
+                let md = `# ${getLoc(topic.name).toUpperCase()}\n\n`;
+                md += `> 📌 **EXAM DEMAND & 10-YEAR WEIGHTAGE ANALYSIS (${topic.targetExam})**:\n> ${getLoc(topic.examDemand?.summary)}\n\n`;
+                
+                if (topic.formulaCheatSheet && topic.formulaCheatSheet.length > 0) {
+                  md += `## ✦ MASTER FORMULA CHEAT SHEET\n`;
+                  topic.formulaCheatSheet.forEach((f) => {
+                    md += `✦ **${getLoc(f.title)}**: \`${f.formula}\`\n`;
+                    md += `> 📌 **Exam Utility**: ${getLoc(f.utility)}\n`;
+                  });
+                  md += `\n`;
+                }
+
+                if (topic.bestMethodVsShortTrick) {
+                  md += `## ✦ JITOMNI SPEED SHORTCUT VS CONVENTIONAL METHOD\n`;
+                  md += `✦ **Speed Shortcut**: ${getLoc(topic.bestMethodVsShortTrick.jitomniFastTrick?.title)}\n`;
+                  md += `✦ **Execution**: ${getLoc(topic.bestMethodVsShortTrick.jitomniFastTrick?.executionStep)}\n`;
+                  md += `✦ **Conventional Method**: ${getLoc(topic.bestMethodVsShortTrick.conventionalMethod?.title)} — ${getLoc(topic.bestMethodVsShortTrick.conventionalMethod?.steps)}\n\n`;
+                }
+
+                if (topic.pyqBlueprint && topic.pyqBlueprint.length > 0) {
+                  md += `## ✦ PREVIOUS YEARS QUESTIONS (PYQ) BREAKDOWN\n`;
+                  topic.pyqBlueprint.forEach((p, idx) => {
+                    md += `✦ **PYQ ${idx + 1} (${p.year} ${p.examName})**: ${getLoc(p.question)}\n`;
+                    md += `> 📌 **Solution / Trap**: ${getLoc(p.fastSolution)}\n`;
+                  });
+                  md += `\n`;
+                }
+
+                exportStylishVisionIasPdf({
+                  title: getLoc(topic.name),
+                  markdownContent: md,
+                  lang: language,
+                  authorBadge: `JITOMNI 360° EXAM COMMAND • ${topic.subjectName.toUpperCase()}`,
+                  paperLinkage: `${topic.targetExam} • High-Yield Topic Dossier`,
+                });
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-black text-slate-950 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 rounded-lg shadow-md transition-all cursor-pointer"
+              title="Vision IAS Publication-Grade PDF Dossier"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>📄 विज़न IAS स्टाइलिश PDF</span>
+            </button>
+
+            <button
+              onClick={() => generateTopicPdf({ ...topic, framework: null as any } as any, language)}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors"
+            >
+              <FileText className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Standard PDF</span>
+            </button>
+          </div>
         </div>
 
         {/* MODAL MAIN CONTENT SCROLLER */}

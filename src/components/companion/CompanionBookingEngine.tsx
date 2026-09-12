@@ -129,7 +129,7 @@ export const CompanionBookingEngine: React.FC<CompanionBookingEngineProps> = ({
         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
           {lang === 'hi' ? '1. सेवा श्रेणी पुष्टि करें (Select Category):' : '1. Confirm Service Category:'}
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
           {companionCategories.map((cat) => {
             const isSelected = selectedCategory === cat.id;
             return (

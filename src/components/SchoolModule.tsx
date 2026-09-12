@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { BookOpen, Search, FileText, Play, CheckCircle2, Network, ChevronRight, Sparkles, Filter, Layers, ChevronDown, Award, Zap, Compass } from 'lucide-react';
+import { BookOpen, Search, FileText, Play, CheckCircle2, Network, ChevronRight, Sparkles, Filter, Layers, ChevronDown, Award, Zap, Compass, Gamepad2 } from 'lucide-react';
 import { Board, Language, TopicItem } from '../types';
 import { getSyllabusTreeForClass } from '../data/fullSyllabusTree';
 import { schoolCurriculumData } from '../data/curriculumData';
 import { translations } from '../data/translations';
 import { generateTopicPdf, downloadPdfBlob } from '../utils/pdfGenerator';
 import { buildFallbackFramework, buildFallbackQuiz } from '../utils/aiTopicSynthesizer';
+import { KidsGamingLearningAdventure } from './KidsGamingLearningAdventure';
+import { FullChapterReaderModal } from './FullChapterReaderModal';
 
 interface SchoolModuleProps {
   lang: Language;
@@ -29,6 +31,15 @@ export const SchoolModule: React.FC<SchoolModuleProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'hierarchy' | 'cards'>('hierarchy');
   const [generatingPdfTopicId, setGeneratingPdfTopicId] = useState<string | null>(null);
+
+  // Kids Gaming Mode & Full Chapter State
+  const [isKidsGameModeActive, setIsKidsGameModeActive] = useState<boolean>(true);
+  const [selectedFullChapter, setSelectedFullChapter] = useState<{
+    id: string;
+    name: { hi: string; en: string; hinglish?: string };
+    subjectName: string;
+    initialTab?: 'chapter' | 'vocabulary' | 'solutions' | 'megaTest';
+  } | null>(null);
 
   const isKidsClass = selectedClass <= 5;
   const classes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -195,12 +206,27 @@ export const SchoolModule: React.FC<SchoolModuleProps> = ({
 
       {/* Selectors Bar: Class + Board + Search */}
       <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#0A1931] border border-slate-800 space-y-4 shadow-lg">
-        {/* Class Selector Carousel */}
+        {/* Class Selector Carousel + Kids Gaming Mode Switch */}
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-              {translations.school.selectClass[lang]}:
-            </label>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+                {translations.school.selectClass[lang]}:
+              </label>
+              {isKidsClass && (
+                <button
+                  onClick={() => setIsKidsGameModeActive(!isKidsGameModeActive)}
+                  className={`px-3 py-1 rounded-full text-xs font-black flex items-center gap-1.5 transition-all shadow-md ${
+                    isKidsGameModeActive
+                      ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 ring-2 ring-purple-400 animate-pulse'
+                      : 'bg-purple-900/60 text-purple-300 border border-purple-500/50 hover:bg-purple-800'
+                  }`}
+                >
+                  <Gamepad2 className="w-3.5 h-3.5" />
+                  <span>{isKidsGameModeActive ? '🎮 गेमिंग मोड चालू है (Kids Game Active)' : '🎮 गेमिंग मोड ऑन करें'}</span>
+                </button>
+              )}
+            </div>
             <span className="text-xs text-slate-400">
               Showing Class {selectedClass} ({totalTopicsCount} Syllabus Topics)
             </span>
@@ -212,18 +238,32 @@ export const SchoolModule: React.FC<SchoolModuleProps> = ({
                 <button
                   key={cls}
                   id={`class-btn-${cls}`}
-                  onClick={() => setSelectedClass(cls)}
+                  onClick={() => {
+                    setSelectedClass(cls);
+                    if (cls <= 5) setIsKidsGameModeActive(true);
+                  }}
                   className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shrink-0 ${
                     isSelected
                       ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md shadow-amber-500/30 scale-105 ring-2 ring-amber-400'
                       : 'bg-[#071329] text-slate-300 hover:bg-[#102447] hover:text-amber-300 border border-slate-800'
                   }`}
                 >
-                  Class {cls}
+                  Class {cls} {cls <= 5 ? '🎈' : ''}
                 </button>
               );
             })}
           </div>
+        </div>
+
+        {/* Live Auto-Scheduler Status Bar */}
+        <div className="p-3 rounded-2xl bg-[#061224] border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs">
+          <div className="flex items-center gap-2 text-amber-300 font-bold">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+            <span>🤖 ऑटो-शेड्यूलर 24x7 सक्रिय (Auto-Scheduler Engine)</span>
+          </div>
+          <p className="text-slate-300 text-[11px]">
+            कक्षा 1 से 12 तक के सभी चैप्टर्स की पूर्ण पाठ्य सामग्री, सचित्र कहानियां, NCERT अभ्यास हल व 10-प्रश्न टेस्ट निरंतर स्वतः अपडेटेड हैं।
+          </p>
         </div>
 
         {/* Board Selector & View Mode Switch */}
@@ -328,6 +368,17 @@ export const SchoolModule: React.FC<SchoolModuleProps> = ({
       </div>
 
       {/* Main Content Area */}
+      {/* KIDS GAMING ADVENTURE MODE (FOR CLASS 1 TO 5) */}
+      {isKidsClass && isKidsGameModeActive && (
+        <div className="mb-6">
+          <KidsGamingLearningAdventure
+            lang={lang}
+            selectedClass={selectedClass}
+            onExitGameMode={() => setIsKidsGameModeActive(false)}
+          />
+        </div>
+      )}
+
       {viewMode === 'hierarchy' ? (
         /* HIERARCHICAL SYLLABUS TREE ACCORDION VIEW */
         <div className="space-y-6">
@@ -363,9 +414,9 @@ export const SchoolModule: React.FC<SchoolModuleProps> = ({
                   return (
                     <div key={ch.id} className="transition-colors">
                       {/* Chapter Row Toggle */}
-                      <button
+                      <div
                         onClick={() => setExpandedChapterId(isExpanded ? null : ch.id)}
-                        className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-[#0e2246] transition-colors"
+                        className="w-full p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left hover:bg-[#0e2246] transition-colors cursor-pointer"
                       >
                         <div className="flex items-center gap-3">
                           <span className="w-7 h-7 rounded-xl bg-amber-500/15 text-amber-300 text-xs font-black flex items-center justify-center border border-amber-500/30 shrink-0">
@@ -381,8 +432,42 @@ export const SchoolModule: React.FC<SchoolModuleProps> = ({
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                          <span className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-medium">
+                        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-end">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedFullChapter({
+                                id: ch.id,
+                                name: ch.name,
+                                subjectName: subj.name[lang] || subj.name.en,
+                                initialTab: 'chapter',
+                              });
+                            }}
+                            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:brightness-110 text-slate-950 text-xs font-black flex items-center gap-1.5 shadow"
+                            title="पूरा अध्याय पढ़ें"
+                          >
+                            <BookOpen className="w-3.5 h-3.5" />
+                            <span>पूरा चैप्टर पढ़ें 📖</span>
+                          </button>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedFullChapter({
+                                id: ch.id,
+                                name: ch.name,
+                                subjectName: subj.name[lang] || subj.name.en,
+                                initialTab: 'megaTest',
+                              });
+                            }}
+                            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 text-xs font-bold border border-emerald-500/40 flex items-center gap-1.5 transition-colors"
+                            title="अध्याय का 10 MCQ टेस्ट"
+                          >
+                            <Award className="w-3.5 h-3.5" />
+                            <span>चैप्टर टेस्ट 🏆</span>
+                          </button>
+
+                          <span className="text-xs px-2 py-1 rounded-lg bg-slate-800 text-slate-300 font-medium hidden md:inline">
                             {ch.topics.length} Topics
                           </span>
                           <ChevronDown
@@ -391,7 +476,7 @@ export const SchoolModule: React.FC<SchoolModuleProps> = ({
                             }`}
                           />
                         </div>
-                      </button>
+                      </div>
 
                       {/* 5 Topics Expanded Grid */}
                       {isExpanded && (
@@ -587,6 +672,19 @@ export const SchoolModule: React.FC<SchoolModuleProps> = ({
             )
           )}
         </div>
+      )}
+      {/* FULL CHAPTER STUDY READER & COMPLETE MEGA-TEST MODAL */}
+      {selectedFullChapter && (
+        <FullChapterReaderModal
+          isOpen={true}
+          onClose={() => setSelectedFullChapter(null)}
+          chapterId={selectedFullChapter.id}
+          chapterName={selectedFullChapter.name}
+          subjectName={selectedFullChapter.subjectName}
+          classLevel={selectedClass}
+          lang={lang}
+          initialTab={selectedFullChapter.initialTab || 'chapter'}
+        />
       )}
     </div>
   );

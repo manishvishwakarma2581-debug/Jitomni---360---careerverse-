@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import { BrainCircuit, Send, Mic, MicOff, Sparkles, FileText, CheckCircle2, Network, Film, Database, ArrowRight, Layers, Bot, Cpu } from 'lucide-react';
-import { Language, SubAgentType, TopicItem } from '../types';
+import { BrainCircuit, Send, Mic, MicOff, Sparkles, FileText, CheckCircle2, Network, Film, Database, ArrowRight, Layers, Bot, Cpu, Award, Printer } from 'lucide-react';
+import { Language, SubAgentType, TopicItem, VisionIasInfographic } from '../types';
 import { translations } from '../data/translations';
 import { speech, createSpeechRecognition } from '../utils/speech';
 import { generateTopicPdf, downloadPdfBlob } from '../utils/pdfGenerator';
 import { schoolCurriculumData, competitiveCurriculumData } from '../data/curriculumData';
+import { UserMemoryService } from '../services/userMemoryService';
+import { AuthService } from '../services/authService';
+import { VisionIasInfographicCard } from './VisionIasInfographicCard';
+import { generateVisionIasInfographic } from '../utils/visionIasInfographicGenerator';
+import { VisionIasRenderer } from './VisionIasRenderer';
+import { exportStylishVisionIasPdf } from '../utils/stylishPdfExporter';
 
 interface PrimeManagerProps {
   lang: Language;
   onOpenTopicModal?: (topic: TopicItem) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 interface AgentPipelineStep {
@@ -23,18 +30,21 @@ interface ChatLog {
   id: string;
   sender: 'user' | 'prime';
   text: string;
+  userPrompt?: string;
   pipeline?: AgentPipelineStep[];
   downloadableTopic?: TopicItem;
+  visionIasInfographic?: VisionIasInfographic;
+  showInfographic?: boolean;
 }
 
-export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicModal }) => {
+export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicModal, onNavigateTab }) => {
   const [inputText, setInputText] = useState<string>('');
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [activePipeline, setActivePipeline] = useState<AgentPipelineStep[]>([
     { agent: 'prime', name: 'PRIME Brain', icon: '🧠', status: 'completed', detail: 'Master controller ready to execute' },
-    { agent: 'lesson', name: 'Lesson Agent', icon: '📖', status: 'idle', detail: 'Synthesizes 360° conceptual pillars' },
-    { agent: 'quiz', name: 'Quiz Agent', icon: '📝', status: 'idle', detail: 'Formulates critical analysis questions' },
+    { agent: 'lesson', name: 'Lesson Agent', icon: '📖', status: 'idle', detail: 'Synthesizes clear, intuitive core explanation' },
+    { agent: 'quiz', name: 'Quiz Agent', icon: '📝', status: 'idle', detail: 'Formulates practical practice check' },
     { agent: 'visual', name: 'Visual Agent', icon: '🎨', status: 'idle', detail: 'Builds concept blueprints & node maps' },
     { agent: 'video', name: 'Video Agent', icon: '🎬', status: 'idle', detail: 'Animates visual lessons & simulations' },
     { agent: 'pdf', name: 'PDF Agent', icon: '📄', status: 'idle', detail: 'Compiles print-ready JITOMNI documents' },
@@ -45,15 +55,33 @@ export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicMod
     {
       id: 'prime-welcome',
       sender: 'prime',
-      text: `नमस्ते! मैं JITOMNI PRIME हूँ - आपका 360° मल्टी-एजेंट AI नियंत्रक।\n\nआप मुझसे कुछ भी पूछ सकते हैं, जैसे:\n• "Class 5 ka Jal Chakra ka PDF Hinglish me banao"\n• "MPPSC ke liye Constitution Fundamental Rights samjhao"\n• "Class 10 Ohm's Law ka 360 quiz banao"\n\nमैं तुरंत अपने सभी सब-एजेंट्स (Lesson, PDF, Quiz, Video) को एक्टिवेट करके परिणाम दूंगा!`,
+      text: `# JITOMNI PRIME 360° SOVEREIGN AI MENTOR
+
+> 📌 **CORE MISSION / SOVEREIGN MANDATE**:
+> **"Padhai Se Kamai Tak"** — प्रतियोगी परीक्षाओं से लेकर हाई-पेइंग इंटरनेशनल AI जॉब्स तक, हर भारतीय युवा को बिना किसी कोचिंग फीस के 100% प्रामाणिक मार्गदर्शन।
+
+✦ **प्रीमियम विज़न IAS फॉर्मेट**: अब हर उत्तर और कॉन्सेप्ट हाई-कंट्रास्ट मैगज़ीन लेआउट, कॉलआउट बॉक्सेस और तुलनात्मक तालिकाओं में।
+✦ **1-क्लिक स्टाइलिश PDF एक्सपोर्ट**: किसी भी उत्तर को तुरंत प्रिंट-रेडी Vision IAS मैगज़ीन PDF के रूप में डाउनलोड करें।
+✦ **14-मॉड्यूल ऑटोनॉमस कवरेज**: NCERT 1-12, UPSC, NEET, JEE, ITI, कृषि, सरकारी भर्तियां और ग्लोबल डॉलर जॉब्स।
+
+| डोमेन (Domain) | मुख्य विशेषता (Key Feature) | सीधा लाभ (Direct Yield) |
+| :--- | :--- | :--- |
+| **प्रतियोगी परीक्षाएं** | 2026 गजट ऑडिटेड सिलेबस व PYQs | 100% सटीक तैयारी, शून्य भटकाव |
+| **NEET & JEE** | NCERT लाइन-बाई-लाइन व शॉर्टकट ट्रिक्स | 720/720 व 99+ पर्सेंटाइल रोडमैप |
+| **ग्लोबल टेक जॉब्स** | सिंगापुर व यूएस रिमोट डॉलर कमाई | $25 - $120/घंटे का सत्यापित करियर |
+
+स्वाभाविक भाषा में कुछ भी पूछें:
+✦ **"Class 10 प्रकाश संश्लेषण (Photosynthesis) आसान भाषा में समझाओ"**
+✦ **"1991 के LPG सुधारों का 360° विज़न IAS विश्लेषण दीजिए"**
+✦ **"NEET 2026 Biology 360/360 का 3-फेज रोडमैप क्या है?"**`,
     },
   ]);
 
   const quickPrompts = [
-    'Class 5 ka Jal Chakra ka PDF Hinglish me banao',
-    'MPPSC ke liye Fundamental Rights ka 360 analysis do',
-    'Class 10 Ohm\'s Law ka 360 concept aur quiz do',
-    'Photosynthesis kyu important hai aur iska daily life problem kya hai?',
+    'Class 10 प्रकाश संश्लेषण (Photosynthesis) आसान भाषा में समझाओ',
+    'Class 10 ओम का नियम (Ohm\'s Law) और इसका फॉर्मूला',
+    'सिंगापुर AI जॉब्स व रिमोट डॉलर कमाई (S$6k-S$14k) का रोडमैप क्या है?',
+    'भारतीय संविधान के मौलिक अधिकार (UPSC विश्लेषण सहित)',
   ];
 
   const handleSpeechRecord = () => {
@@ -124,16 +152,27 @@ export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicMod
       schoolCurriculumData[0];
 
     try {
+      const contextMemory = UserMemoryService.getAIContextPrompt();
+
       const response = await fetch('/api/gemini/prime', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt,
           language: lang,
+          contextMemory,
         }),
       });
 
       const data = await response.json();
+
+      // Record in UserMemoryService for continuous learning & recall
+      UserMemoryService.addMemory({
+        category: 'career_target',
+        topicOrSubject: prompt.slice(0, 50),
+        summary: `PRIME Guidance: "${prompt.slice(0, 80)}" - Coordinated multi-agent plan generated.`,
+        importance: 'high',
+      });
 
       setActivePipeline((prev) =>
         prev.map((step) => ({
@@ -142,11 +181,17 @@ export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicMod
         }))
       );
 
+      // Only attach Vision IAS infographic if user specifically requested editorial/UPSC/Vision IAS/Mains
+      const isExplicitEditorialRequest = /vision\s*ias|विज़न|upsc\s*mains|mains\s*answer|editorial|संपादकीय|चर्चा\s*में\s*क्यों|15-marker|critical\s*analysis/i.test(prompt);
+
       const primeLog: ChatLog = {
         id: (Date.now() + 1).toString(),
         sender: 'prime',
-        text: data.text || 'JITOMNI PRIME has coordinated all sub-agents and synthesized your 360° request.',
+        userPrompt: prompt,
+        text: data.text || `JITOMNI PRIME ने "${prompt}" का स्पष्ट व समझने योग्य उत्तर तैयार कर लिया है।`,
         downloadableTopic: matchedTopic,
+        visionIasInfographic: isExplicitEditorialRequest ? (data.visionIasInfographic || generateVisionIasInfographic(prompt, lang)) : undefined,
+        showInfographic: isExplicitEditorialRequest,
       };
 
       setChatLogs((prev) => [...prev, primeLog]);
@@ -155,11 +200,15 @@ export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicMod
       speech.speak(typeof data?.text === 'string' && data.text ? data.text.slice(0, 200) : 'JITOMNI PRIME ready.', lang);
     } catch (err) {
       console.error(err);
+      const isExplicitEditorialRequest = /vision\s*ias|विज़न|upsc\s*mains|mains\s*answer|editorial|संपादकीय|चर्चा\s*में\s*क्यों|15-marker|critical\s*analysis/i.test(prompt);
       const fallbackLog: ChatLog = {
         id: (Date.now() + 1).toString(),
         sender: 'prime',
-        text: `JITOMNI PRIME ने "${prompt}" के लिए 360° फ्रेमवर्क तैयार कर लिया है। आप नीचे दिए गए बटन से PDF डाउनलोड कर सकते हैं।`,
+        userPrompt: prompt,
+        text: `JITOMNI PRIME: "${prompt}" के लिए व्यावहारिक और समझने योग्य समाधान तैयार है। आप नीचे दिए गए टूल्स से आगे बढ़ सकते हैं।`,
         downloadableTopic: matchedTopic,
+        visionIasInfographic: isExplicitEditorialRequest ? generateVisionIasInfographic(prompt, lang) : undefined,
+        showInfographic: isExplicitEditorialRequest,
       };
       setChatLogs((prev) => [...prev, fallbackLog]);
     } finally {
@@ -275,14 +324,67 @@ export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicMod
                   </div>
                 )}
 
-                <div className={`max-w-[85%] rounded-2xl p-4 space-y-3 ${
+                <div className={`${log.visionIasInfographic ? 'max-w-[98%] sm:max-w-[96%]' : 'max-w-[96%] sm:max-w-[92%]'} rounded-2xl p-4 sm:p-5 space-y-3 ${
                   isPrime
-                    ? 'bg-[#102447] text-white border border-amber-500/30'
+                    ? 'bg-[#102447] text-white border border-amber-500/30 shadow-xl'
                     : 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold shadow-md'
                 }`}>
-                  <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
-                    {log.text}
-                  </p>
+                  {isPrime ? (
+                    <VisionIasRenderer
+                      content={log.text}
+                      title={log.userPrompt || 'JITOMNI PRIME AI Guidance'}
+                      lang={lang}
+                      onNavigateTab={onNavigateTab}
+                      showExportPdf={true}
+                    />
+                  ) : (
+                    <p className="text-xs sm:text-sm leading-relaxed font-bold whitespace-pre-wrap">
+                      {log.text}
+                    </p>
+                  )}
+
+                  {/* Optional 360° Vision IAS Magazine-Style Critical Analysis Infographic */}
+                  {log.visionIasInfographic && (
+                    <div className="pt-2 space-y-2">
+                      <button
+                        onClick={() => {
+                          setChatLogs((prev) =>
+                            prev.map((l) => (l.id === log.id ? { ...l, showInfographic: !l.showInfographic } : l))
+                          );
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                      >
+                        <span>{log.showInfographic ? '🏛️ 360° विज़न IAS विश्लेषण समेटें (Collapse)' : '🏛️ 360° विज़न IAS संपादकीय विश्लेषण देखें (Expand View)'}</span>
+                      </button>
+
+                      {log.showInfographic && (
+                        <div className="pt-1 animate-in fade-in duration-200">
+                          <VisionIasInfographicCard
+                            infographic={log.visionIasInfographic}
+                            lang={lang}
+                            onNavigateTab={onNavigateTab}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Optional On-Demand Deep-Dive Prompt for normal responses */}
+                  {!log.visionIasInfographic && log.userPrompt && (
+                    <div className="pt-1 border-t border-slate-700/40">
+                      <button
+                        onClick={() => {
+                          const info = generateVisionIasInfographic(log.userPrompt!, lang);
+                          setChatLogs((prev) =>
+                            prev.map((l) => (l.id === log.id ? { ...l, visionIasInfographic: info, showInfographic: true } : l))
+                          );
+                        }}
+                        className="text-[11px] text-amber-400/80 hover:text-amber-300 flex items-center gap-1.5 hover:underline cursor-pointer transition-all"
+                      >
+                        <span>🏛️ UPSC / मेंस स्तर का 360° विज़न IAS संपादकीय विश्लेषण चाहिए? (वैकल्पिक)</span>
+                      </button>
+                    </div>
+                  )}
 
                   {/* If actionable topic synthesized */}
                   {log.downloadableTopic && (

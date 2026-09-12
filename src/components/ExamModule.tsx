@@ -32,6 +32,8 @@ import { CompetitiveTopicModal } from './CompetitiveTopicModal';
 import { translations } from '../data/translations';
 import { generateTopicPdf, downloadPdfBlob } from '../utils/pdfGenerator';
 import { buildFallbackFramework, buildFallbackQuiz } from '../utils/aiTopicSynthesizer';
+import { DailyCurrentAffairsHub } from './DailyCurrentAffairsHub';
+import { TargetExamCommandCenter } from './TargetExamCommandCenter';
 
 interface ExamModuleProps {
   lang: Language;
@@ -58,6 +60,7 @@ export const ExamModule: React.FC<ExamModuleProps> = ({
   const [viewMode, setViewMode] = useState<'hierarchy' | 'cards'>('hierarchy');
   const [generatingPdfTopicId, setGeneratingPdfTopicId] = useState<string | null>(null);
   const [activeCompetitiveTopic, setActiveCompetitiveTopic] = useState<CompetitiveTopicDetail | null>(null);
+  const [examModeTab, setExamModeTab] = useState<'syllabus' | 'target_command' | 'current_affairs'>('syllabus');
 
   const exams: { id: CompetitiveExam; label: string; badge: string; icon: string }[] = [
     { id: 'SSC', label: 'SSC (CGL/CHSL/GD)', badge: 'Speed Heavy', icon: '📊' },
@@ -304,8 +307,67 @@ export const ExamModule: React.FC<ExamModuleProps> = ({
         <div className="absolute top-0 right-0 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
       </div>
 
-      {/* 2. EXAM SELECTOR CAROUSEL */}
-      <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#0A1931] border border-slate-800 space-y-5 shadow-lg">
+      {/* 1.5 TRIPLE ENGINE TABS: SYLLABUS & PYQ VS TARGET EXAM COMMAND CENTER VS DAILY CURRENT AFFAIRS 360° */}
+      <div className="flex flex-col md:flex-row items-center gap-2 p-1.5 rounded-2xl bg-[#08152B] border-2 border-amber-500/30 shadow-xl">
+        <button
+          onClick={() => setExamModeTab('syllabus')}
+          className={`w-full md:flex-1 py-3 px-3.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 ${
+            examModeTab === 'syllabus'
+              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md shadow-amber-500/30 scale-[1.01]'
+              : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+          }`}
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>1. परीक्षा पाठ्यक्रम व 10-वर्षीय PYQ (Syllabus & Topics)</span>
+        </button>
+
+        <button
+          onClick={() => setExamModeTab('target_command')}
+          className={`w-full md:flex-1 py-3 px-3.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 ${
+            examModeTab === 'target_command'
+              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md shadow-amber-500/30 scale-[1.01]'
+              : 'text-amber-300 hover:text-white hover:bg-slate-800/60'
+          }`}
+        >
+          <span className="text-base">🎯</span>
+          <span>2. 100% परीक्षा मांग व रणनीति (Target Blueprint & NCERT)</span>
+          <span className="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black">
+            100% Demand
+          </span>
+        </button>
+
+        <button
+          onClick={() => setExamModeTab('current_affairs')}
+          className={`w-full md:flex-1 py-3 px-3.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 ${
+            examModeTab === 'current_affairs'
+              ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-amber-500 text-white shadow-md shadow-indigo-500/40 ring-2 ring-amber-400 scale-[1.01]'
+              : 'text-purple-300 hover:text-white hover:bg-slate-800/60'
+          }`}
+        >
+          <span className="text-base">🔥</span>
+          <span>3. दैनिक समसामयिकी (Daily Current Affairs)</span>
+          <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
+            LIVE 360°
+          </span>
+        </button>
+      </div>
+
+      {examModeTab === 'target_command' ? (
+        <TargetExamCommandCenter
+          lang={lang}
+          selectedExam={selectedExam}
+          onSelectExam={setSelectedExam}
+        />
+      ) : examModeTab === 'current_affairs' ? (
+        <DailyCurrentAffairsHub
+          lang={lang}
+          onStartQuiz={onStartMockTest}
+          onBackToSyllabus={() => setExamModeTab('syllabus')}
+        />
+      ) : (
+        <>
+          {/* 2. EXAM SELECTOR CAROUSEL */}
+          <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#0A1931] border border-slate-800 space-y-5 shadow-lg">
         <div>
           <div className="flex items-center justify-between mb-2.5">
             <label className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
@@ -827,6 +889,8 @@ export const ExamModule: React.FC<ExamModuleProps> = ({
             )
           )}
         </div>
+      )}
+        </>
       )}
 
       {/* 6. COMPETITIVE TOPIC FULL MASTER MODAL */}

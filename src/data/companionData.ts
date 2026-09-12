@@ -1,4 +1,4 @@
-import { CompanionServiceCategory, CompanionWorker } from '../types';
+import { CompanionServiceCategory, CompanionWorker, RideVehiclePartner, RidePlatformFeeRecord } from '../types';
 
 export const companionCategories: CompanionServiceCategory[] = [
   {
@@ -367,6 +367,98 @@ export const companionCategories: CompanionServiceCategory[] = [
       'Stand in line at electricity board office for billing correction',
       'Collect signed property documents from advocate chamber & deliver to home',
       'Help in packing and sealing 10 cartons for household shifting'
+    ]
+  },
+  {
+    id: 'ride_travel',
+    title: {
+      hi: '🚗 कार व 🏍️ बाइक यात्रा साथी (Ride & Travel Booking)',
+      en: '🚗 Car & 🏍️ Bike Travel Partner (Local & Outstation)',
+      hinglish: '🚗 Car & Bike Ride Booking (Rapido/Ola se behtar)'
+    },
+    tagline: {
+      hi: 'लोकल शहर व आउटस्टेशन यात्रा हेतु त्वरित बाइक टैक्सी व कार कैब। पारदर्शी 10% प्लेटफ़ॉर्म व प्रबंधन शुल्क (90% चालक की सीधी कमाई • 10% ऐप सर्वर, 24/7 SOS सुरक्षा व मेंटेनेंस), नो सर्ज प्राइसिंग, डायरेक्ट ड्राइवर कॉल।',
+      en: 'Instant bike taxi & car cab for city & outstation travel. Fair 10% platform management fee (90% driver earnings • 10% app operations & 24/7 SOS safety), zero surge pricing, direct driver calls.',
+      hinglish: 'Bike taxi, City Car, Intercity Travel. 90% Driver direct earning, 10% fair app management fee, 0% surge pricing aur direct contact.'
+    },
+    icon: '🚗',
+    visualAnchorBadge: 'BIKE & CAR TRAVEL • FAIR 10% MANAGEMENT FEE',
+    themeColor: {
+      badge: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+      border: 'border-amber-500/50 hover:border-amber-400',
+      bgGlow: 'from-amber-950/40 via-[#1C1205] to-[#0A0702]',
+      gradient: 'from-amber-500 to-yellow-600',
+      accent: '#F59E0B'
+    },
+    baseHourlyRate: 99,
+    subServices: [
+      {
+        id: 'ride_bike_express',
+        name: {
+          hi: '🏍️ सुपरफास्ट बाइक टैक्सी (Bike Express)',
+          en: '🏍️ Superfast Bike Taxi (Solo Rider Express)',
+          hinglish: '🏍️ Fast Bike Taxi (Rapido Alternative)'
+        },
+        desc: {
+          hi: 'ट्रैफिक से बचकर तेज और सबसे सस्ती यात्रा। हेलमेट उपलब्ध, सुरक्षित राइड। ₹6-8/किमी।',
+          en: 'Beat traffic jams swiftly at lowest cost. Sanitized helmet provided. ₹6-8/km.',
+          hinglish: 'Traffic se bachiye, sabse sasti & fast ride. Helmet provided.'
+        },
+        icon: '🏍️',
+        recommendedHours: 1
+      },
+      {
+        id: 'ride_car_city',
+        name: {
+          hi: '🚗 सिटी कैब व कार राइड (AC Hatchback / Sedan)',
+          en: '🚗 City Cab & Car Ride (AC Hatchback / Sedan)',
+          hinglish: '🚗 City Car Ride (AC Comfort)'
+        },
+        desc: {
+          hi: 'परिवार व लगेज के साथ आरामदायक लोकल यात्रा। साफ-सुथरी कार, नो सर्ज रेट। ₹11-14/किमी।',
+          en: 'Comfortable air-conditioned city transit with family & luggage. ₹11-14/km.',
+          hinglish: 'Comfortable AC car ride, fair pricing, no surge charges.'
+        },
+        icon: '🚗',
+        recommendedHours: 2
+      },
+      {
+        id: 'ride_car_outstation',
+        name: {
+          hi: '🚙 आउटस्टेशन व इंटरसिटी कार/SUV (गाँव से शहर व लंबी दूरी)',
+          en: '🚙 Outstation & Intercity Car/SUV (Town to City & Long Distance)',
+          hinglish: '🚙 Outstation & Rural-to-City Long Travel'
+        },
+        desc: {
+          hi: '50 से 350+ किलोमीटर की अंतर-शहरी व ग्रामीण यात्रा। वन-वे व राउंड ट्रिप दोनों।',
+          en: '50 km to 350+ km intercity and rural transit with verified drivers.',
+          hinglish: 'Long distance travel, outstation & rural connectivity.'
+        },
+        icon: '🚙',
+        recommendedHours: 5
+      },
+      {
+        id: 'ride_women_safe',
+        name: {
+          hi: '👩‍🦰 पिंक राइड (महिला पायलट व सुरक्षित यात्रा साथी)',
+          en: '👩‍🦰 Pink Safe Ride (Verified Female Bike/Car Partner)',
+          hinglish: '👩‍🦰 Women Special Safe Ride'
+        },
+        desc: {
+          hi: 'महिला यात्रियों और छात्राओं हेतु समर्पित सत्यापित महिला टू-व्हीलर / कार पायलट।',
+          en: 'Dedicated police-verified female bike/car pilot for female passengers & students.',
+          hinglish: 'Female passenger ke liye dedicated female driver partner.'
+        },
+        icon: '👩‍🦰',
+        recommendedHours: 2
+      }
+    ],
+    quickRequirements: [
+      'Need urgent bike ride from MP Nagar to BHEL (12 km)',
+      'Book AC car for 4 passengers to Bhopal Airport (22 km)',
+      'Outstation car needed for Bhopal to Indore one-way (190 km)',
+      'Need female bike rider for college drop & pickup (daily)',
+      'Emergency car for railway station with 3 heavy suitcases'
     ]
   }
 ];
@@ -1009,4 +1101,330 @@ export const sovereignSafetyProtocols = {
 
 // Aliases for admin and worker portal modules
 export const initialVerifiedWorkers = verifiedCompanionWorkersPool;
+
+export const initialRidePartnersPool: RideVehiclePartner[] = [
+  {
+    id: 'ride-p-01',
+    name: 'Dharmendra Sharma',
+    phone: '+91 98261 58210',
+    whatsapp: '+91 98261 58210',
+    photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80',
+    gender: 'male',
+    age: 28,
+    vehicleType: 'bike',
+    vehicleName: 'Hero Splendor Plus (Black/Silver)',
+    vehicleNumber: 'MP 04 ZB 7824',
+    seatingCapacity: 1,
+    serviceArea: 'MP Nagar, Habibganj, Shahpura se Mandideep & BHEL',
+    operatingCity: 'Bhopal',
+    routeCoverage: 'MP Nagar, Railway Station, Kolar, BHEL, Mandideep Industrial Area (0-40 km)',
+    maxKilometers: 45,
+    ratePerKm: 7,
+    baseFare: 25,
+    helmetProvided: true,
+    availableNow: true,
+    rating: 4.94,
+    reviewsCount: 218,
+    tripsCompleted: 342,
+    policeVerified: true,
+    policeVerificationId: 'MP-BPL-TRAF-2026-9921',
+    dlNumber: 'MP04-2018-0048291',
+    rcVerified: true,
+    aadhaarVerified: true,
+    bio: '5+ years safe two-wheeler driving in Bhopal. Sanitized spare helmet provided, zero rash driving, fair meter.'
+  },
+  {
+    id: 'ride-p-02',
+    name: 'Pooja Vishwakarma',
+    phone: '+91 98261 44520',
+    whatsapp: '+91 98261 44520',
+    photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80',
+    gender: 'female',
+    age: 24,
+    vehicleType: 'scooter',
+    vehicleName: 'TVS Jupiter 125 (Matte Blue)',
+    vehicleNumber: 'MP 04 SK 4109',
+    seatingCapacity: 1,
+    serviceArea: 'Arera Colony, MP Nagar, Nutan College, Bittan Market, BHEL',
+    operatingCity: 'Bhopal',
+    routeCoverage: 'South Bhopal, MP Nagar, Colleges & Hostels, Safe Corridor for Female Passengers (0-30 km)',
+    maxKilometers: 35,
+    ratePerKm: 8,
+    baseFare: 30,
+    helmetProvided: true,
+    availableNow: true,
+    rating: 4.98,
+    reviewsCount: 194,
+    tripsCompleted: 280,
+    policeVerified: true,
+    policeVerificationId: 'MP-BPL-WSAFE-2026-7714',
+    dlNumber: 'MP04-2021-0081944',
+    rcVerified: true,
+    aadhaarVerified: true,
+    isFemaleDriver: true,
+    bio: 'Dedicated safe ride partner for women, college girls & elderly. High empathy, punctual and safe.'
+  },
+  {
+    id: 'ride-p-03',
+    name: 'Vikram Singh Rajput',
+    phone: '+91 94250 88319',
+    whatsapp: '+91 94250 88319',
+    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80',
+    gender: 'male',
+    age: 32,
+    vehicleType: 'car_hatchback',
+    vehicleName: 'Maruti Suzuki WagonR VXI (White - Clean AC)',
+    vehicleNumber: 'MP 04 CA 3218',
+    seatingCapacity: 4,
+    serviceArea: 'Bhopal City, Raja Bhoj Airport, Rani Kamlapati Station, Kolar, Sehore',
+    operatingCity: 'Bhopal',
+    routeCoverage: 'All Bhopal Local, Airport Express, Station Drop & Sehore (0-75 km)',
+    maxKilometers: 80,
+    ratePerKm: 12,
+    baseFare: 70,
+    acAvailable: true,
+    availableNow: true,
+    rating: 4.91,
+    reviewsCount: 310,
+    tripsCompleted: 490,
+    policeVerified: true,
+    policeVerificationId: 'MP-BPL-TRAF-2026-3841',
+    dlNumber: 'MP04-2015-0019283',
+    rcVerified: true,
+    aadhaarVerified: true,
+    bio: 'Commercial badge driver with clean record. Chilled AC, quiet ride, carrier for heavy luggage.'
+  },
+  {
+    id: 'ride-p-04',
+    name: 'Kailash Patel',
+    phone: '+91 98932 77102',
+    whatsapp: '+91 98932 77102',
+    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80',
+    gender: 'male',
+    age: 36,
+    vehicleType: 'car_sedan',
+    vehicleName: 'Maruti Suzuki Dzire Tour (Silver AC)',
+    vehicleNumber: 'MP 04 CC 9012',
+    seatingCapacity: 4,
+    serviceArea: 'Bhopal to Indore, Ujjain, Hoshangabad, Raisen, Sagar Highway',
+    operatingCity: 'Bhopal & Outstation',
+    routeCoverage: 'Bhopal-Indore Highway (195 km), Ujjain Mahakal (220 km), Hoshangabad / Narmadapuram (75 km)',
+    maxKilometers: 350,
+    ratePerKm: 13,
+    baseFare: 120,
+    acAvailable: true,
+    availableNow: true,
+    rating: 4.96,
+    reviewsCount: 420,
+    tripsCompleted: 612,
+    policeVerified: true,
+    policeVerificationId: 'MP-BPL-CID-2026-6629',
+    dlNumber: 'MP04-2012-0004921',
+    rcVerified: true,
+    aadhaarVerified: true,
+    bio: 'Specialist in outstation & intercity highway travel. Fastag enabled, smooth driving, comfortable sedan.'
+  },
+  {
+    id: 'ride-p-05',
+    name: 'Mahesh Lodhi',
+    phone: '+91 97551 22890',
+    whatsapp: '+91 97551 22890',
+    photoUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80',
+    gender: 'male',
+    age: 34,
+    vehicleType: 'car_suv',
+    vehicleName: 'Maruti Suzuki Ertiga 7-Seater (Pearl White AC)',
+    vehicleNumber: 'MP 04 TZ 8190',
+    seatingCapacity: 6,
+    serviceArea: 'Bhopal, Pachmarhi, Indore, Jabalpur, Wedding & Family Outings',
+    operatingCity: 'Bhopal / MP Statewide',
+    routeCoverage: 'City group travel, wedding airport shuttle & outstation pilgrimage (Pachmarhi, Sanchi, Omkareshwar) up to 400 km',
+    maxKilometers: 400,
+    ratePerKm: 16,
+    baseFare: 200,
+    acAvailable: true,
+    availableNow: true,
+    rating: 4.95,
+    reviewsCount: 180,
+    tripsCompleted: 295,
+    policeVerified: true,
+    policeVerificationId: 'MP-BPL-CID-2026-5510',
+    dlNumber: 'MP04-2014-0010928',
+    rcVerified: true,
+    aadhaarVerified: true,
+    bio: 'Spacious 7-seater SUV with roof carrier. Ideal for big families, luggage, and comfortable long highway trips.'
+  },
+  {
+    id: 'ride-p-06',
+    name: 'Amit Malviya',
+    phone: '+91 96301 44192',
+    whatsapp: '+91 96301 44192',
+    photoUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80',
+    gender: 'male',
+    age: 25,
+    vehicleType: 'bike',
+    vehicleName: 'Bajaj Pulsar 150 (Neon Yellow/Black)',
+    vehicleNumber: 'MP 04 NA 5519',
+    seatingCapacity: 1,
+    serviceArea: 'Old Bhopal, Bhopal Junction Railway Station, Karond, Ayodhya Bypass',
+    operatingCity: 'Bhopal',
+    routeCoverage: 'North Bhopal, Nadra Bus Stand, Old City, Karond & Ayodhya Bypass (0-25 km)',
+    maxKilometers: 30,
+    ratePerKm: 6,
+    baseFare: 20,
+    helmetProvided: true,
+    availableNow: true,
+    rating: 4.88,
+    reviewsCount: 145,
+    tripsCompleted: 210,
+    policeVerified: true,
+    policeVerificationId: 'MP-BPL-TRAF-2026-1182',
+    dlNumber: 'MP04-2020-0038102',
+    rcVerified: true,
+    aadhaarVerified: true,
+    bio: 'Super agile bike pilot. Know all shortcuts to reach railway station and bus stand without traffic delay.'
+  },
+  {
+    id: 'ride-p-07',
+    name: 'Sourabh Sen',
+    phone: '+91 91114 88203',
+    whatsapp: '+91 91114 88203',
+    photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
+    gender: 'male',
+    age: 26,
+    vehicleType: 'electric_ev',
+    vehicleName: 'Ather 450X Electric Scooter (White)',
+    vehicleNumber: 'MP 04 EV 1024',
+    seatingCapacity: 1,
+    serviceArea: 'MP Nagar, 10 Number Market, Chuna Bhatti, Shahpura Lake, Kolar Road',
+    operatingCity: 'Bhopal',
+    routeCoverage: 'Central & New Bhopal, Green Eco Corridor, Zero Emission (0-35 km)',
+    maxKilometers: 40,
+    ratePerKm: 6.5,
+    baseFare: 20,
+    helmetProvided: true,
+    availableNow: true,
+    rating: 4.97,
+    reviewsCount: 120,
+    tripsCompleted: 165,
+    policeVerified: true,
+    policeVerificationId: 'MP-BPL-TRAF-2026-4402',
+    dlNumber: 'MP04-2019-0022941',
+    rcVerified: true,
+    aadhaarVerified: true,
+    bio: '100% Electric, silent and smooth ride. Pocket-friendly, eco-friendly, and always on time.'
+  },
+  {
+    id: 'ride-p-08',
+    name: 'Mohit Chouhan',
+    phone: '+91 98270 66491',
+    whatsapp: '+91 98270 66491',
+    photoUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80',
+    gender: 'male',
+    age: 29,
+    vehicleType: 'car_hatchback',
+    vehicleName: 'Hyundai Grand i10 Nios (Titan Grey AC)',
+    vehicleNumber: 'MP 04 CE 6720',
+    seatingCapacity: 4,
+    serviceArea: 'Bhopal Airport, Lalghati, VIP Road, TT Nagar, Bairagarh',
+    operatingCity: 'Bhopal',
+    routeCoverage: 'West Bhopal, Airport corridor, Sehore Bypass & City Centre (0-60 km)',
+    maxKilometers: 60,
+    ratePerKm: 12,
+    baseFare: 65,
+    acAvailable: true,
+    availableNow: true,
+    rating: 4.93,
+    reviewsCount: 240,
+    tripsCompleted: 380,
+    policeVerified: true,
+    policeVerificationId: 'MP-BPL-TRAF-2026-8820',
+    dlNumber: 'MP04-2017-0091029',
+    rcVerified: true,
+    aadhaarVerified: true,
+    bio: 'Punctual airport transfers with flight tracking. Clean interiors, phone charger and chilled bottled water.',
+    platformFeePlan: 'percentage_10',
+    totalFareGenerated: 45600,
+    platformFeePaid: 4560,
+    platformFeePending: 0
+  }
+];
+
+export const initialRidePlatformFeeRecords: RidePlatformFeeRecord[] = [
+  {
+    id: 'RIDE-FEE-101',
+    rideId: 'RIDE-948102',
+    driverName: 'Vikram Rajput',
+    driverPhone: '+91 98260 11928',
+    vehicleType: 'bike',
+    vehicleNumber: 'MP 04 MN 4821',
+    route: 'MP Nagar Zone-1 → Mandideep Industrial Area',
+    distanceKm: 18,
+    totalFare: 151,
+    driverPayout: 136, // 90%
+    platformFee: 15, // 10%
+    date: '2026-09-06 09:15 AM',
+    status: 'collected'
+  },
+  {
+    id: 'RIDE-FEE-102',
+    rideId: 'RIDE-947883',
+    driverName: 'Rameshwar Sahu',
+    driverPhone: '+91 94250 88192',
+    vehicleType: 'car_sedan',
+    vehicleNumber: 'MP 04 ZA 9920',
+    route: 'Bhopal Raja Bhoj Airport → TT Nagar',
+    distanceKm: 16,
+    totalFare: 292,
+    driverPayout: 263, // 90%
+    platformFee: 29, // 10%
+    date: '2026-09-06 08:30 AM',
+    status: 'collected'
+  },
+  {
+    id: 'RIDE-FEE-103',
+    rideId: 'RIDE-946712',
+    driverName: 'Sourabh Sen',
+    driverPhone: '+91 91114 88203',
+    vehicleType: 'electric_ev',
+    vehicleNumber: 'MP 04 EV 1024',
+    route: 'Bittan Market → Shahpura Lake',
+    distanceKm: 6.5,
+    totalFare: 62,
+    driverPayout: 56, // 90%
+    platformFee: 6, // 10%
+    date: '2026-09-05 07:45 PM',
+    status: 'collected'
+  },
+  {
+    id: 'RIDE-FEE-104',
+    rideId: 'RIDE-945901',
+    driverName: 'Sunita Mehra (Women Safe)',
+    driverPhone: '+91 98930 77412',
+    vehicleType: 'scooter',
+    vehicleNumber: 'MP 04 SQ 2209',
+    route: 'Barkatullah University → 10 No. Market',
+    distanceKm: 8,
+    totalFare: 84,
+    driverPayout: 76, // 90%
+    platformFee: 8, // 10%
+    date: '2026-09-05 05:20 PM',
+    status: 'collected'
+  },
+  {
+    id: 'RIDE-FEE-105',
+    rideId: 'RIDE-944210',
+    driverName: 'Mahesh Lodhi',
+    driverPhone: '+91 97551 22890',
+    vehicleType: 'car_suv',
+    vehicleNumber: 'MP 04 TZ 8190',
+    route: 'Bhopal → Sanchi Stupa Day Outing',
+    distanceKm: 96,
+    totalFare: 1736,
+    driverPayout: 1562, // 90%
+    platformFee: 174, // 10%
+    date: '2026-09-04 11:00 AM',
+    status: 'collected'
+  }
+];
 

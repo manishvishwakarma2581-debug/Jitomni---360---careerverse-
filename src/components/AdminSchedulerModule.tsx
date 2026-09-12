@@ -16,9 +16,13 @@ import {
   Layers,
   Award,
   ShieldCheck,
+  SearchCheck,
 } from 'lucide-react';
 import { Language, TopicItem } from '../types';
 import { generateTopicPdf, downloadPdfBlob } from '../utils/pdfGenerator';
+import { syllabusEngine, SyllabusGapAuditResult } from '../services/syllabusAutoFulfillService';
+import { fourteenModulesEngine } from '../services/fourteenModulesMasterEngine';
+import { FourteenModulesQualityRadarModal } from './admin/FourteenModulesQualityRadarModal';
 
 interface AdminSchedulerModuleProps {
   lang: Language;
@@ -26,6 +30,7 @@ interface AdminSchedulerModuleProps {
   onOpenQuiz: (topic: TopicItem) => void;
   onOpenVideo: (topic: TopicItem) => void;
   onAddNewTopicToCurriculum?: (topic: TopicItem) => void;
+  onNavigateTab?: (tab: any) => void;
 }
 
 export const AdminSchedulerModule: React.FC<AdminSchedulerModuleProps> = ({
@@ -34,6 +39,7 @@ export const AdminSchedulerModule: React.FC<AdminSchedulerModuleProps> = ({
   onOpenQuiz,
   onOpenVideo,
   onAddNewTopicToCurriculum,
+  onNavigateTab,
 }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationLog, setGenerationLog] = useState<string[]>([]);
@@ -65,6 +71,45 @@ export const AdminSchedulerModule: React.FC<AdminSchedulerModuleProps> = ({
   });
 
   const [nextBatchTimeCountdown, setNextBatchTimeCountdown] = useState<string>('23h 59m');
+
+  // Syllabus Gap-Audit & Auto-Fulfill Engine State
+  const [gapAudit, setGapAudit] = useState<SyllabusGapAuditResult>(() => syllabusEngine.auditSyllabusGaps());
+  const [isFulfillingGaps, setIsFulfillingGaps] = useState(false);
+  const [show14RadarModal, setShow14RadarModal] = useState(false);
+  const [is14Boosting, setIs14Boosting] = useState(false);
+
+  const handleBoostAll14 = () => {
+    setIs14Boosting(true);
+    setGenerationLog((prev) => [
+      `[${new Date().toLocaleTimeString()}] 🚀 Initiating Full-Platform 14-Module Continuous Quality & Data Fulfillment...`,
+      ...prev,
+    ]);
+
+    setTimeout(() => {
+      fourteenModulesEngine.boostAndFulfillAllModules((msg) => {
+        setGenerationLog((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev]);
+      });
+      setIs14Boosting(false);
+      setStatusMessage('✓ All 14 Modules Audited & 100% Fulfilled! Zero Trust Break Guaranteed.');
+    }, 400);
+  };
+
+  const handleScanAndFulfillSyllabusGaps = () => {
+    setIsFulfillingGaps(true);
+    setGenerationLog((prev) => [
+      `[${new Date().toLocaleTimeString()}] 🔍 Scanning all 12 Classes for missing chapters & tests...`,
+      ...prev,
+    ]);
+
+    syllabusEngine.autoFulfillAllMissingChapters((msg) => {
+      setGenerationLog((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev]);
+    });
+
+    const freshAudit = syllabusEngine.auditSyllabusGaps();
+    setGapAudit(freshAudit);
+    setIsFulfillingGaps(false);
+    setStatusMessage('Syllabus Audit 100% Complete: All Class 1-5 stories & Class 6-12 chapters fulfilled!');
+  };
 
   // Cron-like 24-hour interval effect
   useEffect(() => {
@@ -357,6 +402,120 @@ export const AdminSchedulerModule: React.FC<AdminSchedulerModuleProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Big Auto Button & Logs */}
         <div className="lg:col-span-2 space-y-6">
+          {/* 14-MODULES SOVEREIGN CONTINUOUS FULFILLMENT & ZERO TRUST BREAK ENGINE */}
+          <div className="bg-gradient-to-r from-[#000000] via-[#091C3D] to-[#000000] p-6 rounded-2xl border-2 border-[#FFD700] shadow-2xl relative overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#FFD700] text-slate-950 font-black text-[11px] uppercase tracking-wider flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-slate-950" /> 14-Module Continuous Fulfillment
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px] border border-emerald-500/40">
+                    100% Sovereign Depth
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white font-heading">
+                  14-मॉड्यूल उद्देश्य, मांग व स्वायत्त डेटा पूर्ति रडार
+                </h3>
+                <p className="text-xs text-amber-200/90 mt-1 max-w-xl leading-relaxed">
+                  School, Exams, IIT, ITI, Agri, Verified Jobs, Labour, AI Interview, Sarkari, Companion, English, Doubt, Flashcards—किसी भी मॉड्यूल में डेटा अधूरा नहीं रहेगा।
+                </p>
+              </div>
+
+              <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
+                <button
+                  onClick={() => setShow14RadarModal(true)}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#FFD700] to-amber-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-1.5"
+                >
+                  <SearchCheck className="w-4 h-4 text-slate-950" />
+                  <span>14 मॉड्यूल्स रडार खोलें 🔍</span>
+                </button>
+
+                <button
+                  onClick={handleBoostAll14}
+                  disabled={is14Boosting}
+                  className="px-4 py-2.5 rounded-xl bg-[#040C1A] hover:bg-[#071630] text-emerald-300 border border-emerald-500/50 font-bold text-xs flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                >
+                  {is14Boosting ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>बूस्ट हो रहा है...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>⚡ 14 मॉड्यूल्स डेटा बूस्ट</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* SYLLABUS GAP AUDIT & AUTO-FULFILL ENGINE (USER REQUESTED) */}
+          <div className="bg-gradient-to-br from-[#0B1D3A] via-[#08152B] to-[#040C1A] p-6 rounded-2xl border-2 border-emerald-500/40 shadow-xl relative overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-400 text-slate-950 font-black text-[11px] uppercase tracking-wider flex items-center gap-1">
+                    <SearchCheck className="w-3 h-3" /> Auto-Gap Detection Engine
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold text-[10px] border border-blue-500/30">
+                    कक्षा 1 से 12 पूर्ण कवरेज
+                  </span>
+                </div>
+                <h3 className="text-xl font-black text-white mt-1 font-heading flex items-center gap-2">
+                  <span>पाठ्यक्रम कमियां स्कैन व स्वतः पूर्ति इंजन</span>
+                </h3>
+                <p className="text-xs text-slate-300 mt-0.5">
+                  ऑटो-शेड्यूलर निरंतर जांच करता है कि छोटे बच्चों की क्लास में कोई चैप्टर अधूरा तो नहीं, और तुरंत सचित्र कहानियां, NCERT हल व 10-प्रश्न टेस्ट स्वतः तैयार कर देता है।
+                </p>
+              </div>
+
+              <button
+                onClick={handleScanAndFulfillSyllabusGaps}
+                disabled={isFulfillingGaps}
+                className="px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50"
+              >
+                {isFulfillingGaps ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>कमियां स्कैन व पूरी हो रही हैं...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4 text-slate-950" />
+                    <span>कमियां स्कैन व स्वतः पूर्ण करें 🚀</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Audit Status Matrix */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+              <div className="p-3.5 rounded-xl bg-[#061224] border border-slate-700/80 text-center">
+                <span className="text-xs text-slate-400 block">कुल कक्षाएं ऑडिट</span>
+                <span className="text-lg font-black text-white mt-0.5 block">{gapAudit.totalClassesChecked} कक्षाएं (1-12)</span>
+                <span className="text-[10px] text-emerald-400 font-bold">✓ 100% एक्टिव</span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-[#061224] border border-slate-700/80 text-center">
+                <span className="text-xs text-slate-400 block">स्कैन किए गए चैप्टर्स</span>
+                <span className="text-lg font-black text-amber-400 mt-0.5 block">{gapAudit.totalChaptersScanned}+</span>
+                <span className="text-[10px] text-slate-300">NCERT / बोर्ड संरेखित</span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-[#061224] border border-slate-700/80 text-center">
+                <span className="text-xs text-slate-400 block">कक्षा 1-5 बाल मोड</span>
+                <span className="text-lg font-black text-purple-300 mt-0.5 block">सचित्र + गेम्स</span>
+                <span className="text-[10px] text-purple-400 font-bold">बोलती कहानियां ✓</span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-[#061224] border border-slate-700/80 text-center">
+                <span className="text-xs text-slate-400 block">कक्षा 6-12 संपूर्ण नोट्स</span>
+                <span className="text-lg font-black text-cyan-300 mt-0.5 block">NCERT हल + टेस्ट</span>
+                <span className="text-[10px] text-cyan-400 font-bold">10 MCQ महा-टेस्ट ✓</span>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-[#0A1931] p-6 rounded-2xl border border-amber-500/30 shadow-lg relative overflow-hidden">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -614,6 +773,16 @@ export const AdminSchedulerModule: React.FC<AdminSchedulerModuleProps> = ({
           </div>
         )}
       </div>
+
+      {/* Sovereign 14-Module Quality & Continuous Data Radar Modal */}
+      {show14RadarModal && (
+        <FourteenModulesQualityRadarModal
+          isOpen={show14RadarModal}
+          onClose={() => setShow14RadarModal(false)}
+          lang={lang}
+          onNavigateTab={onNavigateTab || (() => {})}
+        />
+      )}
     </div>
   );
 };

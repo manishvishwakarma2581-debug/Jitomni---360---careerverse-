@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Award, Mic, BrainCircuit, Globe, Sparkles, Volume2, Globe2, ShieldCheck, Building2, Info, Flag, HeartHandshake } from 'lucide-react';
+import { BookOpen, Award, Mic, BrainCircuit, Globe, Sparkles, Volume2, Globe2, ShieldCheck, Building2, Info, Flag, HeartHandshake, MessageSquarePlus } from 'lucide-react';
 import { Language, MainTab } from '../types';
 import { translations } from '../data/translations';
 import { JitomniEmblemLogo } from './JitomniEmblemLogo';
@@ -12,6 +12,10 @@ interface HeaderProps {
   onOpenPrimeChat?: () => void;
   onOpenRoleModal?: () => void;
   onOpenAboutUs?: () => void;
+  onOpenAuthLogin?: () => void;
+  onOpenPaymentModal?: () => void;
+  onOpen14RadarModal?: () => void;
+  onOpenDemandBox?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -22,6 +26,10 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenPrimeChat,
   onOpenRoleModal,
   onOpenAboutUs,
+  onOpenAuthLogin,
+  onOpenPaymentModal,
+  onOpen14RadarModal,
+  onOpenDemandBox,
 }) => {
   const languages: { code: Language; label: string; flag: string }[] = [
     { code: 'hi', label: 'हिंदी', flag: '🇮🇳' },
@@ -48,6 +56,47 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Quick Sovereign Identity & Verified Jobs Pill */}
         <div className="hidden sm:flex items-center gap-2">
+          {/* Public Demand & Help Center Button */}
+          {onOpenDemandBox && (
+            <button
+              id="header-demand-ribbon-btn"
+              onClick={onOpenDemandBox}
+              className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-[#FFD700] text-slate-950 font-black hover:brightness-110 transition-all text-[11px] shadow-sm animate-pulse cursor-pointer"
+              title="अपनी मांग, शिकायत या नई सुविधा का सुझाव भेजें (100% Demand Match)"
+            >
+              <MessageSquarePlus className="w-3.5 h-3.5 text-slate-950" />
+              <span>📢 मांग / सहायता बॉक्स</span>
+            </button>
+          )}
+
+          {/* 14 Modules Sovereign Quality Radar Button */}
+          {onOpen14RadarModal && (
+            <button
+              id="header-14-radar-btn"
+              onClick={onOpen14RadarModal}
+              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00D4FF]/20 text-[#00D4FF] font-black border border-[#00D4FF]/50 hover:bg-[#00D4FF]/30 transition-all text-[11px] shadow-sm animate-pulse"
+              title="14 मॉड्यूल्स का उद्देश्य, मांग व पूर्ति रडार देखें"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-cyan-300" />
+              <span>14 मॉड्यूल्स संप्रभु रडार ⚡</span>
+            </button>
+          )}
+
+          {/* Sovereign Admin Shortcuts */}
+          <button
+            onClick={() => onTabChange('super-admin')}
+            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFD700]/20 text-[#FFD700] font-bold border border-[#FFD700]/50 hover:bg-[#FFD700]/30 transition-all text-[11px]"
+          >
+            <span>👑 सुपर एडमिन: मनीष</span>
+          </button>
+
+          <button
+            onClick={() => onTabChange('krishi-admin')}
+            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 hover:bg-emerald-500/30 transition-all text-[11px]"
+          >
+            <span>🌾 कृषि हब: माहि पवार</span>
+          </button>
+
           {onOpenAboutUs && (
             <button
               onClick={onOpenAboutUs}
@@ -111,6 +160,19 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
+            {/* Direct Demand / Help Center Action Button */}
+            {onOpenDemandBox && (
+              <button
+                id="header-demand-btn"
+                onClick={onOpenDemandBox}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-400 via-[#FFD700] to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 shadow-md shadow-amber-500/20 transition-all cursor-pointer whitespace-nowrap"
+                title="अपनी मांग / सहायता भेजें (100% Demand Match)"
+              >
+                <MessageSquarePlus className="w-3.5 h-3.5 text-slate-950 shrink-0" />
+                <span>📢 मांग / सहायता</span>
+              </button>
+            )}
+
             {/* Direct Verified Jobs Action Button */}
             <button
               id="header-hiring-btn"
@@ -148,6 +210,30 @@ export const Header: React.FC<HeaderProps> = ({
                 );
               })}
             </div>
+
+            {/* Nominal Monetization / Pricing Button */}
+            {onOpenPaymentModal && (
+              <button
+                id="header-payment-btn"
+                onClick={onOpenPaymentModal}
+                className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-[#FFD700] to-amber-500 text-slate-950 shadow-md hover:brightness-110 transition-all whitespace-nowrap"
+                title="नॉमिनल टोकन फीस (₹9 - ₹49)"
+              >
+                <span>💰 नॉमिनल पास (₹9-₹49)</span>
+              </button>
+            )}
+
+            {/* Sovereign Auth / Role Login Button */}
+            {onOpenAuthLogin && (
+              <button
+                id="header-auth-btn"
+                onClick={onOpenAuthLogin}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold bg-[#061224] text-slate-200 border border-slate-700 hover:border-amber-400 transition-all whitespace-nowrap"
+                title="लॉगिन या रोल बदलें"
+              >
+                <span>👤 लॉगिन / रोल्स</span>
+              </button>
+            )}
 
             {/* Quick Prime Chat Launcher Button */}
             <button
@@ -277,6 +363,21 @@ export const Header: React.FC<HeaderProps> = ({
             <span>{translations.nav.exam[currentLang]}</span>
           </button>
 
+          {/* Dedicated Sovereign Daily Current Affairs Tab */}
+          <button
+            id="nav-current-affairs-btn"
+            onClick={() => onTabChange('current-affairs')}
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              activeTab === 'current-affairs'
+                ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-amber-500 text-white shadow-lg shadow-indigo-500/40 border border-indigo-400/60 font-black ring-2 ring-amber-400'
+                : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/40'
+            }`}
+          >
+            <span>🔥</span>
+            <span>{currentLang === 'hi' ? 'दैनिक समसामयिकी' : currentLang === 'hinglish' ? 'Daily Current Affairs' : 'Daily Current Affairs'}</span>
+            <span className="px-1.5 py-0.2 rounded text-[10px] bg-rose-500 text-white font-black animate-pulse">DAILY</span>
+          </button>
+
           <button
             id="nav-vacancies-btn"
             onClick={() => onTabChange('vacancies')}
@@ -369,6 +470,36 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
             <span>⚡ {translations.nav.admin?.[currentLang] || 'Roz 5 Topics Auto'}</span>
+          </button>
+
+          {/* Super Admin Manish Vishwakarma Navigation Tab */}
+          <button
+            id="nav-super-admin-btn"
+            onClick={() => onTabChange('super-admin')}
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              activeTab === 'super-admin'
+                ? 'bg-gradient-to-r from-[#FFD700] via-amber-500 to-amber-600 text-slate-950 shadow-lg shadow-amber-500/40 border border-white'
+                : 'bg-[#0A1931]/80 text-[#FFD700] hover:bg-[#102447] border border-[#FFD700]/50'
+            }`}
+          >
+            <span>👑</span>
+            <span>सुपर एडमिन (मनीष)</span>
+            <span className="px-1.5 py-0.2 rounded text-[9px] bg-black text-[#FFD700] font-mono">14 MODS</span>
+          </button>
+
+          {/* Krishi Admin Mahi Pawar Navigation Tab */}
+          <button
+            id="nav-krishi-admin-btn"
+            onClick={() => onTabChange('krishi-admin')}
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              activeTab === 'krishi-admin'
+                ? 'bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-700 text-white shadow-lg shadow-emerald-500/40 border border-emerald-300'
+                : 'bg-[#0A1931]/80 text-emerald-300 hover:bg-[#102447] border border-emerald-500/50'
+            }`}
+          >
+            <span>🌾</span>
+            <span>माहि पवार कृषि हब</span>
+            <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-950 text-emerald-300 font-mono">DIRECTOR</span>
           </button>
         </nav>
       </div>

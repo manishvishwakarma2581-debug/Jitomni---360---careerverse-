@@ -55,6 +55,14 @@ export const KisanSuperHub: React.FC<KisanSuperHubProps> = ({ lang, onNavigateSe
 
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
               <button
+                onClick={() => onNavigateSection('kriti_faas')}
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 font-black text-sm hover:scale-105 transition-all shadow-xl shadow-amber-500/30 flex items-center justify-center gap-2 border border-amber-300"
+              >
+                <Sparkles className="w-5 h-5 text-slate-950" />
+                <span>✨ कृषि 360° (FaaS साझेदारी)</span>
+              </button>
+
+              <button
                 onClick={() => onNavigateSection('ai_kisan_mitra')}
                 className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 font-black text-sm hover:scale-105 transition-all shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2"
               >
@@ -98,6 +106,64 @@ export const KisanSuperHub: React.FC<KisanSuperHubProps> = ({ lang, onNavigateSe
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          {/* Flagship Module 0: KRITI 360° FaaS */}
+          <div
+            onClick={() => onNavigateSection('kriti_faas')}
+            className="md:col-span-2 lg:col-span-3 p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-[#05281B] via-[#021810] to-black border-2 border-emerald-400 shadow-2xl hover:border-emerald-300 transition-all cursor-pointer group hover:scale-[1.01] space-y-4 relative overflow-hidden"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 group-hover:scale-110 transition-transform">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#FFD700] text-slate-950 font-black text-[10px] uppercase">
+                      नया फ्लैगशिप मॉडल
+                    </span>
+                    <span className="text-xs text-emerald-400 font-bold">
+                      खेत किसान का, खेती माही की
+                    </span>
+                  </div>
+                  <h4 className="text-xl sm:text-2xl font-black text-white group-hover:text-emerald-300 transition-colors">
+                    🌾 कृषि 360° (KRISHI 360° FaaS - Farming-as-a-Service)
+                  </h4>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs">
+                  85% किसान • 15% प्लेटफॉर्म
+                </span>
+                <span className="px-3.5 py-1.5 rounded-xl bg-black/60 border border-emerald-400/40 text-emerald-300 font-black text-xs">
+                  ₹0 अग्रिम लागत
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-4xl">
+              शून्य वित्तीय जोखिम के साथ शुद्ध साझेदारी मॉडल: बीज, वैज्ञानिक तकनीक और कोल्ड-चेन लॉजिस्टिक्स प्लेटफॉर्म का; 100% बाय-बैक गारंटी और 5-10 गांवों में शिक्षित युवाओं को “माही टेक एजेंट” बनाकर ₹50,000+ प्रतिमाह स्थानीय रोजगार।
+            </p>
+
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-500/30 text-xs font-bold text-emerald-300">
+              <div className="flex items-center gap-4">
+                <span>1. FaaS मॉडल</span>
+                <span>•</span>
+                <span>2. कृषि उद्यमी एजेंट</span>
+                <span>•</span>
+                <span>3. हाइब्रिड इनपुट हब</span>
+                <span>•</span>
+                <span>4. किफायती तकनीक</span>
+                <span>•</span>
+                <span>5. 100% बाय-बैक व एक्सपोर्ट</span>
+              </div>
+              <span className="flex items-center gap-1 text-emerald-400 group-hover:translate-x-1 transition-transform">
+                <span>पूरी कार्यप्रणाली व अनुबंध देखें</span>
+                <ArrowRight className="w-4 h-4" />
+              </span>
+            </div>
+          </div>
           
           {/* Module 1: AI Kisan Mitra */}
           <div

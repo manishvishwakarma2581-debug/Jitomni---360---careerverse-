@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Award, Mic, BrainCircuit, ArrowRight, Sparkles, FileText, CheckCircle2, ShieldCheck, HelpCircle, HeartHandshake, Briefcase, Globe2, Building2, GraduationCap, HardHat, Flag, Cpu, Video, Sprout } from 'lucide-react';
+import { BookOpen, Award, Mic, BrainCircuit, ArrowRight, Sparkles, FileText, CheckCircle2, ShieldCheck, HelpCircle, HeartHandshake, Briefcase, Globe2, Building2, GraduationCap, HardHat, Flag, Cpu, Video, Sprout, MessageSquarePlus } from 'lucide-react';
 import { Language, MainTab, TopicItem } from '../types';
 import { translations } from '../data/translations';
 import { schoolCurriculumData, competitiveCurriculumData } from '../data/curriculumData';
@@ -51,6 +51,28 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       border: 'border-rose-500/50 hover:border-rose-400',
       tag: 'Hospital • Wedding • Elderly • Errands',
       features: ['4 प्रमुख श्रेणियां (प्रति घंटा आधार)', 'लाइव जीपीएस लोकेशन ट्रैकिंग', '1-टैप इमरजेंसी एसओएस व पुलिस 112'],
+    },
+    {
+      id: 'iti' as MainTab,
+      badge: 'NCVT • SCVT • CTS • DGT',
+      title: lang === 'hi' ? '🛠️ ITI महा-हब (ए टू जेड ट्रेड्स)' : '🛠️ ITI Sovereign Hub (A to Z Trades)',
+      desc: lang === 'hi' ? 'NCVT/SCVT फिटर, इलेक्ट्रीशियन, वेल्डर, डीजल मैकेनिक ट्रेड्स, वर्कशॉप टूल्स, फॉर्मूले, भारत स्किल्स व RRB ALP तैयारी।' : 'Comprehensive vocational trades (Fitter, Electrician, Welder), workshop tools, practical formulas, Bharat Skills and RRB ALP technician preparation.',
+      icon: <HardHat className="w-8 h-8 text-amber-400" />,
+      color: 'from-amber-950/80 via-[#2A1504] to-[#0D0701]',
+      border: 'border-amber-500/50 hover:border-amber-400',
+      tag: 'NCVT • CTS • Railway ALP',
+      features: ['फिटर, इलेक्ट्रीशियन व टॉप 10 ट्रेड्स', 'वर्कशॉप टूल्स व 50+ प्रैक्टिकल फॉर्मूले', 'भारत स्किल्स व सरकारी जॉब रोडमैप'],
+    },
+    {
+      id: 'iit' as MainTab,
+      badge: '23 IITs • JEE Advanced • ₹1Cr+',
+      title: lang === 'hi' ? '🏛️ IIT एवं JEE महा-हब (A to Z)' : '🏛️ IIT & JEE Advanced 360° Hub',
+      desc: lang === 'hi' ? '23 IITs कटऑफ व NIRF रैंकिंग, JEE Main व Advanced मास्टर स्ट्रैटेजी, CSE/AI ब्रांचेज, ₹1 Cr+ HFT प्लेसमेंट्स व यूनिकॉर्न स्टार्टअप्स।' : '23 Indian Institutes of Technology, JEE Advanced subject-wise strategy, branch matrix, ₹1Cr+ HFT placements and startup founder playbook.',
+      icon: <GraduationCap className="w-8 h-8 text-cyan-400" />,
+      color: 'from-cyan-950/80 via-[#071A2E] to-[#020B14]',
+      border: 'border-cyan-500/50 hover:border-cyan-400',
+      tag: 'JEE Adv • NIRF Top 23 • Coding CP',
+      features: ['23 IITs मैट्रिक्स, कटऑफ व सीट्स', 'JEE Main & Advanced 360° स्ट्रैटेजी', 'CSE/AI कोडिंग, HFT प्लेसमेंट्स व स्टार्टअप्स'],
     },
     {
       id: 'school' as MainTab,
@@ -139,6 +161,17 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       border: 'border-purple-500/40 hover:border-amber-400',
       tag: '6 Autonomous Agents',
       features: ['वॉइस या टेक्स्ट से कमांड दें', 'ऑटो PDF व क्विज जनरेटर', 'मल्टी-एजेंट कोआर्डिनेशन'],
+    },
+    {
+      id: 'admin' as MainTab,
+      badge: '5 Daily Topics • Auto-Batch',
+      title: lang === 'hi' ? '⚡ ऑटो शेड्यूलर (रोज 5 नए टॉपिक्स)' : '⚡ Auto Scheduler & Daily Batch',
+      desc: lang === 'hi' ? 'ऑटोमेटेड डेली 5 नए टॉपिक्स जनरेशन, 360° एनालिसिस, इंटरएक्टिव क्विज, वीडियो स्क्रिप्ट्स, PDF और कस्टमाइज्ड जनरेटर।' : 'Automated daily batch synthesizer producing 5 fresh curriculum topics with 360° framework, quizzes, videos and PDF generation.',
+      icon: <Sparkles className="w-8 h-8 text-amber-400" />,
+      color: 'from-amber-950/60 via-[#1F1404] to-[#0A0702]',
+      border: 'border-amber-500/40 hover:border-amber-300',
+      tag: 'Daily 6 AM • Auto Quiz & Video',
+      features: ['रोज 5 फ्रेश टॉपिक्स ऑटो सिंथेसिस', '1-क्लिक टॉपिक, क्विज व वीडियो', 'कस्टम टॉपिक जेनरेशन व PDF एक्सपोर्ट'],
     },
   ];
 
@@ -384,6 +417,41 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* PUBLIC DEMAND & HELP CENTER BANNER (100% Demand Match & Admin Updates) */}
+      <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-amber-950/60 via-[#1C1103] to-[#0D0902] border-2 border-amber-500/50 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-5 relative overflow-hidden">
+        <div className="space-y-1.5 z-10 text-center md:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 font-black text-xs border border-amber-400/40">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <MessageSquarePlus className="w-3.5 h-3.5 text-amber-300" />
+            <span>जन-मांग व सहायता केंद्र • 100% DEMAND & CONTINUOUS UPDATE</span>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-black text-white font-heading">
+            {lang === 'hi' ? '📢 क्या ऐप में कोई कमी है या नई मांग है? हमें बताएं!' : '📢 Missing a feature, syllabus or exam topic? Tell us!'}
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl">
+            {lang === 'hi' 
+              ? 'NEET, JEE, नए सरकारी भर्ती सिलेबस, स्पेशल ट्रेड या किसी भी समस्या की मांग तुरंत भेजें। सुपर एडमिन व डेवलपमेंट टीम आपकी मांग के अनुसार ऐप को अपडेट करेंगे।'
+              : 'Request any new exam roadmaps (e.g., NEET 2026), trade courses, video solutions or tools. Our sovereign admin team continuously implements user demands.'}
+          </p>
+        </div>
+
+        <button
+          id="home-open-demand-box-btn"
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('jitomni-open-demand-box', { detail: { query: '' } }));
+            }
+          }}
+          className="z-10 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-[#FFD700] to-amber-500 hover:brightness-110 text-slate-950 font-black text-sm shadow-xl shadow-amber-500/25 flex items-center gap-2.5 whitespace-nowrap cursor-pointer transition-all hover:scale-105"
+        >
+          <MessageSquarePlus className="w-4 h-4 text-slate-950" />
+          <span>अपनी मांग / सवाल दर्ज करें ✍️</span>
+        </button>
+
+        {/* Subtle Background Glow */}
+        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
       </div>
 
       {/* ALL MAIN MODULE CARDS */}

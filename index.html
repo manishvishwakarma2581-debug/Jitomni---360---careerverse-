@@ -9,6 +9,12 @@
     <meta property="og:description" content="Jitomni 360° Careerverse - Padhai Se Kamai Tak | Verified Jobs | On-Demand Companion & Task Management Service with Police Verification, 80/20 Split Wallet & Sovereign Admin Control." />
     <meta property="og:image" content="/jitomni_emblem_logo.webp" />
     <link rel="icon" type="image/webp" href="/jitomni_emblem_logo.webp" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#FFD700" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Jitomni 360" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -21,6 +27,15 @@
   <body class="bg-[#030B1E] text-slate-100 antialiased selection:bg-[#F59E0B] selection:text-[#030B1E]">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch((err) => {
+            console.log('SW registration note:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
 

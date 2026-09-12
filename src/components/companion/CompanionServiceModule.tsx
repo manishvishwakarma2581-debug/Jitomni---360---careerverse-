@@ -13,7 +13,9 @@ import {
   Sparkles,
   ArrowRight,
   RefreshCw,
-  FileText
+  FileText,
+  Car,
+  Bike
 } from 'lucide-react';
 import { 
   CompanionCategoryType, 
@@ -30,6 +32,7 @@ import { CompanionLiveTrackingMap } from './CompanionLiveTrackingMap';
 import { CompanionSOSModal } from './CompanionSOSModal';
 import { CompanionWorkerPortal } from './CompanionWorkerPortal';
 import { CompanionAdminPanel } from './CompanionAdminPanel';
+import { RideTravelBookingHub } from './RideTravelBookingHub';
 
 interface CompanionServiceModuleProps {
   lang: Language;
@@ -40,7 +43,7 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
   const [activeRole, setActiveRole] = useState<'citizen' | 'worker' | 'admin'>('citizen');
 
   // Current Active Sub-View inside the Citizen Module
-  const [activeSubView, setActiveSubView] = useState<'categories' | 'book' | 'radar' | 'tracking' | 'safety'>('categories');
+  const [activeSubView, setActiveSubView] = useState<'categories' | 'rides' | 'book' | 'radar' | 'tracking' | 'safety'>('categories');
   
   // Selected Category
   const [selectedCategory, setSelectedCategory] = useState<CompanionCategoryType>('hospital_care');
@@ -91,12 +94,20 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
   const handleSelectCategory = (cat: CompanionCategoryType, subId?: string) => {
     setSelectedCategory(cat);
     if (subId) setSelectedSubServiceId(subId);
-    setActiveSubView('book');
+    if (cat === 'ride_travel') {
+      setActiveSubView('rides');
+    } else {
+      setActiveSubView('book');
+    }
   };
 
   const handleQuickBook = (cat: CompanionCategoryType) => {
     setSelectedCategory(cat);
-    setActiveSubView('book');
+    if (cat === 'ride_travel') {
+      setActiveSubView('rides');
+    } else {
+      setActiveSubView('book');
+    }
   };
 
   // Booking Form Submission Handler
@@ -228,7 +239,23 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
                 : 'bg-[#07132B] text-slate-300 hover:text-white border-slate-700'
             }`}
           >
-            <span>✨ 4 सेवा श्रेणियां (Services)</span>
+            <span>✨ 5 सेवाएं (All Services)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSubView('rides')}
+            className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border ${
+              activeSubView === 'rides'
+                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md shadow-amber-500/30'
+                : 'bg-[#07132B] text-amber-400 hover:text-white border-amber-500/40'
+            }`}
+          >
+            <div className="flex items-center gap-1">
+              <Car className="w-3.5 h-3.5" />
+              <Bike className="w-3.5 h-3.5" />
+            </div>
+            <span>🚗 कार व 🏍️ बाइक राइड (0% Commission)</span>
           </button>
 
           <button
@@ -240,7 +267,7 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
                 : 'bg-[#07132B] text-slate-300 hover:text-white border-slate-700'
             }`}
           >
-            <span>📝 नया साथी बुक करें (Booking)</span>
+            <span>📝 नया साथी बुक करें (Hourly Booking)</span>
           </button>
 
           <button
@@ -281,13 +308,21 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
         </button>
       </div>
 
-      {/* VIEW 1: Service Selection Screen (The 4 Categories with distinct visual anchors) */}
+      {/* VIEW 1: Service Selection Screen (The 5 Categories with distinct visual anchors) */}
       {activeSubView === 'categories' && (
         <CompanionServiceSelector
           selectedCategory={selectedCategory}
           onSelectCategory={handleSelectCategory}
           onQuickBook={handleQuickBook}
           lang={lang}
+        />
+      )}
+
+      {/* VIEW: Ride & Travel Booking Hub (Car & Bike Ride - 0% Commission) */}
+      {activeSubView === 'rides' && (
+        <RideTravelBookingHub
+          lang={lang}
+          onOpenSOSModal={() => setIsSOSModalOpen(true)}
         />
       )}
 

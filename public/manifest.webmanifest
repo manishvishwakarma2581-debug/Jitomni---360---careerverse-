@@ -1,0 +1,72 @@
+{
+  "id": "/",
+  "name": "JITOMNI 360° CAREERVERSE - Padhai Se Kamai Tak",
+  "short_name": "Jitomni 360",
+  "description": "Sovereign Career, Verified Jobs, On-Demand Companions & Agri-Tech Ecosystem. Empowering India from 10th pass to AI Engineers.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#FFD700",
+  "background_color": "#030B1E",
+  "lang": "hi-IN",
+  "dir": "ltr",
+  "categories": ["education", "business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/jitomni_emblem_logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/jitomni_emblem_logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/jitomni_emblem_logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/jitomni_emblem_logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Verified Jobs",
+      "short_name": "Jobs",
+      "description": "100% Verified talent hiring without fake profiles",
+      "url": "/?tab=verifiedjobs",
+      "icons": [{ "src": "/jitomni_emblem_logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Krishi 360° Agri-Tech",
+      "short_name": "Krishi",
+      "description": "ICAR curriculum, crop doctor & smart mandi rates",
+      "url": "/?tab=agri",
+      "icons": [{ "src": "/jitomni_emblem_logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "On-Demand Companion",
+      "short_name": "Companion",
+      "description": "Hospital stay, elderly care & verified tasks",
+      "url": "/?tab=companion",
+      "icons": [{ "src": "/jitomni_emblem_logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "PRIME AI Brain",
+      "short_name": "PRIME AI",
+      "description": "Multi-agent career & academic controller",
+      "url": "/?tab=prime",
+      "icons": [{ "src": "/jitomni_emblem_logo.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

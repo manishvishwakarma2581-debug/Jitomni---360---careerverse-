@@ -45,6 +45,7 @@ import { KisanAIMitra } from './agri/KisanAIMitra';
 import { KisanMarketDemand } from './agri/KisanMarketDemand';
 import { KisanWeatherWidget } from './agri/KisanWeatherWidget';
 import { KisanMachineryCHC } from './agri/KisanMachineryCHC';
+import { KritiFaaSModule } from './agri/KritiFaaSModule';
 
 interface AgriModuleProps {
   lang: Language;
@@ -221,6 +222,13 @@ export const AgriModule: React.FC<AgriModuleProps> = ({ lang, onNavigateTab }) =
 
           <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3">
             <button
+              onClick={() => setActiveSection('kriti_faas')}
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-[#FFD700] via-[#F59E0B] to-[#D97706] text-slate-950 font-black text-xs sm:text-sm hover:scale-105 transition-all shadow-xl shadow-amber-500/30 flex items-center gap-2 border border-amber-300"
+            >
+              <Sparkles className="w-4 h-4 text-slate-950" />
+              <span>✨ कृषि 360° (FaaS मॉडल)</span>
+            </button>
+            <button
               onClick={() => setActiveSection('ai_kisan_mitra')}
               className="px-5 py-3 rounded-2xl bg-gradient-to-r from-[#10B981] via-[#059669] to-[#047857] text-white font-black text-xs sm:text-sm hover:scale-105 transition-all shadow-xl shadow-emerald-500/30 flex items-center gap-2"
             >
@@ -250,6 +258,7 @@ export const AgriModule: React.FC<AgriModuleProps> = ({ lang, onNavigateTab }) =
         <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           {[
             { id: 'kisan_hub', label: '🌾 किसान समाधान हब', icon: '🌾' },
+            { id: 'kriti_faas', label: '✨ कृषि 360° (FaaS मॉडल)', icon: '✨' },
             { id: 'crop_calendar_guide', label: '🌱 फसल वैज्ञानिक विधि (SOP)', icon: '📖' },
             { id: 'ai_kisan_mitra', label: '🤖 AI किसान मित्र (Q&A)', icon: '🎤' },
             { id: 'market_demand_profit', label: '📈 मार्केट डिमांड व मुनाफा', icon: '💰' },
@@ -287,6 +296,14 @@ export const AgriModule: React.FC<AgriModuleProps> = ({ lang, onNavigateTab }) =
           <KisanSuperHub 
             lang={lang} 
             onNavigateSection={(sec) => setActiveSection(sec)} 
+          />
+        )}
+
+        {/* SECTION: KRITI 360° (FARMING-AS-A-SERVICE FaaS) */}
+        {activeSection === 'kriti_faas' && (
+          <KritiFaaSModule 
+            lang={lang} 
+            onNavigateAgriTab={(sec) => setActiveSection(sec as any)} 
           />
         )}
 

@@ -22,15 +22,15 @@ import {
   ChevronRight,
   TrendingUp,
   Sparkles,
-  Info
+  Info,
+  Car
 } from 'lucide-react';
 import { 
   CompanionWorker, 
-  CompanionRadarTask, 
   Language,
   CompanionTaskLifecycleStep
 } from '../../types';
-import { initialAvailableRadarTasks, initialVerifiedWorkers } from '../../data/companionData';
+import { initialAvailableRadarTasks, initialVerifiedWorkers, WorkerRadarTask } from '../../data/companionData';
 
 interface CompanionWorkerPortalProps {
   lang: Language;
@@ -52,8 +52,8 @@ export const CompanionWorkerPortal: React.FC<CompanionWorkerPortalProps> = ({
   const [workerTab, setWorkerTab] = useState<'radar' | 'lifecycle' | 'onboarding' | 'wallet'>('radar');
 
   // Radar tasks list
-  const [radarTasks, setRadarTasks] = useState<CompanionRadarTask[]>(initialAvailableRadarTasks);
-  const [activeTask, setActiveTask] = useState<CompanionRadarTask | null>(null);
+  const [radarTasks, setRadarTasks] = useState<WorkerRadarTask[]>(initialAvailableRadarTasks);
+  const [activeTask, setActiveTask] = useState<WorkerRadarTask | null>(null);
 
   // Task Lifecycle Step: 'idle' | 'start_travel' | 'reach_location' | 'start_task' | 'complete_task'
   const [currentStep, setCurrentStep] = useState<CompanionTaskLifecycleStep>('idle');
@@ -142,7 +142,7 @@ export const CompanionWorkerPortal: React.FC<CompanionWorkerPortalProps> = ({
   }, [isTaskTimerRunning]);
 
   // Handle Accept Radar Task
-  const handleAcceptTask = async (task: CompanionRadarTask) => {
+  const handleAcceptTask = async (task: WorkerRadarTask) => {
     // If worker is pending approval, forbid accepting tasks
     if (currentWorker.verificationStatus === 'pending_approval') {
       setWorkerTab('onboarding');
@@ -1573,13 +1573,26 @@ export const CompanionWorkerPortal: React.FC<CompanionWorkerPortalProps> = ({
             </div>
 
             {/* Commission Policy Clarification */}
-            <div className="p-4 rounded-xl bg-blue-950/30 border border-blue-500/30 text-xs text-slate-300 flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold text-white">जितोमनी 80/20 स्वचालित विभाजन नियम</p>
-                <p className="text-slate-400 text-[11px] mt-0.5 leading-relaxed">
-                  प्रत्येक पूर्ण घंटे की कुल फीस में से <strong>80% राशि सीधे साथी को</strong> दी जाती है और <strong>20% जितोमनी सोवरेन प्लेटफ़ॉर्म वॉलेट</strong> में पुलिस बैकग्राउंड वेरिफिकेशन, 24/7 आपातकालीन SOS रिस्पॉन्स नेटवर्क और तकनीकी रखरखाव के लिए रखी जाती है।
-                </p>
+            <div className="space-y-3">
+              <div className="p-4 rounded-xl bg-blue-950/30 border border-blue-500/30 text-xs text-slate-300 flex items-start gap-2.5">
+                <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-white">टास्क साथी 80/20 स्वचालित विभाजन नियम (Companion Tasks)</p>
+                  <p className="text-slate-400 text-[11px] mt-0.5 leading-relaxed">
+                    प्रत्येक पूर्ण घंटे की कुल फीस में से <strong>80% राशि सीधे साथी को</strong> दी जाती है और <strong>20% जितोमनी सोवरेन प्लेटफ़ॉर्म वॉलेट</strong> में पुलिस बैकग्राउंड वेरिफिकेशन, 24/7 आपातकालीन SOS रिस्पॉन्स नेटवर्क और तकनीकी रखरखाव के लिए रखी जाती है।
+                  </p>
+                </div>
+              </div>
+
+              {/* Car & Bike 90/10 Ride Policy */}
+              <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/30 text-xs text-slate-300 flex items-start gap-2.5">
+                <Car className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-white">कार व बाइक राइड पार्टनर्स: 90/10 प्लेटफ़ॉर्म व प्रबंधन शुल्क (Car & Bike Rides)</p>
+                  <p className="text-slate-400 text-[11px] mt-0.5 leading-relaxed">
+                    कार और बाइक चालकों हेतु <strong>90% किराया सीधे चालक की कमाई</strong> है और केवल <strong>10% न्यूनतम प्रबंधन व सर्वर शुल्क</strong> जितोमनी प्लेटफ़ॉर्म द्वारा लिया जाता है। कमर्शियल कंपनियों (Rapido/Ola/Uber) की 30-35% लूट के मुकाबले यहाँ 90% शुद्ध कमाई चालक को मिलती है और प्लेटफ़ॉर्म का संचालन सुचारू रूप से चलता है।
+                  </p>
+                </div>
               </div>
             </div>
           </div>

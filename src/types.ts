@@ -2,7 +2,7 @@ export type Language = 'hi' | 'en' | 'hinglish';
 
 export type AppRole = 'home' | 'company' | 'skilled' | 'labour';
 
-export type MainTab = AppRole | 'verifiedjobs' | 'companion' | 'ai-interview' | 'agri' | 'iti' | 'iit' | 'school' | 'exam' | 'vacancies' | 'globaljobs' | 'english' | 'prime' | 'doubt' | 'flashcards' | 'admin';
+export type MainTab = AppRole | 'verifiedjobs' | 'companion' | 'ai-interview' | 'agri' | 'iti' | 'iit' | 'school' | 'exam' | 'current-affairs' | 'vacancies' | 'globaljobs' | 'english' | 'prime' | 'doubt' | 'flashcards' | 'admin' | 'super-admin' | 'krishi-admin';
 
 export type ITITabSection =
   | 'overview'
@@ -31,6 +31,7 @@ export type IITTabSection =
 
 export type AgriTabSection = 
   | 'kisan_hub'
+  | 'kriti_faas'
   | 'crop_calendar_guide'
   | 'market_demand_profit'
   | 'ai_kisan_mitra'
@@ -245,9 +246,15 @@ export interface JobVacancy {
   salaryMax: number;
   salaryDisplay: string;
   location: string;
-  jobType: 'Full-Time' | 'Part-Time' | 'Remote' | 'Work From Office' | 'Hybrid';
+  jobType: 'Full-Time' | 'Part-Time' | 'Remote' | 'Work From Office' | 'Hybrid' | 'Field Work';
   openings: number;
   description: string;
+  detailedRequirements?: string[];
+  contactPerson?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  requiresAadhaarKyc?: boolean;
+  urgency?: 'Immediate' | 'Regular' | 'Walk-in';
   testId?: string;
   testPassingScore: number; // 60
   testQuestionsCount: number; // 10
@@ -476,7 +483,84 @@ export interface UserGamificationProfile {
   [key: string]: any;
 }
 
+export interface VisionIasDataPoint {
+  metric: string;
+  label: string;
+  source?: string;
+  trend?: 'up' | 'down' | 'neutral';
+}
+
+export interface VisionIasChallenge {
+  challenge: string;
+  severity: 'Critical' | 'High' | 'Medium';
+  impact: string;
+}
+
+export interface VisionIasRecommendation {
+  title: string;
+  agencyOrModel: string;
+  actionableStep: string;
+}
+
+export interface VisionIasDimension {
+  title: string;
+  points: string[];
+  iconName?: string;
+}
+
+export interface VisionIasMainsFramework {
+  question: string;
+  marks: string;
+  intro: string;
+  dimensions: string[];
+  diagramTip: string;
+  conclusion: string;
+}
+
+export interface VisionIasInfographic {
+  topicTitle: string;
+  paperLinkage: string;
+  editionTag: string;
+  badgeColor?: string;
+  whyInNews: {
+    heading: string;
+    points: string[];
+  };
+  mindmapMermaidCode: string;
+  visualProcessSteps?: {
+    stepNumber: number;
+    title: string;
+    description: string;
+  }[];
+  multidimensionalMatrix: {
+    constitutionalLegal: VisionIasDimension;
+    economicFinancial: VisionIasDimension;
+    socialHuman: VisionIasDimension;
+    techGlobalEnvironmental: VisionIasDimension;
+  };
+  criticalChallenges: VisionIasChallenge[];
+  wayForward: VisionIasRecommendation[];
+  keyDataPoints: VisionIasDataPoint[];
+  mainsFramework: VisionIasMainsFramework;
+  graphicIllustrationUrl?: string;
+  graphicIllustrationConcept?: {
+    title: string;
+    visualNodes: { label: string; sub: string; color: string }[];
+  };
+}
+
 export interface DoubtSolutionResponse {
+  doubtQuery?: string;
+  categoryType?: string;
+  identifiedSubject?: string;
+  identifiedChapter?: string;
+  shortAnswer?: { [key: string]: string };
+  stepByStepSolution?: any[];
+  speedTrickOrShortCut?: any;
+  similarPracticeQuestion?: any;
+  actionableModuleLink?: any;
+  keyTakeaway?: { [key: string]: string };
+  visionIasInfographic?: VisionIasInfographic;
   [key: string]: any;
 }
 
@@ -542,7 +626,8 @@ export type CompanionCategoryType =
   | 'hospital_care' 
   | 'event_wedding' 
   | 'senior_citizen' 
-  | 'daily_errands';
+  | 'daily_errands'
+  | 'ride_travel';
 
 export interface CompanionSubService {
   id: string;
@@ -750,3 +835,272 @@ export interface CompanionSOSEvent {
   sovereignControlRoomAlerted: boolean;
   sirenActive: boolean;
 }
+
+// ==========================================
+// RIDE & TRAVEL (CAR & BIKE PARTNERS) TYPES
+// ==========================================
+
+export type VehicleCategoryType = 
+  | 'bike' 
+  | 'scooter' 
+  | 'car_hatchback' 
+  | 'car_sedan' 
+  | 'car_suv' 
+  | 'electric_ev';
+
+export interface RideVehiclePartner {
+  id: string;
+  name: string;
+  phone: string;
+  whatsapp?: string;
+  photoUrl: string;
+  gender: 'male' | 'female' | 'other';
+  age: number;
+  vehicleType: VehicleCategoryType;
+  vehicleName: string;
+  vehicleNumber: string;
+  seatingCapacity: number;
+  serviceArea: string;
+  operatingCity: string;
+  routeCoverage: string;
+  maxKilometers: number;
+  ratePerKm: number;
+  baseFare: number;
+  acAvailable?: boolean;
+  helmetProvided?: boolean;
+  availableNow: boolean;
+  rating: number;
+  reviewsCount: number;
+  tripsCompleted: number;
+  policeVerified: boolean;
+  policeVerificationId: string;
+  dlNumber: string;
+  rcVerified: boolean;
+  aadhaarVerified: boolean;
+  isFemaleDriver?: boolean;
+  bio?: string;
+  platformFeePlan?: 'percentage_10' | 'daily_fleet_pass';
+  totalFareGenerated?: number;
+  platformFeePaid?: number;
+  platformFeePending?: number;
+}
+
+export interface RideBookingRequest {
+  id: string;
+  riderName: string;
+  riderPhone: string;
+  pickupLocation: string;
+  dropLocation: string;
+  estimatedDistanceKm: number;
+  vehicleType: 'any' | VehicleCategoryType;
+  preferredTiming: 'immediate' | 'scheduled';
+  scheduledTime?: string;
+  passengersCount: number;
+  partnerId?: string;
+  partnerName?: string;
+  partnerPhone?: string;
+  partnerVehicle?: string;
+  partnerPhoto?: string;
+  estimatedFare: number;
+  driverShareFare?: number;
+  platformFee?: number;
+  status: 'pending' | 'accepted' | 'driver_arrived' | 'trip_started' | 'completed' | 'cancelled';
+  rideOtp: string;
+  createdAt: string;
+}
+
+export interface RidePlatformFeeRecord {
+  id: string;
+  rideId: string;
+  driverName: string;
+  driverPhone: string;
+  vehicleType: VehicleCategoryType;
+  vehicleNumber: string;
+  route: string;
+  distanceKm: number;
+  totalFare: number;
+  driverPayout: number; // 90%
+  platformFee: number; // 10%
+  date: string;
+  status: 'collected' | 'pending';
+}
+
+// ==========================================
+// KRITI 360° (Farming-as-a-Service) TYPES
+// ==========================================
+
+export type KritiPillarId = 
+  | 'faas_model'
+  | 'agri_entrepreneurs'
+  | 'hybrid_model'
+  | 'affordable_tech'
+  | 'export_market_linkage';
+
+export interface KritiPillarItem {
+  id: KritiPillarId;
+  titleHi: string;
+  titleEn: string;
+  taglineHi: string;
+  pillarNumber: number;
+  iconName: string;
+  summaryHi: string;
+  keyFeatures: string[];
+  financialStructure?: {
+    farmerShare: string;
+    platformShare: string;
+    upfrontCost: string;
+    riskFactor: string;
+  };
+  commissionModel?: {
+    agentCommission: string;
+    clusterScale: string;
+    monthlyEarningEstimate: string;
+  };
+  actionLabel?: string;
+  actionRoute?: 'contract_flow' | 'samadhan_chat' | 'calculator';
+}
+
+export type KritiContractRole = 'tech_agent' | 'hybrid_hub';
+
+export interface KritiContractApplication {
+  id: string;
+  role: KritiContractRole;
+  fullName: string;
+  phone: string;
+  email?: string;
+  aadhaarNumber: string;
+  state: string;
+  district: string;
+  villageCluster: string;
+  pinCode: string;
+  landOrPremisesDetails: string;
+  proposedLandAcres?: number;
+  consultationDate: string;
+  consultationSlot: string;
+  consultationMode: 'video_call' | 'hub_visit' | 'on_field_visit';
+  status: 'draft' | 'under_review' | 'kyc_verified' | 'contract_issued' | 'signed_active';
+  agreementNumber: string;
+  authorizedBy: string;
+  issuedAt: string;
+  signedAt?: string;
+  digitalSignatureHash?: string;
+  notes?: string;
+}
+
+export interface KritiSamadhanMessage {
+  id: string;
+  sender: 'farmer' | 'mahi_desk';
+  senderName: string;
+  text: string;
+  imageUrl?: string;
+  voiceNoteUrl?: string;
+  voiceDurationSeconds?: number;
+  cropTag?: string;
+  timestamp: string;
+  routingStatus: 'received' | 'analyzed_by_ai' | 'routed_to_mahi_desk' | 'resolved';
+  expertBadge?: string;
+}
+
+// ----------------------------------------------------
+// SOVEREIGN RBAC, AUTH, MEMORY & MONETIZATION TYPES
+// ----------------------------------------------------
+
+export type UserRole =
+  | 'guest'              // Free browsing citizen / explorer (no forced login/download)
+  | 'student'            // 1-12th, UPSC, SSC, IIT, ITI student
+  | 'jobseeker'          // White-collar & skilled candidate (Aadhaar KYC verified)
+  | 'labour_worker'      // Blue-collar / field labour worker
+  | 'company'            // Employer / Corporate HR posting vacancies
+  | 'sathi_provider'     // On-demand companion & task worker (earns 80%)
+  | 'service_consumer'   // Citizen / family booking tasks & companion services
+  | 'farmer'             // Farmer & Krishi entrepreneur
+  | 'krishi_admin'       // Mahi Pawar Krishi 360° Directorate
+  | 'super_admin';       // Manish Vishwakarma Sovereign Super Admin
+
+export interface AadhaarKycData {
+  aadhaarNumberMasked: string; // e.g. "XXXX-XXXX-8921"
+  maskedAadhaar?: string; // backwards compatibility alias
+  fullName: string;
+  fatherOrSpouseName?: string;
+  dob?: string;
+  gender?: 'M' | 'F' | 'Other';
+  addressState: string;
+  addressDistrict: string;
+  verificationId: string; // e.g. "JITOMNI-UIDAI-KYC-2026-98124"
+  verifiedAt: string;
+  status: 'verified' | 'pending' | 'rejected';
+  verificationMethod: 'OTP' | 'OFFLINE_XML';
+  tamperProofHash: string;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: UserRole;
+  avatar?: string;
+  targetGoal: string; // e.g. 'UPSC Civil Services', 'SSC CGL', 'IIT-JEE', 'ITI Electrician', 'Agri-Tech & Krishi', 'Remote AI Jobs', 'Corporate Hiring'
+  currentStreakDays: number;
+  totalXp: number;
+  verifiedBadges: string[];
+  unlockedServices: string[]; // service keys that user has paid for or earned
+  aadhaarKyc?: AadhaarKycData;
+  memorySummary?: string;
+  lastLoginAt: string;
+}
+
+export interface UserMemoryEntry {
+  id: string;
+  userId: string;
+  timestamp: string;
+  category: 'doubt' | 'weak_topic' | 'career_target' | 'quiz_score' | 'interview_result' | 'aspirational_note';
+  topicOrSubject: string;
+  summary: string;
+  scoreOrDetail?: string;
+  importance: 'normal' | 'high' | 'critical';
+}
+
+export interface PaymentTier {
+  id: string;
+  serviceKey: string;
+  title: { hi: string; en: string };
+  categoryBadge: string;
+  nominalPriceRupee: number; // Phase 1: ₹9 to ₹49
+  phase2StandardPriceRupee: number; // After 2 months: sustainable price
+  durationOrUsage: string;
+  features: string[];
+  icon: string;
+  popular?: boolean;
+}
+
+export interface PaymentTransaction {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  serviceKey: string;
+  serviceTitle: string;
+  amountRupee: number;
+  paymentMethod: 'upi_qr' | 'upi_vpa' | 'card' | 'netbanking' | 'wallet';
+  upiRefNumber: string;
+  status: 'pending' | 'success' | 'failed';
+  timestamp: string;
+  invoiceNo: string;
+}
+
+export interface FeaturePriorityItem {
+  id: string;
+  title: string;
+  description: string;
+  targetModule: MainTab;
+  nationalImpactScore: number; // 1-10
+  revenuePotentialScore: number; // 1-10
+  technicalFeasibilityScore: number; // 1-10
+  userDemandScore: number; // 1-10
+  compositePriorityScore: number; // calculated weighted score
+  status: 'active' | 'next_sprint' | 'backlog';
+  category: 'core_nation_building' | 'revenue_engine' | 'ai_deeptech' | 'security_infrastructure';
+  targetReleasePhase: string;
+}
+

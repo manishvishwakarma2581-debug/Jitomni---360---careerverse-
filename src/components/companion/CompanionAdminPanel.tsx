@@ -20,16 +20,22 @@ import {
   Award,
   Star,
   ExternalLink,
-  Percent
+  Percent,
+  Car,
+  Bike,
+  Navigation,
+  Info
 } from 'lucide-react';
 import {
   CompanionWorker,
   CompanionTaskCommissionRecord,
+  RidePlatformFeeRecord,
   Language
 } from '../../types';
 import {
   initialVerifiedWorkers,
-  initialPlatformCommissionRecords
+  initialPlatformCommissionRecords,
+  initialRidePlatformFeeRecords
 } from '../../data/companionData';
 
 interface CompanionAdminPanelProps {
@@ -47,8 +53,10 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
 
   // Commission Records & Platform Financials
   const [commissionRecords, setCommissionRecords] = useState<CompanionTaskCommissionRecord[]>(initialPlatformCommissionRecords);
+  const [rideFeeRecords, setRideFeeRecords] = useState<RidePlatformFeeRecord[]>(initialRidePlatformFeeRecords);
   const [platformBalance, setPlatformBalance] = useState<number>(634); // Platform Wallet 20%
   const [activeAdminTab, setActiveAdminTab] = useState<'verification' | 'financials' | 'rating_audit'>('verification');
+  const [financialsSubTab, setFinancialsSubTab] = useState<'rides' | 'tasks'>('rides');
 
   // Filter for workers: 'all' | 'pending' | 'verified' | 'flagged'
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'verified' | 'flagged'>('all');
@@ -75,7 +83,7 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
         }
       }
 
-      // 2. Fetch financials
+      // 2. Fetch financials (Task commissions + Ride fees)
       const fRes = await fetch('/api/companion/admin/financials');
       if (fRes.ok) {
         const fData = await fRes.json();
@@ -84,6 +92,9 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
         }
         if (fData.commissionRecords) {
           setCommissionRecords(fData.commissionRecords);
+        }
+        if (fData.ridePlatformFeeRecords) {
+          setRideFeeRecords(fData.ridePlatformFeeRecords);
         }
       }
     } catch (e) {
@@ -244,10 +255,19 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
     }
   };
 
-  // Financial aggregates
+  // Financial aggregates (Companion Tasks)
   const totalGrossVolume = commissionRecords.reduce((acc, c) => acc + (c.grossFee || 0), 0);
   const totalWorkerPayouts = commissionRecords.reduce((acc, c) => acc + (c.workerShare80 || 0), 0);
   const totalPlatformCommission = commissionRecords.reduce((acc, c) => acc + (c.platformShare20 || 0), 0);
+
+  // Financial aggregates (Car & Bike Rides Fleet)
+  const totalRideFareVolume = rideFeeRecords.reduce((acc, r) => acc + (r.totalFare || 0), 0);
+  const totalRideDriverPayouts = rideFeeRecords.reduce((acc, r) => acc + (r.driverPayout || 0), 0);
+  const totalRidePlatformFees = rideFeeRecords.reduce((acc, r) => acc + (r.platformFee || 0), 0);
+
+  // Combined Platform Operational Reserve
+  const combinedPlatformFunds = platformBalance + totalPlatformCommission + totalRidePlatformFees;
+
   const pendingApprovalsCount = workersList.filter((w) => w.verificationStatus === 'pending_approval').length;
   const flaggedCount = workersList.filter((w) => w.isFlagged).length;
 
@@ -263,11 +283,11 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
                 जितोमनी सोवरेन एडमिन कंट्रोल पैनल (Sovereign Admin & Audit System)
               </h2>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
-                80/20 Split & KYC Engine
+                10% Ride Fee & 80/20 Split Engine
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-1">
-              दस्तावेज सत्यापन (Pending Approval/Active), 80/20 कमिशन वॉलेट एवं रेटिंग बैकग्राउंड मॉनिटर (&lt;4.0★ ऑटो-फ्लैगिंग)।
+              दस्तावेज सत्यापन (Pending Approval/Active), कार-बाइक 10% प्लेटफ़ॉर्म प्रबंधन फंड, साथी 80/20 कमिशन वॉलेट एवं रेटिंग बैकग्राउंड मॉनिटर।
             </p>
           </div>
 
@@ -298,17 +318,27 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-800">
           <div className="bg-[#07132B] p-3 rounded-xl border border-slate-800 space-y-1">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-              जितोमनी प्लेटफ़ॉर्म वॉलेट (20%)
+              कुल प्लेटफ़ॉर्म रिज़र्व फंड
             </span>
             <p className="text-xl font-black text-[#FFD700] font-mono">
-              ₹{platformBalance + totalPlatformCommission}
+              ₹{combinedPlatformFunds}
             </p>
-            <span className="text-[10px] text-slate-400">सुरक्षा व सर्वर पूल</span>
+            <span className="text-[10px] text-slate-400">टास्क 20% + राइड 10% पूल</span>
           </div>
 
           <div className="bg-[#07132B] p-3 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-              साथियों को वितरित (80%)
+            <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider block">
+              राइड प्रबंधन शुल्क (10%)
+            </span>
+            <p className="text-xl font-black text-amber-400 font-mono">
+              ₹{totalRidePlatformFees}
+            </p>
+            <span className="text-[10px] text-slate-400">ड्राइवर पेआउट: ₹{totalRideDriverPayouts}</span>
+          </div>
+
+          <div className="bg-[#07132B] p-3 rounded-xl border border-slate-800 space-y-1">
+            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">
+              साथी टास्क फंड (80/20)
             </span>
             <p className="text-xl font-black text-emerald-400 font-mono">
               ₹{totalWorkerPayouts}
@@ -317,23 +347,13 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
           </div>
 
           <div className="bg-[#07132B] p-3 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider block">
-              सत्यापन लंबित (Pending Approval)
-            </span>
-            <p className="text-xl font-black text-amber-400 font-mono">
-              {pendingApprovalsCount}
-            </p>
-            <span className="text-[10px] text-slate-400">दस्तावेज समीक्षा प्रतीक्षित</span>
-          </div>
-
-          <div className="bg-[#07132B] p-3 rounded-xl border border-slate-800 space-y-1">
             <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider block">
-              फ्लैग खाते (&lt; 4.0★ Alert)
+              लंबित / फ्लैग खाते
             </span>
             <p className="text-xl font-black text-red-400 font-mono">
-              {flaggedCount}
+              {pendingApprovalsCount} / {flaggedCount}
             </p>
-            <span className="text-[10px] text-slate-400">गुणवत्ता चेतावनी एक्टिव</span>
+            <span className="text-[10px] text-slate-400">समीक्षा व अलर्ट</span>
           </div>
         </div>
       </div>
@@ -697,110 +717,269 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
       )}
 
       {/* ============================================================ */}
-      {/* SUB-TAB 2: 80/20 COMMISSION & WALLET SPLIT SYSTEM            */}
+      {/* SUB-TAB 2: 80/20 & 90/10 PLATFORM REVENUE & WALLET SYSTEM    */}
       {/* ============================================================ */}
       {activeAdminTab === 'financials' && (
         <div className="space-y-6">
           <div className="bg-[#0B1E3B] border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
-            <div>
-              <h3 className="text-base font-black text-white flex items-center gap-2">
-                <Percent className="w-5 h-5 text-[#FFD700]" />
-                <span>स्वचालित 80/20 कमिशन व वॉलेट विभाजन प्रणाली (Automated Split Payment Engine)</span>
-              </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                प्रत्येक पूर्ण कार्य का कुल प्रति घंटा शुल्क: 80% साथी के वॉलेट में (साप्ताहिक निकासी योग्य) और 20% जितोमनी प्लेटफ़ॉर्म वॉलेट में।
-              </p>
-            </div>
-
-            {/* Split Visualization Bar */}
-            <div className="p-4 bg-[#07132B] rounded-xl border border-slate-800 space-y-3">
-              <div className="flex items-center justify-between text-xs font-bold">
-                <span className="text-emerald-400 flex items-center gap-1">
-                  <span>👷 80% साथी का हिस्सा (Worker Share)</span>
-                </span>
-                <span className="text-[#FFD700] flex items-center gap-1">
-                  <span>🏛️ 20% जितोमनी प्लेटफ़ॉर्म कमिशन (Jitomni Commission)</span>
-                </span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-black text-white flex items-center gap-2">
+                  <Percent className="w-5 h-5 text-[#FFD700]" />
+                  <span>प्लेटफ़ॉर्म कमिशन व प्रबंधन शुल्क लेजर (Platform Revenue & Fee Engine)</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  कार व बाइक चालकों हेतु 90/10 विभाजन (90% ड्राइवर / 10% ऐप प्रबंधन) एवं टास्क साथियों हेतु 80/20 विभाजन।
+                </p>
               </div>
 
-              <div className="w-full h-4 rounded-full bg-slate-800 overflow-hidden flex">
-                <div className="w-4/5 h-full bg-emerald-500 transition-all flex items-center justify-center text-[9px] font-black text-slate-950 font-mono">
-                  80% WORKER
-                </div>
-                <div className="w-1/5 h-full bg-[#FFD700] transition-all flex items-center justify-center text-[9px] font-black text-slate-950 font-mono">
-                  20%
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1 text-slate-300">
-                <div>
-                  <span className="text-[10px] text-slate-400 block">कुल ग्रॉस टास्क वॉल्यूम</span>
-                  <span className="text-base font-black text-white font-mono">₹{totalGrossVolume}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-emerald-300 block">श्रमिक वॉलेट्स में जमा (80%)</span>
-                  <span className="text-base font-black text-emerald-400 font-mono">₹{totalWorkerPayouts}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-[#FFD700] block">जितोमनी प्लेटफ़ॉर्म रिज़र्व (20%)</span>
-                  <span className="text-base font-black text-[#FFD700] font-mono">₹{totalPlatformCommission}</span>
-                </div>
+              {/* Sub-toggle between Rides and Tasks */}
+              <div className="flex items-center gap-2 bg-[#07132B] p-1.5 rounded-xl border border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setFinancialsSubTab('rides')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    financialsSubTab === 'rides'
+                      ? 'bg-amber-500 text-slate-950 shadow'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Car className="w-3.5 h-3.5" />
+                  <span>कार व बाइक (90/10)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFinancialsSubTab('tasks')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    financialsSubTab === 'tasks'
+                      ? 'bg-emerald-500 text-slate-950 shadow'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Percent className="w-3.5 h-3.5" />
+                  <span>टास्क साथी (80/20)</span>
+                </button>
               </div>
             </div>
 
-            {/* Financial Ledger Table */}
-            <div className="space-y-3">
-              <h4 className="text-xs font-black text-white uppercase tracking-wider">
-                हाल के कार्यों का कमिशन विभाजन लेजर (Recent Settled Task Records)
-              </h4>
+            {/* RIDES 90/10 MANAGEMENT FEE VIEW */}
+            {financialsSubTab === 'rides' && (
+              <div className="space-y-6 animate-fadeIn">
+                {/* 90/10 Ride Split Visualization Bar */}
+                <div className="p-4 bg-[#07132B] rounded-xl border border-amber-500/30 space-y-3">
+                  <div className="flex items-center justify-between text-xs font-bold">
+                    <span className="text-emerald-400 flex items-center gap-1">
+                      <Car className="w-4 h-4 text-emerald-400" />
+                      <span>🚕 90% चालक की शुद्ध कमाई (Driver Payout)</span>
+                    </span>
+                    <span className="text-amber-400 flex items-center gap-1">
+                      <ShieldCheck className="w-4 h-4 text-amber-400" />
+                      <span>🏛️ 10% जितोमनी प्रबंधन व सर्वर शुल्क (App Management Fee)</span>
+                    </span>
+                  </div>
 
-              <div className="overflow-x-auto rounded-xl border border-slate-800">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#07132B] text-slate-400 font-bold uppercase text-[10px] border-b border-slate-800">
-                    <tr>
-                      <th className="p-3">कार्य / ग्राहक</th>
-                      <th className="p-3">साथी का नाम</th>
-                      <th className="p-3">अवधि व दर</th>
-                      <th className="p-3">कुल बिल</th>
-                      <th className="p-3 text-emerald-400">80% साथी वॉलेट</th>
-                      <th className="p-3 text-[#FFD700]">20% प्लेटफ़ॉर्म</th>
-                      <th className="p-3">स्थिति</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800 text-slate-200">
-                    {commissionRecords.map((c) => (
-                      <tr key={c.id} className="hover:bg-slate-800/40 transition-colors">
-                        <td className="p-3">
-                          <p className="font-bold text-white">{c.taskTitle}</p>
-                          <p className="text-[10px] text-slate-400">ग्राहक: {c.customerName}</p>
-                        </td>
-                        <td className="p-3">
-                          <span className="font-medium text-slate-300">{c.workerName}</span>
-                          <span className="text-[10px] font-mono text-slate-500 block">{c.workerId}</span>
-                        </td>
-                        <td className="p-3 font-mono">
-                          {c.hours}h × ₹{c.hourlyRate}/h
-                        </td>
-                        <td className="p-3 font-mono font-bold text-white">
-                          ₹{c.grossFee}
-                        </td>
-                        <td className="p-3 font-mono font-bold text-emerald-400 bg-emerald-500/5">
-                          ₹{c.workerShare80}
-                        </td>
-                        <td className="p-3 font-mono font-bold text-[#FFD700] bg-[#FFD700]/5">
-                          ₹{c.platformShare20}
-                        </td>
-                        <td className="p-3">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
-                            {c.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                  <div className="w-full h-5 rounded-full bg-slate-800 overflow-hidden flex shadow-inner">
+                    <div className="w-[90%] h-full bg-emerald-500 transition-all flex items-center justify-center text-[10px] font-black text-slate-950 font-mono">
+                      90% DRIVER SHARE
+                    </div>
+                    <div className="w-[10%] h-full bg-amber-400 transition-all flex items-center justify-center text-[10px] font-black text-slate-950 font-mono">
+                      10%
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1 text-slate-300">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">कुल राइड ग्रॉस वॉल्यूम</span>
+                      <span className="text-base font-black text-white font-mono">₹{totalRideFareVolume}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-emerald-300 block">चालकों के बैंक खाते में जमा (90%)</span>
+                      <span className="text-base font-black text-emerald-400 font-mono">₹{totalRideDriverPayouts}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-amber-300 block">जितोमनी सर्वर व सुरक्षा रिज़र्व (10%)</span>
+                      <span className="text-base font-black text-amber-400 font-mono">₹{totalRidePlatformFees}</span>
+                    </div>
+                  </div>
+
+                  {/* Why 10% Fee banner */}
+                  <div className="mt-3 p-3 rounded-xl bg-amber-950/20 border border-amber-500/20 text-xs text-slate-300 flex items-start gap-2">
+                    <Info className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-white text-[11px]">10% न्यूनतम प्लेटफ़ॉर्म प्रबंधन शुल्क का उद्देश्य:</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                        यह 10% शुल्क <strong>हाई-स्पीड क्लाउड सर्वर, 24/7 आपातकालीन SOS कॉल नेटवर्क, पुलिस बैकग्राउंड वेरिफिकेशन व रियल-टाइम GPS ट्रैकिंग</strong> के दैनिक खर्चों को चलाने के लिए लिया जाता है। अन्य कमर्शियल ऐप्स (Rapido/Ola/Uber) 30-35% तक काटते हैं, जबकि जितोमनी केवल 10% में संपूर्ण सोवरेन सुरक्षा व तकनीकी प्रबंधन उपलब्ध कराता है।
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ride Ledger Table */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
+                      <Car className="w-4 h-4 text-amber-400" />
+                      <span>कार व बाइक राइड्स प्रबंधन शुल्क लेजर (Ride Platform Fee Records)</span>
+                    </h4>
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      {rideFeeRecords.length} Rides Recorded
+                    </span>
+                  </div>
+
+                  <div className="overflow-x-auto rounded-xl border border-slate-800">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#07132B] text-slate-400 font-bold uppercase text-[10px] border-b border-slate-800">
+                        <tr>
+                          <th className="p-3">राइड / रूट</th>
+                          <th className="p-3">चालक व संपर्क</th>
+                          <th className="p-3">वाहन प्रकार</th>
+                          <th className="p-3">दूरी</th>
+                          <th className="p-3">कुल किराया</th>
+                          <th className="p-3 text-emerald-400">90% चालक पेआउट</th>
+                          <th className="p-3 text-amber-400">10% ऐप शुल्क</th>
+                          <th className="p-3">स्थिति</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800 text-slate-200">
+                        {rideFeeRecords.map((r) => (
+                          <tr key={r.id} className="hover:bg-slate-800/40 transition-colors">
+                            <td className="p-3">
+                              <p className="font-bold text-white flex items-center gap-1.5">
+                                <Navigation className="w-3 h-3 text-cyan-400" />
+                                <span>{r.route}</span>
+                              </p>
+                              <span className="text-[10px] font-mono text-slate-500">ID: {r.rideId} • {r.date}</span>
+                            </td>
+                            <td className="p-3">
+                              <p className="font-medium text-slate-200">{r.driverName}</p>
+                              <p className="text-[10px] font-mono text-slate-400">{r.driverPhone}</p>
+                            </td>
+                            <td className="p-3">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">
+                                {r.vehicleType.replace('_', ' ')}
+                              </span>
+                              <span className="block text-[10px] font-mono text-slate-400 mt-0.5">{r.vehicleNumber}</span>
+                            </td>
+                            <td className="p-3 font-mono text-slate-300">
+                              {r.distanceKm} km
+                            </td>
+                            <td className="p-3 font-mono font-bold text-white">
+                              ₹{r.totalFare}
+                            </td>
+                            <td className="p-3 font-mono font-bold text-emerald-400 bg-emerald-500/5">
+                              ₹{r.driverPayout}
+                            </td>
+                            <td className="p-3 font-mono font-bold text-amber-400 bg-amber-500/5">
+                              ₹{r.platformFee}
+                            </td>
+                            <td className="p-3">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                                {r.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* TASKS 80/20 SPLIT VIEW */}
+            {financialsSubTab === 'tasks' && (
+              <div className="space-y-6 animate-fadeIn">
+                {/* Split Visualization Bar */}
+                <div className="p-4 bg-[#07132B] rounded-xl border border-slate-800 space-y-3">
+                  <div className="flex items-center justify-between text-xs font-bold">
+                    <span className="text-emerald-400 flex items-center gap-1">
+                      <span>👷 80% साथी का हिस्सा (Worker Share)</span>
+                    </span>
+                    <span className="text-[#FFD700] flex items-center gap-1">
+                      <span>🏛️ 20% जितोमनी प्लेटफ़ॉर्म कमिशन (Jitomni Commission)</span>
+                    </span>
+                  </div>
+
+                  <div className="w-full h-4 rounded-full bg-slate-800 overflow-hidden flex">
+                    <div className="w-4/5 h-full bg-emerald-500 transition-all flex items-center justify-center text-[9px] font-black text-slate-950 font-mono">
+                      80% WORKER
+                    </div>
+                    <div className="w-1/5 h-full bg-[#FFD700] transition-all flex items-center justify-center text-[9px] font-black text-slate-950 font-mono">
+                      20%
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1 text-slate-300">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">कुल ग्रॉस टास्क वॉल्यूम</span>
+                      <span className="text-base font-black text-white font-mono">₹{totalGrossVolume}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-emerald-300 block">श्रमिक वॉलेट्स में जमा (80%)</span>
+                      <span className="text-base font-black text-emerald-400 font-mono">₹{totalWorkerPayouts}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-[#FFD700] block">जितोमनी प्लेटफ़ॉर्म रिज़र्व (20%)</span>
+                      <span className="text-base font-black text-[#FFD700] font-mono">₹{totalPlatformCommission}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Financial Ledger Table */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                    हाल के कार्यों का कमिशन विभाजन लेजर (Recent Settled Task Records)
+                  </h4>
+
+                  <div className="overflow-x-auto rounded-xl border border-slate-800">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#07132B] text-slate-400 font-bold uppercase text-[10px] border-b border-slate-800">
+                        <tr>
+                          <th className="p-3">कार्य / ग्राहक</th>
+                          <th className="p-3">साथी का नाम</th>
+                          <th className="p-3">अवधि व दर</th>
+                          <th className="p-3">कुल बिल</th>
+                          <th className="p-3 text-emerald-400">80% साथी वॉलेट</th>
+                          <th className="p-3 text-[#FFD700]">20% प्लेटफ़ॉर्म</th>
+                          <th className="p-3">स्थिति</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800 text-slate-200">
+                        {commissionRecords.map((c) => (
+                          <tr key={c.id} className="hover:bg-slate-800/40 transition-colors">
+                            <td className="p-3">
+                              <p className="font-bold text-white">{c.taskTitle}</p>
+                              <p className="text-[10px] text-slate-400">ग्राहक: {c.customerName}</p>
+                            </td>
+                            <td className="p-3">
+                              <span className="font-medium text-slate-300">{c.workerName}</span>
+                              <span className="text-[10px] font-mono text-slate-500 block">{c.workerId}</span>
+                            </td>
+                            <td className="p-3 font-mono">
+                              {c.hours}h × ₹{c.hourlyRate}/h
+                            </td>
+                            <td className="p-3 font-mono font-bold text-white">
+                              ₹{c.grossFee}
+                            </td>
+                            <td className="p-3 font-mono font-bold text-emerald-400 bg-emerald-500/5">
+                              ₹{c.workerShare80}
+                            </td>
+                            <td className="p-3 font-mono font-bold text-[#FFD700] bg-[#FFD700]/5">
+                              ₹{c.platformShare20}
+                            </td>
+                            <td className="p-3">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                                {c.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -91,14 +91,14 @@ export const CompanionServiceSelector: React.FC<CompanionServiceSelectorProps> =
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-lg sm:text-2xl font-black text-white flex items-center gap-2">
-            <span>चार प्रमुख सेवा श्रेणियां</span>
+            <span>पांच प्रमुख सेवा श्रेणियां</span>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#FFD700]/20 text-[#FFD700] font-mono font-bold">
-              4 Distinct Service Verticals
+              5 Distinct Service Verticals (कार व बाइक राइड सहित)
             </span>
           </h3>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
             {lang === 'hi'
-              ? 'अपनी आवश्यकता अनुसार श्रेणी चुनें और तुरंत नजदीकी साथी मैच करें'
+              ? 'अपनी आवश्यकता अनुसार श्रेणी चुनें — अस्पताल देखभाल, शादी इवेंट, बुजुर्ग सहायता, दैनिक कार्य या कार व बाइक यात्रा'
               : 'Choose the relevant service vertical below to configure requirements & match companions'}
           </p>
         </div>

@@ -20,6 +20,7 @@ import { PrimeManager } from './components/PrimeManager';
 import { AdminSchedulerModule } from './components/AdminSchedulerModule';
 import { AIInterviewerModule } from './components/AIInterviewerModule';
 import { CompanionServiceModule } from './components/companion/CompanionServiceModule';
+import { DailyCurrentAffairsHub } from './components/DailyCurrentAffairsHub';
 import { TopicDetailModal } from './components/TopicDetailModal';
 import { MockTestModal } from './components/MockTestModal';
 import { QuizModal } from './components/QuizModal';
@@ -27,6 +28,16 @@ import { InfographicModal } from './components/InfographicModal';
 import { VideoModal } from './components/VideoModal';
 import { RoleLoginModal } from './components/RoleLoginModal';
 import { AboutUsModal } from './components/AboutUsModal';
+import { SuperAdminDashboard } from './components/admin/SuperAdminDashboard';
+import { MahiPawarKrishiAdminPortal } from './components/admin/MahiPawarKrishiAdminPortal';
+import { FourteenModulesQualityRadarModal } from './components/admin/FourteenModulesQualityRadarModal';
+import { AuthLoginModal } from './components/auth/AuthLoginModal';
+import { UniversalPaymentModal } from './components/payment/UniversalPaymentModal';
+import { UserDemandBoxModal } from './components/UserDemandBoxModal';
+import { InstallPwaBanner } from './components/pwa/InstallPwaBanner';
+import { AuthService } from './services/authService';
+import { NOMINAL_PAYMENT_TIERS } from './services/paymentService';
+import { PaymentTier, UserProfile } from './types';
 import { JitomniEmblemLogo } from './components/JitomniEmblemLogo';
 import { ShieldCheck, Building2, GraduationCap, HardHat, CheckCircle2, ArrowRight, Video, Sparkles, Flag, Cpu } from 'lucide-react';
 
@@ -50,6 +61,7 @@ export default function App() {
       if (path === '/iit' || path === '/jee' || path === '/iit-jee') return 'iit';
       if (path === '/school') return 'school';
       if (path === '/exam') return 'exam';
+      if (path === '/current-affairs' || path === '/daily-ca' || path === '/ca') return 'current-affairs';
       if (path === '/vacancies') return 'vacancies';
       if (path === '/global-ai-jobs' || path === '/globaljobs') return 'globaljobs';
       if (path === '/english') return 'english';
@@ -57,6 +69,8 @@ export default function App() {
       if (path === '/flashcards') return 'flashcards';
       if (path === '/prime') return 'prime';
       if (path === '/admin') return 'admin';
+      if (path === '/super-admin') return 'super-admin';
+      if (path === '/krishi-admin') return 'krishi-admin';
     }
     return 'home';
   });
@@ -69,6 +83,34 @@ export default function App() {
   const [activeMockTest, setActiveMockTest] = useState<{ config: MockExamConfig; questions: QuizQuestion[] } | null>(null);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const [isAuthLoginModalOpen, setIsAuthLoginModalOpen] = useState(false);
+  const [is14RadarModalOpen, setIs14RadarModalOpen] = useState(false);
+  const [isDemandBoxOpen, setIsDemandBoxOpen] = useState(false);
+  const [demandInitialQuery, setDemandInitialQuery] = useState('');
+  const [activePaymentTier, setActivePaymentTier] = useState<PaymentTier | null>(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile>(() => AuthService.getCurrentUser());
+
+  // Listen for universal nominal payment events, 14-radar events, & demand box events from any module
+  useEffect(() => {
+    const handleOpenPayment = (e: any) => {
+      const tier = e.detail || NOMINAL_PAYMENT_TIERS[0];
+      setActivePaymentTier(tier);
+    };
+    const handleOpen14Radar = () => setIs14RadarModalOpen(true);
+    const handleOpenDemandBox = (e: any) => {
+      setDemandInitialQuery(e?.detail?.query || '');
+      setIsDemandBoxOpen(true);
+    };
+
+    window.addEventListener('jitomni-open-payment', handleOpenPayment);
+    window.addEventListener('jitomni-open-14-radar', handleOpen14Radar);
+    window.addEventListener('jitomni-open-demand-box', handleOpenDemandBox);
+    return () => {
+      window.removeEventListener('jitomni-open-payment', handleOpenPayment);
+      window.removeEventListener('jitomni-open-14-radar', handleOpen14Radar);
+      window.removeEventListener('jitomni-open-demand-box', handleOpenDemandBox);
+    };
+  }, []);
 
   // Sync URL with Tab
   const handleTabChange = (tab: MainTab) => {
@@ -93,6 +135,8 @@ export default function App() {
       else if (tab === 'flashcards') path = '/flashcards';
       else if (tab === 'prime') path = '/prime';
       else if (tab === 'admin') path = '/admin';
+      else if (tab === 'super-admin') path = '/super-admin';
+      else if (tab === 'krishi-admin') path = '/krishi-admin';
       window.history.pushState({}, '', path);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -120,6 +164,8 @@ export default function App() {
       else if (path === '/flashcards') setActiveTab('flashcards');
       else if (path === '/prime') setActiveTab('prime');
       else if (path === '/admin') setActiveTab('admin');
+      else if (path === '/super-admin') setActiveTab('super-admin');
+      else if (path === '/krishi-admin') setActiveTab('krishi-admin');
       else setActiveTab('home');
     };
 
@@ -149,6 +195,13 @@ export default function App() {
         onLanguageChange={setLang}
         onOpenRoleModal={() => setIsRoleModalOpen(true)}
         onOpenAboutUs={() => setIsAboutModalOpen(true)}
+        onOpenAuthLogin={() => setIsAuthLoginModalOpen(true)}
+        onOpenPaymentModal={() => setActivePaymentTier(NOMINAL_PAYMENT_TIERS[0])}
+        onOpen14RadarModal={() => setIs14RadarModalOpen(true)}
+        onOpenDemandBox={() => {
+          setDemandInitialQuery('');
+          setIsDemandBoxOpen(true);
+        }}
       />
 
       {/* Sub-Header Bar when inside Jitomni Verified Jobs */}
@@ -333,6 +386,15 @@ export default function App() {
           />
         )}
 
+        {/* TAB 7.5: DAILY CURRENT AFFAIRS 360° (EXAM DEMAND BASED) */}
+        {activeTab === 'current-affairs' && (
+          <DailyCurrentAffairsHub
+            lang={lang}
+            onStartQuiz={(config, questions) => setActiveMockTest({ config, questions })}
+            onBackToSyllabus={() => handleTabChange('exam')}
+          />
+        )}
+
         {/* TAB 8: SARKARI VACANCIES HUB */}
         {activeTab === 'vacancies' && (
           <VacanciesDashboard
@@ -358,6 +420,11 @@ export default function App() {
             onOpenTopic={(name) => {
               handleTabChange('school');
             }}
+            onNavigateTab={handleTabChange}
+            onOpenDemandBox={(q) => {
+              setDemandInitialQuery(q || '');
+              setIsDemandBoxOpen(true);
+            }}
           />
         )}
 
@@ -376,6 +443,7 @@ export default function App() {
           <PrimeManager
             lang={lang}
             onOpenTopicModal={(t) => setSelectedTopic(t)}
+            onNavigateTab={handleTabChange}
           />
         )}
 
@@ -386,6 +454,23 @@ export default function App() {
             onSelectTopic={(t) => setSelectedTopic(t)}
             onOpenQuiz={(t) => setQuizTopic(t)}
             onOpenVideo={(t) => setVideoTopic(t)}
+            onNavigateTab={handleTabChange}
+          />
+        )}
+
+        {/* TAB 15: SOVEREIGN SUPER ADMIN (MANISH VISHWAKARMA) */}
+        {activeTab === 'super-admin' && (
+          <SuperAdminDashboard
+            lang={lang}
+            onNavigateTab={handleTabChange}
+          />
+        )}
+
+        {/* TAB 16: KRISHI 360° AUTONOMOUS DIRECTORATE (MAHI PAWAR) */}
+        {activeTab === 'krishi-admin' && (
+          <MahiPawarKrishiAdminPortal
+            lang={lang}
+            onNavigateTab={handleTabChange}
           />
         )}
       </main>
@@ -467,6 +552,51 @@ export default function App() {
         isOpen={isAboutModalOpen}
         onClose={() => setIsAboutModalOpen(false)}
         lang={lang}
+      />
+
+      {/* 8. Sovereign Role & User Login Modal */}
+      {isAuthLoginModalOpen && (
+        <AuthLoginModal
+          onClose={() => setIsAuthLoginModalOpen(false)}
+          onSuccess={(profile) => {
+            setCurrentUserProfile(profile);
+            if (profile.role === 'super_admin') handleTabChange('super-admin');
+            else if (profile.role === 'krishi_admin') handleTabChange('krishi-admin');
+          }}
+        />
+      )}
+
+      {/* 9. Sovereign Universal Nominal Payment Modal */}
+      {activePaymentTier && (
+        <UniversalPaymentModal
+          tier={activePaymentTier}
+          onClose={() => setActivePaymentTier(null)}
+          onSuccess={(tx) => {
+            console.log('Sovereign Payment Success:', tx);
+          }}
+        />
+      )}
+
+      {/* 10. Install PWA / Play Store App Mobile Banner */}
+      <InstallPwaBanner />
+
+      {/* 11. Sovereign 14-Module Deep Quality & Continuous Fulfillment Radar Modal */}
+      {is14RadarModalOpen && (
+        <FourteenModulesQualityRadarModal
+          isOpen={is14RadarModalOpen}
+          onClose={() => setIs14RadarModalOpen(false)}
+          lang={lang}
+          onNavigateTab={handleTabChange}
+        />
+      )}
+
+      {/* 12. User Demand & Public Help Request Modal (Direct Sovereign Pipeline) */}
+      <UserDemandBoxModal
+        isOpen={isDemandBoxOpen}
+        onClose={() => setIsDemandBoxOpen(false)}
+        lang={lang}
+        initialQuery={demandInitialQuery}
+        onNavigateTab={handleTabChange}
       />
 
       {/* Sovereign Master Global Footer */}
@@ -570,10 +700,10 @@ export default function App() {
               <p className="text-xs text-slate-300">📞 टोल-फ्री: 1800-123-JITOMNI</p>
               <p className="text-xs text-slate-300 mt-1">📧 support@jitomni.edu.in</p>
               <p className="text-xs text-slate-300 mt-1">🏛️ स्ट्रेटेजी आर्किटेक्ट: भोपाल, म.प्र. (भारत)</p>
-              <div className="pt-3">
+              <div className="pt-3 flex flex-col gap-1.5">
                 <button
                   onClick={() => setIsAboutModalOpen(true)}
-                  className="text-[11px] text-[#FFD700] hover:underline font-bold"
+                  className="text-left text-[11px] text-[#FFD700] hover:underline font-bold"
                 >
                   📖 Read Full Sovereign Manifesto
                 </button>

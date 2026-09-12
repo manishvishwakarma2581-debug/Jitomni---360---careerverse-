@@ -41,13 +41,14 @@ import {
   AIToolItem, 
   RemoteLiveVacancy 
 } from '../types';
+import { SingaporeGlobalTechHub } from './SingaporeGlobalTechHub';
 
 interface GlobalAIJobsDashboardProps {
   lang: Language;
 }
 
 export const GlobalAIJobsDashboard: React.FC<GlobalAIJobsDashboardProps> = ({ lang }) => {
-  const [activeSection, setActiveSection] = useState<'job_types' | 'roadmaps' | 'tools_lab' | 'freelancing_masterclass' | 'live_vacancies'>('job_types');
+  const [activeSection, setActiveSection] = useState<'job_types' | 'roadmaps' | 'tools_lab' | 'freelancing_masterclass' | 'live_vacancies' | 'singapore_hub'>('singapore_hub');
   const [qualificationFilter, setQualificationFilter] = useState<'10th Pass' | '12th Pass' | 'Graduate'>('12th Pass');
   const [activeRoadmapDay, setActiveRoadmapDay] = useState<number>(1);
   const [activeToolCategory, setActiveToolCategory] = useState<string>('all');
@@ -762,7 +763,25 @@ Regards,
           <span>⚡</span>
           <span>5. Live Remote Openings Feed</span>
         </button>
+
+        <button
+          onClick={() => setActiveSection('singapore_hub')}
+          className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-heading font-black whitespace-nowrap transition-all flex items-center gap-2 ${
+            activeSection === 'singapore_hub'
+              ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white shadow-lg shadow-cyan-600/30 border border-cyan-400/50 scale-[1.02]'
+              : 'bg-[#0A1931] text-cyan-300 border border-cyan-500/40 hover:text-white'
+          }`}
+        >
+          <span>🇸🇬</span>
+          <span>6. 🇸🇬 सिंगापुर व ग्लोबल AI हब (S$6k-S$14k)</span>
+          <span className="px-1.5 py-0.5 rounded-full bg-cyan-400/20 text-cyan-200 text-[10px] font-bold">100% Demand</span>
+        </button>
       </div>
+
+      {/* ================= SECTION 6: SINGAPORE & GLOBAL AI TECH HUB ================= */}
+      {activeSection === 'singapore_hub' && (
+        <SingaporeGlobalTechHub lang={lang} />
+      )}
 
       {/* ================= SECTION 1: TOP JOB TYPES ================= */}
       {activeSection === 'job_types' && (
