@@ -371,7 +371,7 @@ export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicMod
 
                   {/* Optional On-Demand Deep-Dive Prompt for normal responses */}
                   {!log.visionIasInfographic && log.userPrompt && (
-                    <div className="pt-1 border-t border-slate-700/40">
+                    <div className="pt-1 border-t border-slate-700/40 flex flex-wrap items-center justify-between gap-2">
                       <button
                         onClick={() => {
                           const info = generateVisionIasInfographic(log.userPrompt!, lang);
@@ -382,6 +382,23 @@ export const PrimeManager: React.FC<PrimeManagerProps> = ({ lang, onOpenTopicMod
                         className="text-[11px] text-amber-400/80 hover:text-amber-300 flex items-center gap-1.5 hover:underline cursor-pointer transition-all"
                       >
                         <span>🏛️ UPSC / मेंस स्तर का 360° विज़न IAS संपादकीय विश्लेषण चाहिए? (वैकल्पिक)</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          exportStylishVisionIasPdf({
+                            title: log.userPrompt || 'JITOMNI PRIME Response',
+                            markdownContent: log.text,
+                            lang,
+                            authorBadge: 'JITOMNI 360° SOVEREIGN AI • EDITORIAL STUDY MATERIAL',
+                            paperLinkage: 'EXHAUSTIVE EXAM STUDY MATERIAL & DOSSIER',
+                          });
+                        }}
+                        className="px-3 py-1 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+                        title="Download or print this answer as a stylish Vision IAS PDF"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        <span>📄 इस उत्तर को PDF में सेव करें (Save as PDF)</span>
                       </button>
                     </div>
                   )}

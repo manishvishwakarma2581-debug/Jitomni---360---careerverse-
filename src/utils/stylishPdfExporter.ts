@@ -24,12 +24,6 @@ export function exportStylishVisionIasPdf(options: {
   // Convert markdown to clean, styled HTML for publication
   const formattedHtml = convertMarkdownToVisionIasHtml(markdownContent);
 
-  const printWindow = window.open('', '_blank', 'width=900,height=1000');
-  if (!printWindow) {
-    alert('Please allow popups to download/print the stylish Vision IAS PDF.');
-    return;
-  }
-
   const currentDate = new Date().toLocaleDateString('hi-IN', {
     day: 'numeric',
     month: 'long',
@@ -64,7 +58,7 @@ export function exportStylishVisionIasPdf(options: {
 
     body {
       margin: 0;
-      padding: 0;
+      padding: 20px;
       font-family: 'Outfit', 'Tiro Devanagari Hindi', -apple-system, sans-serif;
       font-size: 10.5pt;
       line-height: 1.6;
@@ -73,7 +67,7 @@ export function exportStylishVisionIasPdf(options: {
     }
 
     .container {
-      max-width: 100%;
+      max-width: 860px;
       margin: 0 auto;
     }
 
@@ -365,6 +359,9 @@ export function exportStylishVisionIasPdf(options: {
     }
 
     @media print {
+      body {
+        padding: 0;
+      }
       .no-print-toolbar {
         display: none !important;
       }
@@ -419,16 +416,70 @@ export function exportStylishVisionIasPdf(options: {
     // Automatically trigger print dialog after fonts load
     window.addEventListener('load', () => {
       setTimeout(() => {
-        // Optional auto-print can be called or user can click
-      }, 500);
+        try {
+          window.print();
+        } catch (e) {
+          console.warn('Auto print cancelled or blocked', e);
+        }
+      }, 700);
     });
   </script>
 </body>
 </html>`;
 
-  printWindow.document.open();
-  printWindow.document.write(fullDocumentHtml);
-  printWindow.document.close();
+  // Try opening popup window first
+  try {
+    const printWindow = window.open('', '_blank', 'width=900,height=1000');
+    if (printWindow && printWindow.document) {
+      printWindow.document.open();
+      printWindow.document.write(fullDocumentHtml);
+      printWindow.document.close();
+      return;
+    }
+  } catch (err) {
+    console.warn('Popup window blocked, falling back to hidden iframe or direct download', err);
+  }
+
+  // Fallback 1: Hidden iframe print if popup blocked by browser
+  try {
+    const hiddenIframe = document.createElement('iframe');
+    hiddenIframe.style.position = 'fixed';
+    hiddenIframe.style.right = '0';
+    hiddenIframe.style.bottom = '0';
+    hiddenIframe.style.width = '0';
+    hiddenIframe.style.height = '0';
+    hiddenIframe.style.border = '0';
+    document.body.appendChild(hiddenIframe);
+
+    const doc = hiddenIframe.contentWindow?.document || hiddenIframe.contentDocument;
+    if (doc) {
+      doc.open();
+      doc.write(fullDocumentHtml);
+      doc.close();
+      setTimeout(() => {
+        hiddenIframe.contentWindow?.focus();
+        hiddenIframe.contentWindow?.print();
+        setTimeout(() => {
+          document.body.removeChild(hiddenIframe);
+        }, 1500);
+      }, 500);
+      return;
+    }
+  } catch (err) {
+    console.warn('Hidden iframe print failed, falling back to blob download', err);
+  }
+
+  // Fallback 2: Direct file download (HTML Dossier readable by browser and printable to PDF with Ctrl+P)
+  const blob = new Blob([fullDocumentHtml], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const safeFilename = `JITOMNI_VisionIAS_${title.replace(/[^a-zA-Z0-9_\u0900-\u097F]/g, '_').slice(0, 40)}.html`;
+  a.download = safeFilename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function escapeHtml(text: string): string {
