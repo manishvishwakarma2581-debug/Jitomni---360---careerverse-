@@ -579,6 +579,32 @@ export const competitiveExamsSyllabusTree: Record<CompetitiveExam, SyllabusSubje
         topics: createTopics(`ssc-reas-ch${cIdx + 1}`, ch.topics.map((t) => ({ hi: t, en: t }))),
       })),
     },
+    {
+      id: 'ssc-gs',
+      name: { hi: 'सामान्य अध्ययन (General Awareness & GK)', en: 'General Awareness & GK', hinglish: 'General Awareness SSC' },
+      icon: '🌍',
+      chapters: [
+        { name: { hi: 'भारतीय राजव्यवस्था व इतिहास (Polity & History)', en: 'Indian Polity & History' }, topics: ['भारतीय संविधान (मौलिक अधिकार व अनुच्छेद)', 'संसद, राष्ट्रपति एवं न्यायपालिका', 'आधुनिक भारत का इतिहास व 1857 की क्रांति', 'प्राचीन भारत (सिंधु घाटी व मौर्य साम्राज्य)'] },
+        { name: { hi: 'सामान्य विज्ञान व अर्थव्यवस्था (Science & Economy)', en: 'General Science & Economy' }, topics: ['भौतिकी एवं दैनिक जीवन में अनुप्रयोग', 'जीव विज्ञान: मानव शरीर क्रिया व रोग', 'भारतीय अर्थव्यवस्था (LPG सुधार व बजट)', 'करंट अफेयर्स व महत्वपूर्ण सूचकांक'] },
+      ].map((ch, cIdx) => ({
+        id: `ssc-gs-ch${cIdx + 1}`,
+        name: ch.name,
+        topics: createTopics(`ssc-gs-ch${cIdx + 1}`, ch.topics.map((t) => ({ hi: t, en: t }))),
+      })),
+    },
+    {
+      id: 'ssc-english',
+      name: { hi: 'अंग्रेजी भाषा एवं समझ (English Comprehension)', en: 'English Comprehension & Grammar', hinglish: 'SSC English Mastery' },
+      icon: '📖',
+      chapters: [
+        { name: { hi: 'व्याकरण एवं त्रुटि सुधार (Grammar & Rules)', en: 'Grammar & Error Spotting' }, topics: ['Subject-Verb Agreement Rules', 'Active & Passive Voice Transformation', 'Direct & Indirect Speech Rules', 'Prepositions & Phrasal Verbs'] },
+        { name: { hi: 'शब्दावली एवं समझ (Vocabulary & Comprehension)', en: 'Vocabulary & Reading Comprehension' }, topics: ['One Word Substitutions (High Frequency)', 'Idioms and Phrases for SSC', 'Cloze Test Mastery (Context Clues)', 'Reading Comprehension Strategies'] },
+      ].map((ch, cIdx) => ({
+        id: `ssc-eng-ch${cIdx + 1}`,
+        name: ch.name,
+        topics: createTopics(`ssc-eng-ch${cIdx + 1}`, ch.topics.map((t) => ({ hi: t, en: t }))),
+      })),
+    },
   ],
   Banking: [
     {

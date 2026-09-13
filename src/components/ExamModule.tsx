@@ -27,7 +27,7 @@ import { CompetitiveExam, Language, MockExamConfig, QuizQuestion, TopicItem, Com
 import { getSyllabusTreeForExam } from '../data/fullSyllabusTree';
 import { competitiveCurriculumData, mockExamConfigs, mockQuestionsByExam } from '../data/curriculumData';
 import { examPatternsData } from '../data/examPatternsData';
-import { competitiveSpecialTopics } from '../data/competitiveSpecialTopics';
+import { competitiveSpecialTopics, getCompetitiveTopicDetail } from '../data/competitiveSpecialTopics';
 import { CompetitiveTopicModal } from './CompetitiveTopicModal';
 import { translations } from '../data/translations';
 import { generateTopicPdf, downloadPdfBlob } from '../utils/pdfGenerator';
@@ -710,10 +710,14 @@ export const ExamModule: React.FC<ExamModuleProps> = ({
                                   key={t.id}
                                   id={`topic-item-${t.id}`}
                                   onClick={() => {
-                                    if (isSpecialProfitLoss) {
-                                      setActiveCompetitiveTopic(competitiveSpecialTopics['comp-profit-loss']);
-                                    } else if (isSpecialDirection) {
-                                      setActiveCompetitiveTopic(competitiveSpecialTopics['comp-direction-distance']);
+                                    const topicName = t.name?.en || t.name?.hi || 'Topic';
+                                    const compDetail = getCompetitiveTopicDetail(
+                                      topicName,
+                                      subj.id?.includes('quant') ? 'quant' : subj.id?.includes('reas') ? 'reasoning' : subj.id?.includes('sci') ? 'science' : 'gk_gs',
+                                      selectedExam
+                                    );
+                                    if (compDetail) {
+                                      setActiveCompetitiveTopic(compDetail);
                                     } else {
                                       onSelectTopic(fullTopic);
                                     }
@@ -785,10 +789,14 @@ export const ExamModule: React.FC<ExamModuleProps> = ({
                     key={topic.id}
                     id={`topic-card-${topic.id}`}
                     onClick={() => {
-                      if (isSpecialProfitLoss) {
-                        setActiveCompetitiveTopic(competitiveSpecialTopics['comp-profit-loss']);
-                      } else if (isSpecialDirection) {
-                        setActiveCompetitiveTopic(competitiveSpecialTopics['comp-direction-distance']);
+                      const topicName = topic.name[lang] || topic.name['en'] || 'Topic';
+                      const compDetail = getCompetitiveTopicDetail(
+                        topicName,
+                        topic.subject?.toLowerCase().includes('math') ? 'quant' : topic.subject?.toLowerCase().includes('reason') ? 'reasoning' : 'gk_gs',
+                        selectedExam
+                      );
+                      if (compDetail) {
+                        setActiveCompetitiveTopic(compDetail);
                       } else {
                         onSelectTopic(topic);
                       }

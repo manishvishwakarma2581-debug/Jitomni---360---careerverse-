@@ -45,6 +45,7 @@ export const CompanyDashboard: React.FC<CompanyDashboardProps> = ({ lang }) => {
 
   // Contact modal state
   const [contactSuccessMsg, setContactSuccessMsg] = useState<string | null>(null);
+  const [isPosterModalOpen, setIsPosterModalOpen] = useState(false);
 
   // Fetch live verified candidates from backend API
   const fetchLiveCandidates = async () => {
@@ -240,6 +241,15 @@ export const CompanyDashboard: React.FC<CompanyDashboardProps> = ({ lang }) => {
             >
               <Building2 className="w-4 h-4 text-blue-400" />
               <span>कंपनी बदलें / रजिस्टर करें</span>
+            </button>
+
+            <button
+              id="view-company-poster-btn"
+              onClick={() => setIsPosterModalOpen(true)}
+              className="px-4 py-3 rounded-xl font-black text-xs bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-md"
+            >
+              <FileText className="w-4 h-4 text-emerald-400" />
+              <span>कंपनी पोस्टर & हायरिंग बैनर (Vision IAS)</span>
             </button>
           </div>
         </div>
@@ -775,6 +785,138 @@ export const CompanyDashboard: React.FC<CompanyDashboardProps> = ({ lang }) => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* VERIFIED JOBS COMPANY HIRING POSTER MODAL (VISION IAS STANDARD) */}
+      {isPosterModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-3xl my-auto rounded-3xl bg-[#091529] border border-amber-500/40 p-5 sm:p-8 shadow-2xl space-y-6 text-white max-h-[92vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                  <Award className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-[11px] font-black text-amber-400 uppercase tracking-wider">
+                    JITOMNI 360° CAREERVERSE — OFFICIAL HIRING DRIVE
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-black text-white">
+                    कंपनी रिक्रूटमेंट पोस्टर (Verified Jobs & Direct Hiring)
+                  </h2>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsPosterModalOpen(false)}
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Poster Preview Card (Vision IAS Layout) */}
+            <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-[#0c1f3d] to-[#081224] border-2 border-amber-500/50 space-y-6 shadow-xl">
+              {/* Top Banner */}
+              <div className="text-center space-y-2 border-b border-slate-700/80 pb-4">
+                <span className="px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-black uppercase tracking-wider">
+                  ✦ 100% वेरिफाइड टैलेंट • 0% कमीशन • डायरेक्ट हायरिंग ✦
+                </span>
+                <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight mt-2">
+                  JITOMNI 360° CAREERVERSE
+                </h1>
+                <p className="text-xs sm:text-sm font-semibold text-amber-300">
+                  भारत की सभी कंपनियों, MSMEs, स्टार्टअप्स और कारखानों के लिए संपूर्ण रोजगार समाधान
+                </p>
+              </div>
+
+              {/* Core Callout Container */}
+              <div className="p-4 rounded-xl bg-amber-500/10 border-l-4 border-amber-500 text-amber-200 text-xs sm:text-sm font-medium leading-relaxed">
+                📌 <strong className="text-white">कंपनियों के लिए घोषणा:</strong> अपनी कंपनी की सभी रिक्तियों (Skilled, Unskilled, Data Entry, IT, Accounts, Sales, Labour) के लिए सीधे 100% आधार-सत्यापित व AI-इंटरव्यू टेस्टेड युवाओं को 24 घंटे में हायर करें।
+              </div>
+
+              {/* 4 Pillars Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                  <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs sm:text-sm">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>1. 100% आधार व पुलिस वेरिफाइड</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 pl-6">
+                    शून्य फेक बायोडाटा। हर उम्मीदवार की पहचान और शैक्षणिक योग्यता सत्यापित।
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                  <div className="flex items-center gap-2 text-blue-400 font-bold text-xs sm:text-sm">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>2. AI स्किल व इंटरव्यू स्कोर्ड</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 pl-6">
+                    उम्मीदवारों के 5-पैरामीटर रूब्रिक स्कोर कार्ड और वीडियो-ऑडियो इंटरव्यू डोजियर उपलब्ध।
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                  <div className="flex items-center gap-2 text-amber-400 font-bold text-xs sm:text-sm">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>3. ऑल-कैटेगरी वर्कर्स उपलब्ध</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 pl-6">
+                    10वीं पास, ITI, डिप्लोमा, ग्रेजुएट, डेटा एंट्री, फील्ड सेल्स, एवं अकुशल श्रमिक।
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                  <div className="flex items-center gap-2 text-rose-400 font-bold text-xs sm:text-sm">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>4. 0% कमीशन - डायरेक्ट कनेक्ट</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 pl-6">
+                    बिना किसी बिचौलिए या प्लेसमेंट एजेंसी की फीस के सीधा कॉल व व्हाट्सएप से संपर्क।
+                  </p>
+                </div>
+              </div>
+
+              {/* Contact Helpline Box */}
+              <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-600/20 border border-amber-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+                <div>
+                  <div className="text-[11px] font-bold text-amber-300 uppercase">
+                    हेल्पलाइन एवं कंपनी रजिस्ट्रेशन सहायता
+                  </div>
+                  <div className="text-xl sm:text-2xl font-black text-white flex items-center justify-center sm:justify-start gap-2 mt-0.5">
+                    <Phone className="w-5 h-5 text-amber-400 animate-pulse" />
+                    <span>9399608239</span>
+                  </div>
+                  <div className="text-[11px] text-slate-300">
+                    JITOMNI 360° CAREERVERSE • सपोर्ट डेस्क: 24×7 एक्टिव
+                  </div>
+                </div>
+                <a
+                  href="tel:9399608239"
+                  className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/30 shrink-0"
+                >
+                  कॉल करें: 9399608239
+                </a>
+              </div>
+            </div>
+
+            {/* AI Image Generation Prompt Box */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>AI Image Generator Prompt (फॉर हाई-क्वालिटी पोस्टर / बैनर)</span>
+                </span>
+                <span className="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+                  Ready to Copy
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 font-mono bg-black/50 p-3 rounded-xl border border-slate-800 leading-relaxed select-all">
+                "Ultra-realistic premium corporate recruitment drive poster, Vision IAS style typography, title 'JITOMNI 360° CAREERVERSE - VERIFIED JOBS', subtitle '100% Aadhaar Verified Talent & 0% Commission Direct Hiring for All Companies & MSMEs'. Featuring diverse Indian workforce - data entry operator with laptop, skilled engineer, IT professional, and factory technician. Prominent gold badge with helpline '9399608239', navy blue background with gold accents, crisp 8k render, professional editorial graphic design."
+              </p>
+            </div>
           </div>
         </div>
       )}
