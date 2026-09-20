@@ -1,29 +1,84 @@
-import { CompanionServiceCategory, CompanionWorker, RideVehiclePartner, RidePlatformFeeRecord } from '../types';
+import { 
+  CompanionServiceCategory, 
+  CompanionWorker, 
+  RideVehiclePartner, 
+  RidePlatformFeeRecord,
+  CompanionTaskCommissionRecord,
+  CompanionNotification,
+  SovereignTaskRateCard,
+  SovereignTaskServiceId,
+  CompanionVehicleMode
+} from '../types';
 
 export const companionCategories: CompanionServiceCategory[] = [
   {
     id: 'hospital_care',
     title: {
-      hi: '🏥 अस्पताल देखभाल एवं साथी सेवा',
-      en: '🏥 Hospital Care & Companionship',
-      hinglish: '🏥 Hospital Care & Attendant Service'
+      hi: '🚑 HUMARA Medical Sathi - Complete Hospital Escort Service',
+      en: '🚑 HUMARA Medical Sathi - Complete Hospital Escort Service',
+      hinglish: '🚑 HUMARA Medical Sathi - Complete Hospital Escort Service'
     },
     tagline: {
-      hi: 'ओपीडी, वार्ड, रात्रि ड्यूटी व दवाओं की कतार के लिए 100% पुलिस-वेरिफाइड संवेदनशील साथी।',
-      en: '100% police-verified compassionate companions for OPD, patient bedside care & night shifts.',
-      hinglish: 'OPD, Patient Care, Night Hospital Stay ke liye verified attendant companion.'
+      hi: 'Railway Station / Home Se Hospital Tak — Nurse + Doctor Ki Nigrani Me (3-Level Premium Escort)',
+      en: 'Railway Station / Home to Hospital Escort — Supervised by Certified Nurse + Private Doctor (3-Level Premium Escort)',
+      hinglish: 'Railway Station / Home se Hospital tak — Nurse + Doctor ki nigrani me complete medical escort.'
     },
-    icon: '🏥',
-    visualAnchorBadge: 'HOSPITAL & MEDICAL CARE',
+    icon: '🚑',
+    visualAnchorBadge: 'ALL INDIA SERVICE • 24x7 ON-DEMAND • 3-LEVEL MEDICAL ESCORT',
     themeColor: {
-      badge: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
-      border: 'border-rose-500/50 hover:border-rose-400',
-      bgGlow: 'from-rose-950/40 via-[#18080E] to-[#0D0407]',
-      gradient: 'from-rose-600 to-red-700',
-      accent: '#F43F5E'
+      badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50',
+      border: 'border-[#FFD700]/70 hover:border-[#FFD700]',
+      bgGlow: 'from-[#06142E] via-[#040C1A] to-[#02060F]',
+      gradient: 'from-[#0B1E3B] via-[#07132B] to-[#040C1A]',
+      accent: '#FFD700'
     },
-    baseHourlyRate: 199,
+    baseHourlyRate: 150,
     subServices: [
+      {
+        id: 'med_level_1',
+        name: {
+          hi: 'LEVEL 1: BASIC SATHI ESCORT',
+          en: 'LEVEL 1: BASIC SATHI ESCORT',
+          hinglish: 'LEVEL 1: BASIC SATHI ESCORT'
+        },
+        desc: {
+          hi: 'ट्रेन/बस स्टेशन पिकअप, लगेज हेल्प, ऑटो/टैक्सी बुकिंग, हॉस्पिटल काउंटर व ओपीडी कतार सहायता।',
+          en: 'Station pickup, luggage help, auto/taxi booking, hospital counter assistance & OPD queue support.',
+          hinglish: 'Station pickup, luggage, taxi booking, hospital counter & OPD line help.'
+        },
+        icon: '🧳',
+        recommendedHours: 3
+      },
+      {
+        id: 'med_level_2',
+        name: {
+          hi: 'LEVEL 2: SATHI + NURSE SUPPORT [MOST POPULAR]',
+          en: 'LEVEL 2: SATHI + NURSE SUPPORT [MOST POPULAR]',
+          hinglish: 'LEVEL 2: SATHI + NURSE SUPPORT [MOST POPULAR]'
+        },
+        desc: {
+          hi: 'लेवल 1 की सभी सुविधाएं + व्हीलचेयर सपोर्ट, रास्ते में बीपी/शुगर जांच, प्राथमिक चिकित्सा व दवा सहायता, बुजुर्ग व महिला मरीज स्पेशल केयर।',
+          en: 'Everything in Level 1 + Wheelchair Support, BP/Sugar Check On The Way, First-Aid & Medicine Help, Elderly & Female Patient Special Care.',
+          hinglish: 'Level 1 + Wheelchair support, BP/Sugar check on the way, first-aid, medicine & elderly care.'
+        },
+        icon: '👩‍⚕️',
+        recommendedHours: 4
+      },
+      {
+        id: 'med_level_3',
+        name: {
+          hi: 'LEVEL 3: SATHI + NURSE + PRIVATE DOCTOR SUPERVISION [PREMIUM]',
+          en: 'LEVEL 3: SATHI + NURSE + PRIVATE DOCTOR SUPERVISION [PREMIUM]',
+          hinglish: 'LEVEL 3: SATHI + NURSE + PRIVATE DOCTOR SUPERVISION [PREMIUM]'
+        },
+        desc: {
+          hi: 'लेवल 1 और 2 की सभी सुविधाएं + प्राइवेट डॉक्टर सुपरविजन, रास्ते में प्राइमरी हेल्थ केयर चेकअप, ट्रांजिट कंसल्टेशन, इमरजेंसी हैंडलिंग व रिपोर्ट पूर्ति।',
+          en: 'Everything in Level 1 & 2 + Private Doctor Supervision, Primary Health Care Checkup On The Way, Initial Consultation in Transit, Emergency Handling & Full Task Fulfill.',
+          hinglish: 'Level 1 & 2 + Private Doctor Supervision, Transit Health Checkup, Emergency Handling & Full Task Fulfill.'
+        },
+        icon: '🩺',
+        recommendedHours: 4
+      },
       {
         id: 'hosp_bedside',
         name: {
@@ -38,59 +93,14 @@ export const companionCategories: CompanionServiceCategory[] = [
         },
         icon: '🛏️',
         recommendedHours: 8
-      },
-      {
-        id: 'hosp_opd_escort',
-        name: {
-          hi: 'ओपीडी व डॉक्टर कतार सहायक',
-          en: 'OPD Doctor Appointment & Queue Escort',
-          hinglish: 'OPD & Doctor Line Queue Escort'
-        },
-        desc: {
-          hi: 'पर्ची कटवाना, लंबी कतारों में खड़ा होना व डॉक्टर कक्ष तक ले जाना।',
-          en: 'Token generation, queue management & accompanying inside chamber.',
-          hinglish: 'Registration slip, long queue standing aur doctor room escort.'
-        },
-        icon: '🩺',
-        recommendedHours: 4
-      },
-      {
-        id: 'hosp_reports_pharmacy',
-        name: {
-          hi: 'दवा व जांच रिपोर्ट संकलन धावक',
-          en: 'Pharmacy & Diagnostic Reports Runner',
-          hinglish: 'Medicine & Test Reports Runner'
-        },
-        desc: {
-          hi: 'अस्पताल परिसर में ब्लड टेस्ट रिपोर्ट, एक्स-रे व दवाइयों का त्वरित संकलन।',
-          en: 'Swift dispatch to collect pathology reports, radiology & prescriptions.',
-          hinglish: 'Pharmacy se medicine lana aur test reports collect karna.'
-        },
-        icon: '💊',
-        recommendedHours: 2
-      },
-      {
-        id: 'hosp_female_companion',
-        name: {
-          hi: 'महिला मरीज हेतु विशेष महिला साथी',
-          en: 'Specialized Female Companion for Female Patient',
-          hinglish: 'Female Patient Companion (Dedicated Woman Attendant)'
-        },
-        desc: {
-          hi: 'सम्मानजनक, सुरक्षित व संवेदनशील महिला परिचारिका (GDA/Nursing trained)।',
-          en: 'Dignified, 100% verified female companion trained in basic nursing/GDA.',
-          hinglish: 'Dignified & safe female companion for overnight or day hospital stay.'
-        },
-        icon: '👩‍⚕️',
-        recommendedHours: 6
       }
     ],
     quickRequirements: [
-      'Need a female companion for hospital stay (रात की ड्यूटी)',
-      'Need male attendant for wheelchair push & ward transfer',
-      'Doctor appointment line standing & OPD token escort (3-4 hrs)',
-      'Emergency medicine pickup from outside pharmacy',
-      'Bilingual attendant (Hindi + English) to communicate with specialist'
+      'Level 1: Railway station to AIIMS escort with luggage assistance',
+      'Level 2: Wheelchair patient with nurse for BP/Sugar check on the way',
+      'Level 3: Outstation patient with full doctor + nurse supervision & primary care',
+      'Dharamshala booking and medicine runner assistance',
+      'Return drop to railway station after doctor consultation'
     ]
   },
   {
@@ -106,7 +116,7 @@ export const companionCategories: CompanionServiceCategory[] = [
       hinglish: 'Shaadi-byah, stage, guest welcome aur shagun desk ke liye reliable squad.'
     },
     icon: '🪔',
-    visualAnchorBadge: 'WEDDINGS, BANQUETS & EVENTS',
+    visualAnchorBadge: 'WEDDINGS, BANQUETS & EVENTS • MIN 3H',
     themeColor: {
       badge: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
       border: 'border-amber-500/50 hover:border-amber-400',
@@ -114,7 +124,7 @@ export const companionCategories: CompanionServiceCategory[] = [
       gradient: 'from-amber-500 to-orange-600',
       accent: '#F59E0B'
     },
-    baseHourlyRate: 179,
+    baseHourlyRate: 140,
     subServices: [
       {
         id: 'evt_guest_hospitality',
@@ -198,7 +208,7 @@ export const companionCategories: CompanionServiceCategory[] = [
       hinglish: 'Morning walk, Bank work, Jeevan Pramaan Patra aur tech coaching buddy.'
     },
     icon: '🧓',
-    visualAnchorBadge: 'ELDERLY CARE & ASSISTANCE',
+    visualAnchorBadge: 'ELDERLY CARE & COMPANION • MIN 2H',
     themeColor: {
       badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
       border: 'border-cyan-500/50 hover:border-cyan-400',
@@ -206,7 +216,7 @@ export const companionCategories: CompanionServiceCategory[] = [
       gradient: 'from-cyan-500 to-blue-600',
       accent: '#06B6D4'
     },
-    baseHourlyRate: 149,
+    baseHourlyRate: 120,
     subServices: [
       {
         id: 'snr_park_walk',
@@ -290,7 +300,7 @@ export const companionCategories: CompanionServiceCategory[] = [
       hinglish: 'Mandi shopping, bill queue standing, document runner aur shifting tasks.'
     },
     icon: '🛒',
-    visualAnchorBadge: 'ERRANDS & RAPID TASKS',
+    visualAnchorBadge: 'ERRANDS & RAPID TASKS • MIN 1H',
     themeColor: {
       badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
       border: 'border-emerald-500/50 hover:border-emerald-400',
@@ -298,7 +308,7 @@ export const companionCategories: CompanionServiceCategory[] = [
       gradient: 'from-emerald-500 to-teal-600',
       accent: '#10B981'
     },
-    baseHourlyRate: 129,
+    baseHourlyRate: 100,
     subServices: [
       {
         id: 'err_mandi_grocery',
@@ -382,7 +392,7 @@ export const companionCategories: CompanionServiceCategory[] = [
       hinglish: 'Bike taxi, City Car, Intercity Travel. 90% Driver direct earning, 10% fair app management fee, 0% surge pricing aur direct contact.'
     },
     icon: '🚗',
-    visualAnchorBadge: 'BIKE & CAR TRAVEL • FAIR 10% MANAGEMENT FEE',
+    visualAnchorBadge: 'BIKE & CAR TRAVEL • BASE ₹30 + ₹10/KM',
     themeColor: {
       badge: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
       border: 'border-amber-500/50 hover:border-amber-400',
@@ -390,7 +400,7 @@ export const companionCategories: CompanionServiceCategory[] = [
       gradient: 'from-amber-500 to-yellow-600',
       accent: '#F59E0B'
     },
-    baseHourlyRate: 99,
+    baseHourlyRate: 30,
     subServices: [
       {
         id: 'ride_bike_express',
@@ -1037,52 +1047,169 @@ export const initialAvailableRadarTasks: WorkerRadarTask[] = [
   }
 ];
 
-// Initial platform commission records
-export const initialPlatformCommissionRecords = [
+// Initial platform commission records - Daily Hisab Sheet with 10% - 20% Dynamic Commission
+export const initialPlatformCommissionRecords: CompanionTaskCommissionRecord[] = [
   {
-    id: 'COMM-TX-901',
+    id: 'COMM-HISAB-901',
     taskId: 'JIT-CMP-84910',
-    taskTitle: 'Hospital Overnight Duty',
-    customerName: 'Anil Sharma',
+    taskTitle: 'हॉस्पिटल सहायक (Hospital Sahayak - OPD व दवा)',
+    customerName: 'Anil Sharma (AIIMS Patient)',
     workerId: 'cmp-01',
     workerName: 'Pooja Vishwakarma',
-    hours: 8,
-    hourlyRate: 199,
-    grossFee: 1592,
-    workerShare80: 1274,
-    platformShare20: 318,
-    status: 'settled' as const,
-    timestamp: '2026-09-03T18:30:00Z'
+    hours: 2,
+    hourlyRate: 180,
+    bikeKm: 6,
+    bikeKmCharge: 60,
+    waitingCharge: 0,
+    grossFee: 360,
+    billFormulaBreakdown: '2hr x ₹180 = ₹360 (Hospital Bike Sahayak)',
+    platformCommissionPercent: 20, // 20% for hospital task
+    platformShareAmount: 72,
+    workerShareAmount: 288,
+    workerShare80: 288,
+    platformShare20: 72,
+    status: 'credited',
+    timestamp: '2026-10-24T10:45:00Z',
+    dateStr: 'Today, 24 Oct',
+    startPhotoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
+    startGpsLocation: '23.2332° N, 77.4344° E • AIIMS OPD Gate 2, Bhopal',
+    endPhotoUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=400&auto=format&fit=crop&q=80',
+    endGpsLocation: '23.2330° N, 77.4342° E • AIIMS Pharmacy, Bhopal'
   },
   {
-    id: 'COMM-TX-902',
+    id: 'COMM-HISAB-902',
     taskId: 'JIT-CMP-84882',
-    taskTitle: 'Wedding Baraat & Stage Flow',
-    customerName: 'Sunil Jain',
+    taskTitle: 'बुजुर्ग साथी (Buzurg Sathi - मंदिर व देखभाल)',
+    customerName: 'Smt. Gayatri Devi (Arera Colony)',
     workerId: 'cmp-02',
     workerName: 'Rohit Verma',
-    hours: 5,
-    hourlyRate: 189,
-    grossFee: 945,
-    workerShare80: 756,
-    platformShare20: 189,
-    status: 'settled' as const,
-    timestamp: '2026-09-02T22:15:00Z'
+    hours: 2,
+    hourlyRate: 150,
+    bikeKm: 6,
+    bikeKmCharge: 60,
+    waitingCharge: 0,
+    grossFee: 360,
+    billFormulaBreakdown: '2hr x 150 = 300 + 6km bike 60 = 360',
+    platformCommissionPercent: 18, // 18% for senior care
+    platformShareAmount: 65,
+    workerShareAmount: 295,
+    workerShare80: 295,
+    platformShare20: 65,
+    status: 'credited',
+    timestamp: '2026-10-24T09:15:00Z',
+    dateStr: 'Today, 24 Oct',
+    startPhotoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80',
+    startGpsLocation: '23.2140° N, 77.4310° E • Arera Colony E-3, Bhopal',
+    endPhotoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    endGpsLocation: '23.2180° N, 77.4350° E • Birla Mandir complex, Bhopal'
   },
   {
-    id: 'COMM-TX-903',
+    id: 'COMM-HISAB-903',
+    taskId: 'JIT-CMP-84850',
+    taskTitle: 'सुरक्षित यात्रा साथी (Surakshit Yatra - Station Escort)',
+    customerName: 'Priya Chouhan (Bhopal Jn.)',
+    workerId: 'cmp-03',
+    workerName: 'Sunita Mehra',
+    hours: 1,
+    hourlyRate: 200,
+    bikeKm: 8,
+    bikeKmCharge: 40, // 4km free rule (4km x 10)
+    waitingCharge: 0,
+    grossFee: 240,
+    billFormulaBreakdown: '1hr x ₹200 = ₹200 + 8km bike (4km free = 4km x 10) ₹40 = ₹240',
+    platformCommissionPercent: 20, // 20% for women safe transit
+    platformShareAmount: 48,
+    workerShareAmount: 192,
+    workerShare80: 192,
+    platformShare20: 48,
+    status: 'credited',
+    timestamp: '2026-10-24T07:30:00Z',
+    dateStr: 'Today, 24 Oct',
+    startPhotoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80',
+    startGpsLocation: '23.2680° N, 77.4110° E • Bhopal Jn Platform 1',
+    endPhotoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
+    endGpsLocation: '23.2350° N, 77.4290° E • MP Nagar Zone 2'
+  },
+  {
+    id: 'COMM-HISAB-904',
     taskId: 'JIT-CMP-84729',
-    taskTitle: 'Senior Citizen Pension Escort',
-    customerName: 'Gita Devi',
+    taskTitle: 'बैंक एवं सरकारी सहायक (Bank KYC & Challan)',
+    customerName: 'Gita Devi (Pensioner)',
     workerId: 'cmp-04',
     workerName: 'Suresh Patidar',
-    hours: 4,
-    hourlyRate: 159,
-    grossFee: 636,
-    workerShare80: 509,
-    platformShare20: 127,
-    status: 'settled' as const,
-    timestamp: '2026-09-01T14:10:00Z'
+    hours: 2,
+    hourlyRate: 150,
+    bikeKm: 0,
+    bikeKmCharge: 0,
+    waitingCharge: 50,
+    grossFee: 350,
+    billFormulaBreakdown: '2hr x ₹150 = ₹300 + Waiting (30 min extra) ₹50 = ₹350',
+    platformCommissionPercent: 15, // 15% for bank task
+    platformShareAmount: 52,
+    workerShareAmount: 298,
+    workerShare80: 298,
+    platformShare20: 52,
+    status: 'settled',
+    timestamp: '2026-10-23T14:10:00Z',
+    dateStr: 'Yesterday, 23 Oct',
+    startPhotoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+    startGpsLocation: '23.2450° N, 77.4100° E • SBI Main Branch TT Nagar',
+    endPhotoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+    endGpsLocation: '23.2452° N, 77.4102° E • SBI Main Branch TT Nagar'
+  },
+  {
+    id: 'COMM-HISAB-905',
+    taskId: 'JIT-CMP-84610',
+    taskTitle: 'लोकल सामान व इमरजेंसी टास्क (Local Delivery)',
+    customerName: 'Rameshwar Lodhi',
+    workerId: 'cmp-06',
+    workerName: 'Vikas Kushwaha',
+    hours: 1,
+    hourlyRate: 140,
+    bikeKm: 7,
+    bikeKmCharge: 30, // 4km free rule (3km x 10)
+    waitingCharge: 0,
+    grossFee: 170,
+    billFormulaBreakdown: '1hr x ₹140 = ₹140 + 7km bike (4km free = 3km x 10) ₹30 = ₹170',
+    platformCommissionPercent: 10, // 10% for delivery task
+    platformShareAmount: 17,
+    workerShareAmount: 153,
+    workerShare80: 153,
+    platformShare20: 17,
+    status: 'settled',
+    timestamp: '2026-10-23T16:20:00Z',
+    dateStr: 'Yesterday, 23 Oct',
+    startPhotoUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&auto=format&fit=crop&q=80',
+    startGpsLocation: '23.2800° N, 77.4000° E • Karond Mandi Gate 3',
+    endPhotoUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&auto=format&fit=crop&q=80',
+    endGpsLocation: '23.2200° N, 77.4300° E • 10 No. Market Bhopal'
+  },
+  {
+    id: 'COMM-HISAB-906',
+    taskId: 'JIT-CMP-84501',
+    taskTitle: 'सिर्फ राइड सर्विस (SIRF Ride - Rapido Model)',
+    customerName: 'Kunal Singhal',
+    workerId: 'cmp-06',
+    workerName: 'Vikas Kushwaha',
+    hours: 0,
+    hourlyRate: 30,
+    bikeKm: 9,
+    bikeKmCharge: 90,
+    waitingCharge: 0,
+    grossFee: 120,
+    billFormulaBreakdown: 'Base ₹30 + 9km x ₹10 = ₹120',
+    platformCommissionPercent: 10, // 10% for pure ride
+    platformShareAmount: 12,
+    workerShareAmount: 108,
+    workerShare80: 108,
+    platformShare20: 12,
+    status: 'settled',
+    timestamp: '2026-10-23T18:40:00Z',
+    dateStr: 'Yesterday, 23 Oct',
+    startPhotoUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&auto=format&fit=crop&q=80',
+    startGpsLocation: '23.2350° N, 77.4290° E • MP Nagar Zone 1',
+    endPhotoUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&auto=format&fit=crop&q=80',
+    endGpsLocation: '23.2010° N, 77.4420° E • Kolar Road Mandakini'
   }
 ];
 
@@ -1425,6 +1552,717 @@ export const initialRidePlatformFeeRecords: RidePlatformFeeRecord[] = [
     platformFee: 174, // 10%
     date: '2026-09-04 11:00 AM',
     status: 'collected'
+  }
+];
+
+// ============================================================================
+// 8 SOVEREIGN TASK SERVICES & 3 FIXED MANDATORY RULES
+// ============================================================================
+
+export const SOVEREIGN_TASK_SERVICES: SovereignTaskRateCard[] = [
+  {
+    id: 'buzurg_sathi',
+    taskNumber: 1,
+    name: {
+      hi: 'बुजुर्ग साथी (Buzurg Sathi)',
+      en: 'Elderly Companion (Buzurg Sathi)',
+      hinglish: 'Buzurg Sathi (Baat, ghoomana, khana)'
+    },
+    desc: {
+      hi: 'बातचीत, पार्क में टहलाना, भोजन में सहायता व आत्मीय देखभाल।',
+      en: 'Companionship, emotional support, assisted walking & feeding.',
+      hinglish: 'Baat-cheet, park me walk, khana khilana aur care.'
+    },
+    icon: '👴',
+    badge: 'MIN 2 HOUR • 18% COMM • CARE & COMPANION',
+    category: 'senior_citizen',
+    withoutBikeRatePerHour: 120,
+    withoutBikeNote: {
+      hi: 'पैदल, पार्क या घर पर सेवा',
+      en: 'Walking, park or home care',
+      hinglish: 'Walking, park ya ghar par care'
+    },
+    withBikeRatePerHour: 150,
+    withBikeNote: {
+      hi: 'पास की दुकान/मंदिर तक बाइक से सुरक्षित ले जाना',
+      en: 'Bike ride to nearby temple/shop included',
+      hinglish: 'Paas ki dukaan/mandir tak bike se'
+    },
+    minBookingHours: 2,
+    platformCommissionPercent: 18,
+    importanceLevel: 'high',
+    managementEffortReason: {
+      hi: 'बुजुर्गों की देखभाल व संवेदनशीलता (दवा समय, आत्मीय सुरक्षा व निरंतर मॉनिटरिंग)',
+      en: 'Elderly care & sensitivity (medicine schedule, emotional safety & active support)'
+    },
+    hasFourKmFreeRule: false,
+    hasWaitingChargeRule: false
+  },
+  {
+    id: 'hospital_sahayak',
+    taskNumber: 2,
+    name: {
+      hi: 'हॉस्पिटल सहायक (Hospital Sahayak)',
+      en: 'Hospital Attendant & Queue Escort',
+      hinglish: 'Hospital Sahayak (Line, dawai, report)'
+    },
+    desc: {
+      hi: 'ओपीडी पर्ची, लंबी कतार में खड़ा होना, दवाइयां लाना व टेस्ट रिपोर्ट संकलन।',
+      en: 'OPD slip token, doctor line standing, medicine collection & test reports.',
+      hinglish: 'Hospital OPD line, pharmacy se dawai aur reports collection.'
+    },
+    icon: '🏥',
+    badge: 'MIN 2 HOUR • 20% COMM • WAITING RULE',
+    category: 'hospital_care',
+    withoutBikeRatePerHour: 150,
+    withoutBikeNote: {
+      hi: 'अस्पताल वार्ड व ओपीडी कतार में सहायता',
+      en: 'Hospital ward & queue assistance',
+      hinglish: 'Hospital ward aur line support'
+    },
+    withBikeRatePerHour: 180,
+    withBikeNote: {
+      hi: 'मेडिकल स्टोर व बाहर से दवा/जांच लाने हेतु बाइक',
+      en: 'Medical shop / diagnostics bike transit',
+      hinglish: 'Medical shop tak bike transit'
+    },
+    minBookingHours: 2,
+    platformCommissionPercent: 20,
+    importanceLevel: 'critical',
+    managementEffortReason: {
+      hi: 'उच्चतम जिम्मेदारी: OPD कतार, गंभीर मरीज वार्ड सपोर्ट, दवा चेकिंग व 24x7 इमरजेंसी सहायता',
+      en: 'Critical responsibility: OPD queue, serious patient bedside care, pharmacy runner & 24x7 emergency backup'
+    },
+    hasFourKmFreeRule: false,
+    hasWaitingChargeRule: true,
+    waitingFreeHours: 1,
+    waitingChargePer30Min: 50
+  },
+  {
+    id: 'bank_sarkari',
+    taskNumber: 3,
+    name: {
+      hi: 'बैंक एवं सरकारी सहायक (Bank & Sarkari Sahayak)',
+      en: 'Bank & Govt Office Assistant',
+      hinglish: 'Bank & Sarkari Sahayak (Form, line)'
+    },
+    desc: {
+      hi: 'बैंक चालान, KYC फॉर्म भरना, तहसील, कलेक्ट्रेट व दफ्तरों में कतार में खड़ा होना।',
+      en: 'Challan, KYC forms, tehsil, collectorate queue & document assistance.',
+      hinglish: 'Bank form bharna, line me lagna aur govt office tasks.'
+    },
+    icon: '🏛️',
+    badge: 'MIN 2 HOUR • 15% COMM • WAITING RULE',
+    category: 'daily_errands',
+    withoutBikeRatePerHour: 150,
+    withoutBikeNote: {
+      hi: 'दफ्तर में फॉर्म व कतार सहायता',
+      en: 'Counter & queue assistance',
+      hinglish: 'Counter aur line me khada hona'
+    },
+    withBikeRatePerHour: 180,
+    withBikeNote: {
+      hi: 'नोटरी, फोटोकॉपी व बैंक शाखाओं के बीच बाइक मूवमेंट',
+      en: 'Bike transit between notary, Xerox & bank',
+      hinglish: 'Notary, xerox aur branch bike transit'
+    },
+    minBookingHours: 2,
+    platformCommissionPercent: 15,
+    importanceLevel: 'high',
+    managementEffortReason: {
+      hi: 'दस्तावेज गोपनीयता, बैंक टोकन, चालान एवं कानूनी/सरकारी कार्य सुरक्षा',
+      en: 'Document confidentiality, bank token & statutory compliance safety'
+    },
+    hasFourKmFreeRule: false,
+    hasWaitingChargeRule: true,
+    waitingFreeHours: 1,
+    waitingChargePer30Min: 50
+  },
+  {
+    id: 'sheher_guide',
+    taskNumber: 4,
+    name: {
+      hi: 'शहर गाइड + हॉस्टल नेविगेटर (City Guide)',
+      en: 'City Guide & Student Hostel Navigator',
+      hinglish: 'Sheher Guide + Hostel Navigator'
+    },
+    desc: {
+      hi: 'नए छात्रों व आगंतुकों को कोचिंग हब, सुरक्षित हॉस्टल, रूम व शहर दिखाना।',
+      en: 'Navigating coaching hubs, safe student hostels, room finding & city transit.',
+      hinglish: 'Coaching centers, safe hostels aur room hunting companion.'
+    },
+    icon: '🧭',
+    badge: 'MIN 1 HOUR • 12% COMM • 4 KM FREE RIDE',
+    category: 'daily_errands',
+    withoutBikeRatePerHour: 120,
+    withoutBikeNote: {
+      hi: 'पैदल / लोकल ऑटो में साथ चलना',
+      en: 'Walking / public transport escort',
+      hinglish: 'Paidal / local transit ke saath'
+    },
+    withBikeRatePerHour: 160,
+    withBikeNote: {
+      hi: 'बाइक राइड + ₹10/KM (पहले 4 KM मुफ्त)',
+      en: 'Bike ride + ₹10/KM (First 4 KM Free)',
+      hinglish: 'Bike ride + ₹10/KM (0-4 KM Free)'
+    },
+    minBookingHours: 1,
+    platformCommissionPercent: 12,
+    importanceLevel: 'standard',
+    managementEffortReason: {
+      hi: 'नए छात्रों की सुरक्षा, हॉस्टल सत्यापन व शहर नेविगेशन सहायता',
+      en: 'Student security, verified hostel finding & transit guidance'
+    },
+    hasFourKmFreeRule: true,
+    ridePerKmDayRate: 10,
+    hasWaitingChargeRule: false
+  },
+  {
+    id: 'local_delivery',
+    taskNumber: 5,
+    name: {
+      hi: 'लोकल सामान व इमरजेंसी टास्क (Local Delivery)',
+      en: 'Local Errand & Emergency Task Delivery',
+      hinglish: 'Local Saman & Emergency Task (Delivery)'
+    },
+    desc: {
+      hi: 'मंडी से सामान, चाबी, पार्सल, टिफिन या कोई भी तात्कालिक वस्तु पहुंचाना।',
+      en: 'Grocery pickup, keys, parcel, tiffin box, or urgent local deliveries.',
+      hinglish: 'Urgent parcel, keys, grocery ya saman laana/pahunchana.'
+    },
+    icon: '📦',
+    badge: 'MIN 1 HOUR • 10% COMM • 4 KM FREE RIDE',
+    category: 'daily_errands',
+    withoutBikeRatePerHour: 100,
+    withoutBikeNote: {
+      hi: 'ऑटो चार्ज कस्टमर देगा',
+      en: 'Auto charge to be paid by customer directly',
+      hinglish: 'Auto charge customer dega'
+    },
+    withBikeRatePerHour: 140,
+    withBikeNote: {
+      hi: 'बाइक डिलीवरी + ₹10/KM (0-4 KM Free)',
+      en: 'Bike delivery + ₹10/KM (0-4 KM Free)',
+      hinglish: 'Bike delivery + ₹10/KM (0-4 KM Free)'
+    },
+    minBookingHours: 1,
+    platformCommissionPercent: 10,
+    importanceLevel: 'standard',
+    managementEffortReason: {
+      hi: 'तात्कालिक पार्सल डिलीवरी एवं ओटीपी हैंडओवर ट्रैकिंग',
+      en: 'Quick parcel logistics & secure OTP handover management'
+    },
+    hasFourKmFreeRule: true,
+    ridePerKmDayRate: 10,
+    hasWaitingChargeRule: false
+  },
+  {
+    id: 'surakshit_yatra',
+    taskNumber: 6,
+    name: {
+      hi: 'सुरक्षित यात्रा साथी (Surakshit Yatra Sathi)',
+      en: 'Safe Transit Escort (Women / Elderly Companion)',
+      hinglish: 'Surakshit Yatra Sathi (Akele ladki/buzurg ke saath)'
+    },
+    desc: {
+      hi: 'अकेली महिला, छात्रा या बुजुर्ग के साथ बस/ऑटो या बाइक पर सुरक्षित यात्रा।',
+      en: '100% verified escort for solo women/elderly on bus/auto or safe pillion bike ride.',
+      hinglish: 'Late night ya station se ghar tak safe transit companion.'
+    },
+    icon: '🛡️',
+    badge: 'MIN 1 HOUR • 20% COMM • RAPIDO STYLE RIDE',
+    category: 'ride_travel',
+    withoutBikeRatePerHour: 120,
+    withoutBikeNote: {
+      hi: 'बस / ऑटो से साथ यात्रा',
+      en: 'Bus / Auto transit escort',
+      hinglish: 'Bus / Auto se'
+    },
+    withBikeRatePerHour: 200,
+    withBikeNote: {
+      hi: 'बाइक पे पीछे बिठाके - Rapido Style (0-4 KM Free, फिर ₹10/KM)',
+      en: 'Pillion bike escort Rapido style (0-4 KM Free, then ₹10/KM)',
+      hinglish: 'Bike pe piche bithake - Rapido Style (0-4 KM Free)'
+    },
+    minBookingHours: 1,
+    platformCommissionPercent: 20,
+    importanceLevel: 'critical',
+    managementEffortReason: {
+      hi: 'उच्चतम सुरक्षा: महिला व बुजुर्ग सुरक्षा, लाइव पुलिस रडार, 24x7 SOS व आपातकालीन बैकअप',
+      en: 'Critical protection: Women & senior transit security, live police radar, 24x7 SOS monitoring'
+    },
+    hasFourKmFreeRule: true,
+    ridePerKmDayRate: 10,
+    hasWaitingChargeRule: false
+  },
+  {
+    id: 'event_parivarik',
+    taskNumber: 7,
+    name: {
+      hi: 'इवेंट एवं पारिवारिक सहायक (Event Sahayak)',
+      en: 'Event & Family Function Coordinator',
+      hinglish: 'Event & Parivarik Sahayak (Shaadi/Function)'
+    },
+    desc: {
+      hi: 'शादी, सगाई या पारिवारिक उत्सव में मेहमान स्वागत, शगुन व खानपान समन्वय।',
+      en: 'Guest welcome, shagun counter, catering coordination & stage support.',
+      hinglish: 'Shaadi, function me guest welcome, shagun aur stage coordination.'
+    },
+    icon: '🪔',
+    badge: 'MIN 3 HOUR • 15% COMM • FUNCTION SQUAD',
+    category: 'event_wedding',
+    withoutBikeRatePerHour: 140,
+    withoutBikeNote: {
+      hi: 'इवेंट स्थल पर पूर्ण प्रबंधन',
+      en: 'Venue coordination',
+      hinglish: 'Venue coordination'
+    },
+    withBikeRatePerHour: 170,
+    withBikeNote: {
+      hi: 'मार्केट से पूजा/सजावट सामान त्वरित लाने हेतु बाइक सहित',
+      en: 'With bike for urgent market pickups',
+      hinglish: 'Market errands ke liye bike sahayak'
+    },
+    minBookingHours: 3,
+    platformCommissionPercent: 15,
+    importanceLevel: 'high',
+    managementEffortReason: {
+      hi: 'शगुन रजिस्टर, उपहार सुरक्षा व स्टेज अनुशासन समन्वय',
+      en: 'Shagun cash counter, gift custody & stage coordination'
+    },
+    hasFourKmFreeRule: false,
+    hasWaitingChargeRule: false
+  },
+  {
+    id: 'rapido_ride',
+    taskNumber: 8,
+    name: {
+      hi: 'सिर्फ राइड सर्विस (SIRF Ride - Rapido jaisi)',
+      en: 'Express Bike Taxi (Direct Transit Only)',
+      hinglish: 'SIRF Ride Service (Rapido jaisi)'
+    },
+    desc: {
+      hi: 'त्वरित पॉइंट-टू-पॉइंट बाइक टैक्सी। दिन में ₹10/KM, रात 9pm-6am में ₹12/KM।',
+      en: 'Point-to-point swift bike taxi. Day ₹10/KM, Night 9pm-6am ₹12/KM.',
+      hinglish: 'Instant bike taxi. Din ₹10/KM, Raat 9pm-6am ₹12/KM.'
+    },
+    icon: '🏍️',
+    badge: 'BASE ₹30 + ₹10/KM (DIN) / ₹12/KM (RAAT) • 10% COMM',
+    category: 'ride_travel',
+    withoutBikeRatePerHour: null, // Ride only
+    withoutBikeNote: {
+      hi: 'यह सेवा केवल बाइक पर उपलब्ध है',
+      en: 'Available with bike only',
+      hinglish: 'Sirf bike par uplabdh'
+    },
+    withBikeRatePerHour: 30, // Base fare
+    withBikeNote: {
+      hi: 'Base ₹30 + ₹10/KM (Din) / ₹12/KM (Raat 9pm-6am)',
+      en: 'Base ₹30 + ₹10/KM (Day) / ₹12/KM (Night 9pm-6am)',
+      hinglish: 'Base ₹30 + ₹10/KM (Din) / ₹12/KM (Raat 9pm-6am)'
+    },
+    minBookingHours: 0,
+    isRideService: true,
+    rideBaseFare: 30,
+    ridePerKmDayRate: 10,
+    ridePerKmNightRate: 12,
+    platformCommissionPercent: 10,
+    importanceLevel: 'standard',
+    managementEffortReason: {
+      hi: 'रैपिडो मॉडल: पॉइंट-टू-पॉइंट राइड सुरक्षा, डिजिटल हेलमेट वेरिफिकेशन',
+      en: 'Rapido style: Point-to-point transit tracking & digital safety compliance'
+    },
+    hasFourKmFreeRule: false,
+    hasWaitingChargeRule: false
+  }
+];
+
+export const SOVEREIGN_COMPANION_RULES = [
+  {
+    ruleNumber: 1,
+    title: {
+      hi: '4 KM फ्री राइड नियम (4 KM Free Rule)',
+      en: '4 KM Free Ride Rule',
+      hinglish: '4 KM Free Rule (Kaam 4, 5, 6)'
+    },
+    appliesTo: 'काम नं. 4 (शहर गाइड), 5 (सामान डिलीवरी), 6 (सुरक्षित यात्रा)',
+    desc: {
+      hi: 'काम नं. 4, 5 और 6 में पहले 4 किलोमीटर का कोई पैसा नहीं (₹0)। 4 KM के बाद ही ₹10/KM का चार्ज लगेगा। इससे छोटे व नजदीकी कार्यों में ग्राहक को सेवा बहुत किफायती पड़ती है।',
+      en: 'For Tasks 4, 5, and 6, the first 4 kilometers of bike travel are completely free (₹0). The ₹10/KM charge applies only after 4 KM.',
+      hinglish: 'Kaam No. 4,5,6 me pehle 4 KM ka koi paisa nahi. Uske baad hi ₹10/KM lagega. Isse chhote kaam me customer ko mehenga nahi lagega.'
+    },
+    formula: 'Distance Cost = Max(0, Total KM - 4 KM) × ₹10/KM',
+    icon: '🎁'
+  },
+  {
+    ruleNumber: 2,
+    title: {
+      hi: 'वेटिंग चार्ज नियम (Waiting Charge Rule)',
+      en: 'Waiting Charge Rule',
+      hinglish: 'Waiting Charge (Hospital & Bank)'
+    },
+    appliesTo: 'काम नं. 2 (हॉस्पिटल सहायक) एवं 3 (बैंक व सरकारी दफ्तर)',
+    desc: {
+      hi: 'यदि साथी को अस्पताल की ओपीडी/दवा लाइन या बैंक में 1 घंटे से ज्यादा खड़ा होना पड़ा, तो हर 30 मिनट का ₹50 अतिरिक्त वेटिंग चार्ज लगेगा। (पहला 1 घंटा सामान्य बुकिंग में शामिल रहता है)।',
+      en: 'If the companion has to wait in bank/hospital lines for more than 1 hour, an extra waiting charge of ₹50 per 30 minutes applies.',
+      hinglish: 'Agar Sathi ko bank/hospital me 1 ghante se zyada khada hona pada, toh har 30 min ka ₹50 extra.'
+    },
+    formula: 'Waiting Cost = Max(0, ceil((Waiting Mins - 60) / 30)) × ₹50',
+    icon: '⏳'
+  },
+  {
+    ruleNumber: 3,
+    title: {
+      hi: 'नाइट राइड एवं न्यूनतम बुकिंग संरक्षण (Night Tariff & Min Hours)',
+      en: 'Night Tariff & Minimum Booking Guarantee',
+      hinglish: 'Night Tariff & Min Hours Protection'
+    },
+    appliesTo: 'सभी 8 सेवाएं एवं बाइक राइड सर्विस',
+    desc: {
+      hi: 'SIRF Ride Service (काम नं. 8) में दिन (सुबह 6 से रात 9 बजे) ₹10/KM और रात (9pm - 6am) ₹12/KM दर लागू होगी। साथ ही सभी सेवाओं में न्यूनतम बुकिंग (1, 2 या 3 घंटे) अनिवार्य है ताकि साथी का समय व ईंधन सुरक्षित रहे।',
+      en: 'Bike Ride Service charges ₹10/KM during the day (6 AM - 9 PM) and ₹12/KM at night (9 PM - 6 AM). Minimum booking hours (1h, 2h, 3h) protect companion earnings.',
+      hinglish: 'Base ₹30 + ₹10/KM (Din) / ₹12/KM (Raat 9pm-6am). Aur sabhi services me Minimum Booking strictly guaranteed.'
+    },
+    formula: 'Day Ride: Base ₹30 + (KM × 10) | Night Ride: Base ₹30 + (KM × 12)',
+    icon: '🌙'
+  }
+];
+
+export function calculateSovereignTaskQuote(params: {
+  taskId: SovereignTaskServiceId;
+  vehicleMode: CompanionVehicleMode;
+  hours: number;
+  distanceKm?: number;
+  waitingMinutes?: number;
+  isNightRide?: boolean;
+  workerCount?: number;
+}) {
+  const task = SOVEREIGN_TASK_SERVICES.find((t) => t.id === params.taskId) || SOVEREIGN_TASK_SERVICES[0];
+  const workerCount = Math.max(1, params.workerCount || 1);
+  const effectiveHours = Math.max(task.minBookingHours, params.hours || task.minBookingHours);
+
+  let baseHourlyRate = 0;
+  let baseHourlyTotal = 0;
+  let distanceCharge = 0;
+  let fourKmDiscount = 0;
+  let waitingCharge = 0;
+
+  if (task.isRideService) {
+    const baseFare = task.rideBaseFare || 30;
+    const km = Math.max(0, params.distanceKm || 5);
+    const perKmRate = params.isNightRide ? (task.ridePerKmNightRate || 12) : (task.ridePerKmDayRate || 10);
+    distanceCharge = km * perKmRate;
+    baseHourlyTotal = baseFare;
+    baseHourlyRate = baseFare;
+  } else {
+    baseHourlyRate =
+      params.vehicleMode === 'with_bike'
+        ? task.withBikeRatePerHour
+        : (task.withoutBikeRatePerHour || 120);
+
+    baseHourlyTotal = baseHourlyRate * effectiveHours * workerCount;
+
+    if (params.vehicleMode === 'with_bike' && (params.distanceKm || 0) > 0) {
+      const km = params.distanceKm || 0;
+      if (task.hasFourKmFreeRule) {
+        const chargeableKm = Math.max(0, km - 4);
+        distanceCharge = chargeableKm * (task.ridePerKmDayRate || 10);
+        fourKmDiscount = Math.min(km, 4) * (task.ridePerKmDayRate || 10);
+      } else {
+        distanceCharge = 0;
+      }
+    }
+
+    if (task.hasWaitingChargeRule && (params.waitingMinutes || 0) > 60) {
+      const extraMinutes = (params.waitingMinutes || 0) - 60;
+      const extraSlots = Math.ceil(extraMinutes / 30);
+      waitingCharge = extraSlots * (task.waitingChargePer30Min || 50);
+    }
+  }
+
+  const subtotal = baseHourlyTotal + distanceCharge + waitingCharge;
+  const safetyInsuranceFee = 29;
+  const gstTax = Math.round(subtotal * 0.05);
+  const grandTotal = subtotal + safetyInsuranceFee + gstTax;
+
+  const commissionPercent = task.platformCommissionPercent || 15;
+  const platformCommissionAmount = Math.round(subtotal * (commissionPercent / 100));
+  const workerPayoutAmount = subtotal - platformCommissionAmount;
+
+  // Generate clear user-facing formula breakdown (e.g. "2hr x ₹150 = ₹300 + 6km bike ₹60 = ₹360")
+  let formulaParts: string[] = [];
+  if (task.isRideService) {
+    const km = Math.max(0, params.distanceKm || 5);
+    const rate = params.isNightRide ? 12 : 10;
+    formulaParts.push(`Base ₹${baseHourlyTotal} + ${km}km x ₹${rate} = ₹${subtotal}`);
+  } else {
+    formulaParts.push(`${effectiveHours}hr x ₹${baseHourlyRate} = ₹${baseHourlyTotal}`);
+    if (distanceCharge > 0) {
+      formulaParts.push(`+ ${params.distanceKm || 0}km bike (chargeable) ₹${distanceCharge}`);
+    } else if (fourKmDiscount > 0) {
+      formulaParts.push(`+ ${params.distanceKm || 0}km bike (0-4km Free = ₹0)`);
+    }
+    if (waitingCharge > 0) {
+      formulaParts.push(`+ Waiting ₹${waitingCharge}`);
+    }
+    formulaParts.push(`= ₹${subtotal}`);
+  }
+  const billFormulaBreakdown = formulaParts.join(' ');
+
+  return {
+    task,
+    effectiveHours,
+    baseHourlyRate,
+    baseHourlyTotal,
+    distanceCharge,
+    fourKmDiscount,
+    waitingCharge,
+    safetyInsuranceFee,
+    gstTax,
+    grandTotal,
+    commissionPercent,
+    platformCommissionAmount,
+    workerPayoutAmount,
+    billFormulaBreakdown
+  };
+}
+
+// =======================================================
+// HUMARA MEDICAL SATHI 3-LEVEL SERVICE PACKAGES & NETWORK
+// =======================================================
+
+export interface HumaraMedicalPackageConfig {
+  id: 'level1' | 'level2' | 'level3';
+  levelNumber: 1 | 2 | 3;
+  name: string;
+  tagline: string;
+  badge?: string;
+  minPrice: number;
+  maxPrice: number;
+  defaultPrice: number;
+  iconName: 'luggage' | 'nurse' | 'doctor';
+  features: string[];
+  bestFor: string;
+  ctaText: string;
+  nurseIncluded: boolean;
+  doctorIncluded: boolean;
+  primaryCareIncluded: boolean;
+  colorTheme: {
+    border: string;
+    bgGradient: string;
+    badgeBg: string;
+    ctaGradient: string;
+    accent: string;
+  };
+}
+
+export const HUMARA_MEDICAL_PACKAGES: HumaraMedicalPackageConfig[] = [
+  {
+    id: 'level1',
+    levelNumber: 1,
+    name: 'LEVEL 1: BASIC SATHI ESCORT',
+    tagline: 'स्टेशन से अस्पताल तक सामान्य मरीज हेतु भरोसेमंद साथी',
+    minPrice: 100,
+    maxPrice: 250,
+    defaultPrice: 150,
+    iconName: 'luggage',
+    features: [
+      'Train / Bus Station Pickup at Platform / Gate',
+      'Luggage & Baggage Carrying Help',
+      'Auto / Taxi / Cab Booking Assistance',
+      'Hospital Counter & Registration Desk tak le jana',
+      'Doctor Token & OPD Line me khada hona aur help'
+    ],
+    bestFor: 'Normal patients who can walk without wheelchair assistance',
+    ctaText: 'Book Basic Sathi',
+    nurseIncluded: false,
+    doctorIncluded: false,
+    primaryCareIncluded: false,
+    colorTheme: {
+      border: 'border-blue-500/50 hover:border-blue-400',
+      bgGradient: 'from-[#071938] via-[#040E20] to-[#020710]',
+      badgeBg: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+      ctaGradient: 'from-blue-600 via-blue-500 to-indigo-600 text-white',
+      accent: '#3B82F6'
+    }
+  },
+  {
+    id: 'level2',
+    levelNumber: 2,
+    name: 'LEVEL 2: SATHI + NURSE SUPPORT',
+    tagline: 'व्हीलचेयर, बीपी/शुगर मॉनिटरिंग व सर्टिफाइड नर्स केयर',
+    badge: 'MOST POPULAR',
+    minPrice: 500,
+    maxPrice: 700,
+    defaultPrice: 550,
+    iconName: 'nurse',
+    features: [
+      'Everything in Level 1 (Station Pickup, Luggage, Taxi, Line)',
+      'Wheelchair Support (प्लेटफॉर्म से वार्ड/ओपीडी तक)',
+      'BP / Sugar / Pulse Check On The Way in transit',
+      'First-Aid, Injections & On-Time Medicine Help',
+      'Elderly & Female Patient Special Dedicated Care'
+    ],
+    bestFor: 'Bujurg (Senior Citizens), Wheelchair & semi-bedridden patients',
+    ctaText: 'Book Sathi + Nurse',
+    nurseIncluded: true,
+    doctorIncluded: false,
+    primaryCareIncluded: true,
+    colorTheme: {
+      border: 'border-[#FFD700] hover:border-amber-300 shadow-[0_0_25px_rgba(255,215,0,0.25)]',
+      bgGradient: 'from-[#0E1B38] via-[#081229] to-[#030814]',
+      badgeBg: 'bg-[#FFD700] text-slate-950 font-black border-[#FFD700]',
+      ctaGradient: 'from-[#FFD700] via-amber-400 to-[#FFD700] text-slate-950 font-black',
+      accent: '#FFD700'
+    }
+  },
+  {
+    id: 'level3',
+    levelNumber: 3,
+    name: 'LEVEL 3: SATHI + NURSE + PRIVATE DOCTOR SUPERVISION',
+    tagline: 'एमबीबीएस/एमडी डॉक्टर की लाइव निगरानी में गंभीर व बाहरी मरीज एस्कॉर्ट',
+    badge: 'PREMIUM MEDICAL TEAM',
+    minPrice: 1200,
+    maxPrice: 1800,
+    defaultPrice: 1400,
+    iconName: 'doctor',
+    features: [
+      'Everything in Level 1 & 2 (Sathi + GNM Nurse Support)',
+      'Private Doctor Supervision (MBBS/MD Specialist On Transit)',
+      'Primary Health Care Checkup On The Way (ECG/O2/Vitals)',
+      'Initial Clinical Consultation in Transit (Pre-OPD Prep)',
+      'Emergency Handling & Critical Transit Protocol',
+      'Medical Reports Review & Full Task Fulfill Guaranteed'
+    ],
+    bestFor: 'Serious patients & outstation patients arriving at Bhopal, Nagpur AIIMS, Rewa, Jabalpur',
+    ctaText: 'Book Premium Medical Team',
+    nurseIncluded: true,
+    doctorIncluded: true,
+    primaryCareIncluded: true,
+    colorTheme: {
+      border: 'border-emerald-500 hover:border-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]',
+      bgGradient: 'from-[#05241D] via-[#031713] to-[#010B09]',
+      badgeBg: 'bg-emerald-500 text-slate-950 font-black border-emerald-400',
+      ctaGradient: 'from-emerald-500 via-teal-400 to-emerald-500 text-slate-950 font-black',
+      accent: '#10B981'
+    }
+  }
+];
+
+export const POPULAR_PICKUP_STATIONS = [
+  'Bhopal Junction Railway Station (Platform 1 / 6)',
+  'Rani Kamlapati Railway Station (RKMP Platform 1 / 5)',
+  'Nagpur Junction Railway Station (PF 1 / Main Gate)',
+  'Rewa Railway Station (Main Concourse)',
+  'Jabalpur Junction Railway Station',
+  'Indore Junction Railway Station',
+  'Hazrat Nizamuddin / New Delhi Station',
+  'Home Address (Doorstep Pickup)'
+];
+
+export const POPULAR_DESTINATION_HOSPITALS = [
+  'AIIMS Bhopal (Saket Nagar, OPD Gate 1)',
+  'Hamidia Hospital & Gandhi Medical College (Royal Market)',
+  'Bansal Hospital (Shahpura, Bhopal)',
+  'BMHRC (Bhopal Memorial Hospital, Karond)',
+  'Chirayu Health & Medicare (Bairagarh Bhopal)',
+  'Narmada Trauma Centre (E-3 Arera Colony)',
+  'AIIMS Nagpur (MIHAN Campus, Nagpur)',
+  'Sanjay Gandhi Memorial Hospital & Rewa Medical College',
+  'Netaji Subhash Chandra Bose Medical College, Jabalpur'
+];
+
+export const NETWORK_SATHI_STAFF = [
+  {
+    id: 'stf-sathi-01',
+    name: 'Rohit Verma',
+    phone: '+91 98260 14820',
+    photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    verifiedId: 'SATHI-BPL-8812',
+    role: 'companion' as const,
+    qualification: 'Senior Patient Escort & Luggage Specialist',
+    rating: 4.9,
+    experienceYears: 4
+  },
+  {
+    id: 'stf-sathi-02',
+    name: 'Pooja Vishwakarma',
+    phone: '+91 98261 44520',
+    photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+    verifiedId: 'SATHI-BPL-9901',
+    role: 'companion' as const,
+    qualification: 'Certified GDA (General Duty Assistant) & Attendant',
+    rating: 5.0,
+    experienceYears: 3
+  },
+  {
+    id: 'stf-sathi-03',
+    name: 'Deepak Ahirwar',
+    phone: '+91 97701 54321',
+    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    verifiedId: 'SATHI-BPL-7734',
+    role: 'companion' as const,
+    qualification: 'Wheelchair Mobility & Station Runner',
+    rating: 4.8,
+    experienceYears: 5
+  }
+];
+
+export const NETWORK_NURSE_STAFF = [
+  {
+    id: 'stf-nurse-01',
+    name: 'Sister Sunita Minz',
+    phone: '+91 94250 88214',
+    photoUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80',
+    verifiedId: 'NURSE-MPNC-8491',
+    role: 'nurse' as const,
+    qualification: 'B.Sc Nursing (Registered with MP Nursing Council)',
+    specialty: 'ICU Vitals, Wheelchair Escort & Emergency Medication',
+    registrationNumber: 'MPNC-2018-8491',
+    rating: 4.95,
+    experienceYears: 7
+  },
+  {
+    id: 'stf-nurse-02',
+    name: 'Sister Anjali Tiwari',
+    phone: '+91 98930 41209',
+    photoUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=400&q=80',
+    verifiedId: 'NURSE-MPNC-5512',
+    role: 'nurse' as const,
+    qualification: 'GNM & Critical Transit Care Certified',
+    specialty: 'Elderly Gentle Bedside & Diabetic Sugar/BP Monitoring',
+    registrationNumber: 'MPNC-2020-5512',
+    rating: 4.9,
+    experienceYears: 5
+  }
+];
+
+export const NETWORK_DOCTOR_STAFF = [
+  {
+    id: 'stf-doc-01',
+    name: 'Dr. Rajesh Sharma, MD',
+    phone: '+91 98263 77410',
+    photoUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
+    verifiedId: 'DOC-MCI-14209',
+    role: 'doctor' as const,
+    qualification: 'MD (Internal Medicine) • Ex-Senior Resident AIIMS',
+    specialty: 'Clinical Diagnosis, Emergency In-Transit Care & Vitals Stabilization',
+    registrationNumber: 'MPMC-14209',
+    rating: 5.0,
+    experienceYears: 12
+  },
+  {
+    id: 'stf-doc-02',
+    name: 'Dr. Neha Patel, MBBS, DNB',
+    phone: '+91 94251 22987',
+    photoUrl: 'https://images.unsplash.com/photo-1594824813583-22830f0f9b69?auto=format&fit=crop&w=400&q=80',
+    verifiedId: 'DOC-MCI-18754',
+    role: 'doctor' as const,
+    qualification: 'MBBS, DNB (Emergency & Critical Medicine)',
+    specialty: 'Trauma Escort, Cardiac Primary Checkup & Specialist Referral',
+    registrationNumber: 'MPMC-18754',
+    rating: 4.9,
+    experienceYears: 9
   }
 ];
 

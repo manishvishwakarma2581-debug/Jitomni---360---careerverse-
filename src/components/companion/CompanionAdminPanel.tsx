@@ -24,12 +24,15 @@ import {
   Car,
   Bike,
   Navigation,
-  Info
+  Info,
+  FileSpreadsheet
 } from 'lucide-react';
+import { CompanionDailyHisabSheet } from './CompanionDailyHisabSheet';
 import {
   CompanionWorker,
   CompanionTaskCommissionRecord,
   RidePlatformFeeRecord,
+  ServiceProviderRegistration,
   Language
 } from '../../types';
 import {
@@ -51,11 +54,15 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
   const [workersList, setWorkersList] = useState<CompanionWorker[]>(initialVerifiedWorkers);
   const [selectedWorkerForReview, setSelectedWorkerForReview] = useState<CompanionWorker | null>(null);
 
+  // Provider Submissions (Sathis, Cab Vendors, Hotels)
+  const [providersList, setProvidersList] = useState<ServiceProviderRegistration[]>([]);
+  const [providerStatusFilter, setProviderStatusFilter] = useState<'all' | 'pending_approval' | 'verified_active' | 'rejected'>('all');
+
   // Commission Records & Platform Financials
   const [commissionRecords, setCommissionRecords] = useState<CompanionTaskCommissionRecord[]>(initialPlatformCommissionRecords);
   const [rideFeeRecords, setRideFeeRecords] = useState<RidePlatformFeeRecord[]>(initialRidePlatformFeeRecords);
   const [platformBalance, setPlatformBalance] = useState<number>(634); // Platform Wallet 20%
-  const [activeAdminTab, setActiveAdminTab] = useState<'verification' | 'financials' | 'rating_audit'>('verification');
+  const [activeAdminTab, setActiveAdminTab] = useState<'daily_hisab' | 'provider_submissions' | 'verification' | 'financials' | 'rating_audit'>('daily_hisab');
   const [financialsSubTab, setFinancialsSubTab] = useState<'rides' | 'tasks'>('rides');
 
   // Filter for workers: 'all' | 'pending' | 'verified' | 'flagged'
@@ -97,10 +104,49 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
           setRideFeeRecords(fData.ridePlatformFeeRecords);
         }
       }
+
+      // 3. Fetch Provider Submissions (Sathis, Cabs, Hotels)
+      const pRes = await fetch('/api/companion/providers');
+      if (pRes.ok) {
+        const pData = await pRes.json();
+        if (pData.providers) {
+          setProvidersList(pData.providers);
+        }
+      }
     } catch (e) {
       console.warn('Fallback to local admin initial data', e);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Provider Approval / Rejection Handler
+  const handleApproveProvider = async (providerId: string, status: 'approved' | 'rejected', notes?: string) => {
+    try {
+      const res = await fetch('/api/companion/providers/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          providerId,
+          action: status === 'approved' ? 'approve' : 'reject',
+          status,
+          remarks: notes || (status === 'approved' ? 'Verified UIDAI & Rewa Police record' : 'Incomplete documentation')
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setProvidersList((prev) =>
+          prev.map((p) => (p.id === providerId ? data.provider : p))
+        );
+        setActionSuccessMsg(
+          status === 'approved'
+            ? `वेंडर/साथी ${data.provider.fullNameOrBusiness} सफलतापूर्वक स्वीकृत हुआ और रीवा लाइव मैप पर जोड़ दिया गया!`
+            : `आवेदन ${providerId} को अस्वीकृत कर दिया गया।`
+        );
+      }
+    } catch (e) {
+      console.error('Failed to update provider status', e);
     }
   };
 
@@ -362,6 +408,37 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none border-b border-slate-800">
         <button
           type="button"
+          onClick={() => setActiveAdminTab('daily_hisab')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border ${
+            activeAdminTab === 'daily_hisab'
+              ? 'bg-[#FFD700] text-slate-950 border-[#FFD700] shadow-md shadow-[#FFD700]/20'
+              : 'bg-[#07132B] text-slate-300 hover:text-white border-slate-700'
+          }`}
+        >
+          <FileSpreadsheet className="w-3.5 h-3.5" />
+          <span>📊 डेली हिसाब शीट (Daily Hisab Table)</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveAdminTab('provider_submissions')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border ${
+            activeAdminTab === 'provider_submissions'
+              ? 'bg-[#FFD700] text-slate-950 border-[#FFD700] shadow-md shadow-[#FFD700]/20'
+              : 'bg-[#07132B] text-slate-300 hover:text-white border-slate-700'
+          }`}
+        >
+          <Building2 className="w-3.5 h-3.5" />
+          <span>🏢 वेंडर व साथी ऑनबोर्डिंग अनुमोदन (Provider Approvals)</span>
+          {providersList.filter((p) => p.status === 'pending_approval').length > 0 && (
+            <span className="px-1.5 py-0.5 rounded text-[10px] bg-red-500 text-white font-black font-mono animate-pulse">
+              {providersList.filter((p) => p.status === 'pending_approval').length} New
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveAdminTab('verification')}
           className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border ${
             activeAdminTab === 'verification'
@@ -414,6 +491,245 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
         <div className="p-3.5 rounded-xl bg-emerald-950/70 border border-emerald-500 text-emerald-200 text-xs flex items-center gap-2 animate-fadeIn">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{actionSuccessMsg}</span>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* SUB-TAB 0: DAILY HISAB SHEET (10%-20% Platform Cut & Payouts)*/}
+      {/* ============================================================ */}
+      {activeAdminTab === 'daily_hisab' && (
+        <CompanionDailyHisabSheet lang={lang} onRefreshParent={loadAdminData} />
+      )}
+
+      {/* ============================================================ */}
+      {/* SUB-TAB: SERVICE PROVIDER (SATHI/CAB/HOTEL) APPROVAL DASHBOARD*/}
+      {/* ============================================================ */}
+      {activeAdminTab === 'provider_submissions' && (
+        <div className="space-y-6 animate-fadeIn">
+          {/* Header Banner */}
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-[#071738] via-[#0B1E3B] to-[#040E24] border border-amber-500/40 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-400/40">
+                  REWA CITY VENDOR ONBOARDING DESK
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
+                  UIDAI + Rewa Police Audit
+                </span>
+              </div>
+              <h3 className="text-base sm:text-lg font-black text-white mt-1">
+                स्थानीय साथी, कैब वेंडर एवं होटल पार्टनर्स सत्यापन डेस्क (Admin Approval Dashboard)
+              </h3>
+              <p className="text-xs text-slate-300 mt-0.5">
+                नागरिकों व स्थानीय वेंडर्स द्वारा प्रस्तुत आधार व व्यावसायिक विवरणों का ऑडिट करें। स्वीकृति पर वे रीवा लाइव मैप पर तुरंत दृश्यमान हो जाएंगे।
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={loadAdminData}
+              className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5 transition-all self-start sm:self-auto"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
+              <span>रीफ्रेश सबमिशन</span>
+            </button>
+          </div>
+
+          {/* Filter Bar & KPIs */}
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0B1E3B] p-4 rounded-2xl border border-slate-800">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setProviderStatusFilter('all')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                  providerStatusFilter === 'all'
+                    ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md font-black'
+                    : 'bg-[#07132B] text-slate-300 border-slate-700 hover:text-white'
+                }`}
+              >
+                सभी आवेदन ({providersList.length})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setProviderStatusFilter('pending_approval')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                  providerStatusFilter === 'pending_approval'
+                    ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md font-black'
+                    : 'bg-[#07132B] text-amber-400 border-amber-500/40 hover:text-white'
+                }`}
+              >
+                ⏳ लंबित अनुमोदन ({providersList.filter((p) => p.status === 'pending_approval').length})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setProviderStatusFilter('verified_active')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                  providerStatusFilter === 'verified_active'
+                    ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-md font-black'
+                    : 'bg-[#07132B] text-emerald-400 border-emerald-500/40 hover:text-white'
+                }`}
+              >
+                ✓ स्वीकृत व एक्टिव ({providersList.filter((p) => p.status === 'verified_active').length})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setProviderStatusFilter('rejected')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                  providerStatusFilter === 'rejected'
+                    ? 'bg-red-600 text-white border-red-500 shadow-md font-black'
+                    : 'bg-[#07132B] text-red-400 border-red-500/40 hover:text-white'
+                }`}
+              >
+                ✕ अस्वीकृत ({providersList.filter((p) => p.status === 'rejected').length})
+              </button>
+            </div>
+          </div>
+
+          {/* Submissions Table */}
+          <div className="bg-[#0B1E3B] rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#07132B] text-slate-300 font-bold uppercase tracking-wider text-[11px] border-b border-slate-800">
+                  <tr>
+                    <th className="p-3.5">डॉकेट ID व तारीख</th>
+                    <th className="p-3.5">पूरा नाम / व्यवसाय</th>
+                    <th className="p-3.5">श्रेणी (Type)</th>
+                    <th className="p-3.5">संपर्क व आधार</th>
+                    <th className="p-3.5">रीवा लोकेशन व लैंडमार्क</th>
+                    <th className="p-3.5">वाहन / होटल विवरण</th>
+                    <th className="p-3.5">स्थिति (Status)</th>
+                    <th className="p-3.5 text-right">प्रशासकीय एक्शन</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800 text-slate-200">
+                  {providersList
+                    .filter((p) => providerStatusFilter === 'all' || p.status === providerStatusFilter)
+                    .map((prov) => (
+                      <tr key={prov.id} className="hover:bg-slate-800/40 transition-colors">
+                        {/* ID & Date */}
+                        <td className="p-3.5 font-mono">
+                          <div className="text-amber-400 font-bold">{prov.id}</div>
+                          <div className="text-[10px] text-slate-400">
+                            {new Date(prov.appliedAt || prov.registeredAt || Date.now()).toLocaleDateString()}
+                          </div>
+                        </td>
+
+                        {/* Name */}
+                        <td className="p-3.5">
+                          <div className="font-bold text-white text-xs">{prov.fullNameOrBusiness}</div>
+                          <div className="text-[10px] text-emerald-400 font-mono">
+                            {prov.aadhaarStatus === 'verified' || prov.aadhaarVerified ? '✓ आधार लिंक' : 'सत्यापन योग्य'}
+                          </div>
+                        </td>
+
+                        {/* Category */}
+                        <td className="p-3.5">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                              prov.serviceType === 'hospital_helper'
+                                ? 'bg-blue-500/20 text-blue-300 border-blue-400/40'
+                                : prov.serviceType === 'elderly_care'
+                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40'
+                                : prov.serviceType === 'cab_vendor'
+                                ? 'bg-amber-500/20 text-amber-300 border-amber-400/40'
+                                : 'bg-purple-500/20 text-purple-300 border-purple-400/40'
+                            }`}
+                          >
+                            {prov.serviceType.replace('_', ' ')}
+                          </span>
+                        </td>
+
+                        {/* Phone & Aadhaar */}
+                        <td className="p-3.5 font-mono">
+                          <div className="text-slate-200">{prov.phone}</div>
+                          <div className="text-[10px] text-slate-400 tracking-wider">
+                            UID: {prov.aadhaarNumber.slice(0, 4)} XXXX {prov.aadhaarNumber.slice(-4)}
+                          </div>
+                        </td>
+
+                        {/* Location */}
+                        <td className="p-3.5">
+                          <div className="text-xs text-white font-medium">{prov.location.landmark}</div>
+                          <div className="text-[10px] text-slate-400">{prov.location.address}</div>
+                          <div className="text-[9px] text-blue-400 font-mono">
+                            {prov.location.lat}° N, {prov.location.lng}° E
+                          </div>
+                        </td>
+
+                        {/* Specific details */}
+                        <td className="p-3.5 text-[11px]">
+                          {prov.cabDetails && (
+                            <div className="font-mono text-amber-300">
+                              <div>{prov.cabDetails.vehicleType}</div>
+                              <div className="text-[10px] text-slate-300">{prov.cabDetails.vehicleNumber}</div>
+                            </div>
+                          )}
+                          {prov.hotelDetails && (
+                            <div className="text-purple-300">
+                              <div>{prov.hotelDetails.totalRooms} Rooms Available</div>
+                              <div className="text-[10px] text-slate-300">
+                                SGMH: {prov.hotelDetails.proximityHospitalKm}km • ₹{prov.hotelDetails.startingPrice}/रात
+                              </div>
+                            </div>
+                          )}
+                          {!prov.cabDetails && !prov.hotelDetails && (
+                            <span className="text-slate-400">ऑन-डिमांड रीवा साथी (₹120/hr)</span>
+                          )}
+                        </td>
+
+                        {/* Status */}
+                        <td className="p-3.5">
+                          <span
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wider uppercase border flex items-center gap-1 w-fit ${
+                              prov.status === 'verified_active'
+                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50'
+                                : prov.status === 'rejected'
+                                ? 'bg-red-500/20 text-red-300 border-red-500/50'
+                                : 'bg-amber-500/20 text-amber-300 border-amber-400/50 animate-pulse'
+                            }`}
+                          >
+                            {prov.status === 'verified_active' ? '✓ APPROVED' : prov.status === 'rejected' ? '✕ REJECTED' : '⏳ PENDING'}
+                          </span>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="p-3.5 text-right space-x-1.5 whitespace-nowrap">
+                          {prov.status !== 'verified_active' && (
+                            <button
+                              type="button"
+                              onClick={() => handleApproveProvider(prov.id, 'approved')}
+                              className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition-all"
+                            >
+                              स्वीकृत करें (Approve)
+                            </button>
+                          )}
+
+                          {prov.status !== 'rejected' && (
+                            <button
+                              type="button"
+                              onClick={() => handleApproveProvider(prov.id, 'rejected')}
+                              className="px-3 py-1 rounded-lg bg-red-800 hover:bg-red-700 text-red-100 font-bold text-xs transition-all"
+                            >
+                              अस्वीकृत (Reject)
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  {providersList.length === 0 && (
+                    <tr>
+                      <td colSpan={8} className="p-8 text-center text-slate-400 text-xs">
+                        फिलहाल कोई नया वेंडर या साथी पंजीकरण लंबित नहीं है।
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 

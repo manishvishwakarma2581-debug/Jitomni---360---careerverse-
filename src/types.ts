@@ -1,5 +1,7 @@
 export type Language = 'hi' | 'en' | 'hinglish';
 
+export type UserPersona = 'student' | 'company' | 'jobseeker' | 'kisan' | 'worker' | 'all';
+
 export type AppRole = 'home' | 'company' | 'skilled' | 'labour';
 
 export type MainTab = AppRole | 'verifiedjobs' | 'companion' | 'ai-interview' | 'agri' | 'iti' | 'iit' | 'school' | 'exam' | 'current-affairs' | 'vacancies' | 'globaljobs' | 'english' | 'prime' | 'doubt' | 'flashcards' | 'admin' | 'super-admin' | 'krishi-admin';
@@ -629,6 +631,45 @@ export type CompanionCategoryType =
   | 'daily_errands'
   | 'ride_travel';
 
+// Standard 8 Sovereign Task Services
+export type SovereignTaskServiceId = 
+  | 'buzurg_sathi'          // 1. Buzurg Sathi (Baat, ghoomana, khana)
+  | 'hospital_sahayak'      // 2. Hospital Sahayak (Line, dawai, report)
+  | 'bank_sarkari'          // 3. Bank & Sarkari Sahayak (Form, line)
+  | 'sheher_guide'          // 4. Sheher Guide + Hostel Navigator
+  | 'local_delivery'        // 5. Local Saman & Emergency Task (Delivery)
+  | 'surakshit_yatra'       // 6. Surakshit Yatra Sathi (Akele ladki/buzurg ke saath)
+  | 'event_parivarik'       // 7. Event & Parivarik Sahayak (Shaadi/Function)
+  | 'rapido_ride';          // 8. SIRF Ride Service (Rapido jaisi)
+
+export type CompanionVehicleMode = 'without_bike' | 'with_bike';
+
+export interface SovereignTaskRateCard {
+  id: SovereignTaskServiceId;
+  taskNumber: number;
+  name: { hi: string; en: string; hinglish: string };
+  desc: { hi: string; en: string; hinglish: string };
+  icon: string;
+  badge: string;
+  category: CompanionCategoryType;
+  withoutBikeRatePerHour: number | null; // null for pure ride
+  withoutBikeNote?: { hi: string; en: string; hinglish: string };
+  withBikeRatePerHour: number;
+  withBikeNote?: { hi: string; en: string; hinglish: string };
+  minBookingHours: number; // 2, 2, 2, 1, 1, 1, 3, 0 (ride)
+  platformCommissionPercent: number; // 10% - 20% based on task importance
+  importanceLevel: 'critical' | 'high' | 'standard';
+  managementEffortReason: { hi: string; en: string };
+  isRideService?: boolean;
+  rideBaseFare?: number; // ₹30 for ride
+  ridePerKmDayRate?: number; // ₹10/KM
+  ridePerKmNightRate?: number; // ₹12/KM (9pm - 6am)
+  hasFourKmFreeRule?: boolean; // true for 4, 5, 6
+  hasWaitingChargeRule?: boolean; // true for 2, 3 (Bank, Hospital)
+  waitingFreeHours?: number; // 1 hr free
+  waitingChargePer30Min?: number; // ₹50 per 30 min
+}
+
 export interface CompanionSubService {
   id: string;
   name: { hi: string; en: string; hinglish: string };
@@ -756,11 +797,34 @@ export interface CompanionTaskCommissionRecord {
   workerName: string;
   hours: number;
   hourlyRate: number;
+  bikeKm?: number;
+  bikeKmCharge?: number;
+  waitingCharge?: number;
   grossFee: number;
-  workerShare80: number;
-  platformShare20: number;
-  status: 'credited' | 'settled';
+  billFormulaBreakdown?: string;
+  platformCommissionPercent: number; // 10% - 20%
+  platformShareAmount: number;
+  workerShareAmount: number;
+  workerShare80?: number; // backwards compatibility
+  platformShare20?: number; // backwards compatibility
+  status: 'credited' | 'settled' | 'pending';
   timestamp: string;
+  dateStr?: string;
+  startPhotoUrl?: string;
+  startGpsLocation?: string;
+  endPhotoUrl?: string;
+  endGpsLocation?: string;
+}
+
+export interface CompanionNotification {
+  id: string;
+  type: 'task_booked' | 'task_accepted' | 'start_checkin' | 'rule_applied' | 'waiting_alert' | 'end_checkin' | 'bill_generated' | 'wallet_credit';
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  importance?: 'normal' | 'high' | 'urgent';
+  metadata?: any;
 }
 
 export interface CompanionWorkerRatingReview {
@@ -802,6 +866,14 @@ export interface CompanionBooking {
   emergencyContact: string;
   status: BookingStatus;
   matchedWorker?: CompanionWorker;
+  serviceTaskId?: SovereignTaskServiceId;
+  vehicleMode?: CompanionVehicleMode;
+  distanceKm?: number;
+  estimatedDistanceKm?: number;
+  distanceCharge?: number;
+  waitingMinutes?: number;
+  waitingCharge?: number;
+  isNightRide?: boolean;
   hourlyRate: number;
   baseAmount: number;
   safetyInsuranceFee: number;
@@ -810,6 +882,22 @@ export interface CompanionBooking {
   startOtp: string;
   endOtp: string;
   createdAt: string;
+  startCheckIn?: {
+    photoUrl: string;
+    gpsCoordinates: { lat: number; lng: number };
+    addressText: string;
+    timestamp: string;
+  };
+  endCheckIn?: {
+    photoUrl: string;
+    gpsCoordinates: { lat: number; lng: number };
+    addressText: string;
+    timestamp: string;
+  };
+  billFormulaBreakdown?: string;
+  platformCommissionPercent?: number;
+  platformCommissionAmount?: number;
+  workerPayoutAmount?: number;
   trackingCoordinates?: {
     lat: number;
     lng: number;
@@ -923,6 +1011,71 @@ export interface RidePlatformFeeRecord {
   platformFee: number; // 10%
   date: string;
   status: 'collected' | 'pending';
+}
+
+// ==========================================
+// HUMARA MEDICAL SATHI 3-LEVEL SERVICE TYPES
+// ==========================================
+
+export type MedicalSathiLevel = 'level1' | 'level2' | 'level3';
+
+export type MedicalSathiAddon = 
+  | 'Medicine Lane'
+  | 'Report Lane'
+  | 'Khana Lane'
+  | 'Dharamshala Book Karna'
+  | 'Return Drop';
+
+export interface MedicalSathiStaffMember {
+  id: string;
+  name: string;
+  phone: string;
+  photoUrl: string;
+  verifiedId: string;
+  role: 'companion' | 'nurse' | 'doctor';
+  qualification?: string;
+  specialty?: string;
+  registrationNumber?: string;
+  rating: number;
+  experienceYears: number;
+}
+
+export interface MedicalSathiBooking {
+  id: string;
+  level: MedicalSathiLevel;
+  pickup_type: 'railway' | 'home';
+  pickup_location: string;
+  drop_hospital: string;
+  patient_name: string;
+  patient_age: number;
+  can_walk: boolean;
+  wheelchair_needed: boolean;
+  nurse_required: boolean;
+  doctor_required: boolean;
+  primary_care_needed: boolean;
+  addons: MedicalSathiAddon[];
+  hours: number;
+  hourly_rate: number;
+  distance_km: number;
+  distance_charge: number;
+  total_fare: number;
+  assigned_staff: {
+    sathi?: MedicalSathiStaffMember;
+    nurse?: MedicalSathiStaffMember;
+    doctor?: MedicalSathiStaffMember;
+  };
+  transit_tracking: {
+    currentLat: number;
+    currentLng: number;
+    currentLocationName: string;
+    step: 'pickup_arrived' | 'patient_escorted' | 'in_transit' | 'hospital_counter' | 'completed';
+    etaMinutes: number;
+    speedKmh: number;
+    vitalsLogged?: { bp: string; sugar: string; pulse: string; notes: string };
+  };
+  status: 'booked' | 'assigned' | 'in_transit' | 'reached_hospital' | 'completed';
+  user_phone: string;
+  created_at: string;
 }
 
 // ==========================================
@@ -1102,5 +1255,158 @@ export interface FeaturePriorityItem {
   status: 'active' | 'next_sprint' | 'backlog';
   category: 'core_nation_building' | 'revenue_engine' | 'ai_deeptech' | 'security_infrastructure';
   targetReleasePhase: string;
+}
+
+// ==========================================
+// REWA CITY SERVICE PROVIDER & ON-DEMAND SATHI TYPES
+// ==========================================
+
+export type ServiceProviderCategory = 
+  | 'hospital_helper' 
+  | 'elderly_care' 
+  | 'cab_vendor' 
+  | 'hotel_partner';
+
+export interface ServiceProviderRegistration {
+  id: string;
+  fullNameOrBusiness: string;
+  serviceType: ServiceProviderCategory;
+  phone: string;
+  aadhaarNumber: string;
+  aadhaarStatus: 'verified' | 'pending' | 'rejected';
+  aadhaarVerified?: boolean;
+  location: {
+    address: string;
+    landmark: string;
+    city: string;
+    lat: number;
+    lng: number;
+  };
+  cabDetails?: {
+    vehicleType: string;
+    vehicleNumber: string;
+    dlNumber: string;
+    seatingCapacity: number;
+    ratePerKm: number;
+  };
+  hotelDetails?: {
+    hotelName: string;
+    totalRooms: number;
+    proximityStationKm: number;
+    proximityHospitalKm: number;
+    startingPrice: number;
+    amenities: string[];
+  };
+  status: 'pending_approval' | 'verified_active' | 'rejected';
+  adminRemarks?: string;
+  appliedAt: string;
+  registeredAt?: string;
+  approvedAt?: string;
+}
+
+export type RewaLocationType = 'sathi' | 'cab' | 'hotel';
+
+export interface RewaMapLocationPin {
+  id: string;
+  name: string;
+  type: RewaLocationType;
+  categoryLabel: string;
+  lat: number;
+  lng: number;
+  rating: number;
+  reviewsCount: number;
+  address: string;
+  phone: string;
+  verifiedBadge: string;
+  priceLabel: string;
+  isAvailable: boolean;
+  distanceKm?: number;
+  etaMinutes?: number;
+  meta: {
+    photoUrl?: string;
+    specialty?: string;
+    vehicleNumber?: string;
+    vehicleModel?: string;
+    roomsAvailable?: number;
+    amenities?: string[];
+    hospitalProximityKm?: number;
+  };
+}
+
+export type JITOMNICoreModule =
+  | 'Buzurg Sathi - Senior Care Assistance'
+  | 'Hospital Sahayak - Medical Support & Guidance'
+  | 'Bank Sarkari Sahayak - Government & Banking Help'
+  | 'Sheher Guide - Local City Tour'
+  | 'Local Saman Delivery - Doorstep Delivery Service'
+  | 'Surakshit Yatra Sathi - Safe Travel Companion'
+  | 'Event Sahayak - Event Planning & Support'
+  | 'Sirf Ride - On-Demand Ride Service';
+
+export type JITOMNIDemandCategory = 
+  | JITOMNICoreModule
+  | 'Hospital Assistant'
+  | 'Senior Citizen Care'
+  | 'Premium Stay Booking'
+  | 'Premium Cab Request'
+  | 'Local Guide';
+
+export interface SecureTrustDossier {
+  verifiedId: string; // e.g. STV-IND-2026-89421
+  qrPayload: string;
+  isAadhaarVerified: boolean;
+  isPoliceClearanceVerified: boolean;
+  verificationDate: string;
+  issuingAuthority: string;
+  qrCodeUrl?: string;
+  status: 'ACTIVE_VERIFIED' | 'PENDING_REVIEW' | 'SUSPENDED';
+}
+
+export interface AIParsedTaskResult {
+  rawRequest: string;
+  category: string;
+  demandCategory: JITOMNIDemandCategory;
+  coreModule: JITOMNICoreModule;
+  taskTitle: string;
+  city: string;
+  location: string;
+  destination: string;
+  hubType?: 'hospital' | 'railway_station' | 'airport' | 'bank_branch' | 'city_landmark' | 'doorstep';
+  hubName?: string;
+  timeRequirement: string;
+  durationHours: number;
+  isNight: boolean;
+  baseRatePerHour: number;
+  nightSurcharge: number;
+  baseAmount: number;
+  distanceKm?: number;
+  tierPricing: {
+    baselineStartingAt: number; // starting at ₹100
+    hourlyRate: number;
+    durationAmount: number;
+    distanceAmount: number;
+    tierMultiplier: number;
+    nightSurcharge: number;
+    totalCalculated: number;
+  };
+  totalEstimatedAmount: number;
+  partnerEarnings: number; // 80%
+  platformShare: number;   // 20%
+  complexity: 'standard' | 'high_priority' | 'critical_medical';
+  recommendedSathis: CompanionWorker[];
+  billFormulaBreakdown: string;
+  confidenceScore: number;
+  matchedReason: string;
+  taskToken: string; // e.g. TT-IND-84920
+  broadcastStatus?: 'ready' | 'broadcasting' | 'accepted' | 'dispatched';
+  autoInvoiceText: string;
+  secureTrustDossier: SecureTrustDossier;
+  deliveryOtp?: string;
+  conciergeDesk: {
+    status: 'active_24x7';
+    helpline: string;
+    escalationLevel: 'Level-1 Automated AI' | 'Level-2 Duty Officer' | 'Level-3 City Node Commander';
+    deskAgent: string;
+  };
 }
 

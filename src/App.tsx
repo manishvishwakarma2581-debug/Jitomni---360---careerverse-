@@ -37,7 +37,10 @@ import { UserDemandBoxModal } from './components/UserDemandBoxModal';
 import { InstallPwaBanner } from './components/pwa/InstallPwaBanner';
 import { AuthService } from './services/authService';
 import { NOMINAL_PAYMENT_TIERS } from './services/paymentService';
-import { PaymentTier, UserProfile } from './types';
+import { PaymentTier, UserProfile, UserPersona } from './types';
+import { getPersonaFromUrlOrStorage, saveUserPersona, isTabAllowedForPersona, getPersonaConfig } from './data/userPersonas';
+import { UserWorkspaceSelectorModal } from './components/UserWorkspaceSelectorModal';
+import { ShareWorkspaceModal } from './components/ShareWorkspaceModal';
 import { JitomniEmblemLogo } from './components/JitomniEmblemLogo';
 import { ShieldCheck, Building2, GraduationCap, HardHat, CheckCircle2, ArrowRight, Video, Sparkles, Flag, Cpu } from 'lucide-react';
 
@@ -46,6 +49,21 @@ export default function App() {
     const saved = localStorage.getItem('jitomni_app_lang') as Language;
     return saved || 'hi';
   });
+
+  const [currentPersona, setCurrentPersona] = useState<UserPersona>(() => {
+    return getPersonaFromUrlOrStorage();
+  });
+  const [showWorkspaceSelector, setShowWorkspaceSelector] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  const handleSelectPersona = (persona: UserPersona) => {
+    setCurrentPersona(persona);
+    saveUserPersona(persona);
+    const config = getPersonaConfig(persona);
+    if (persona !== 'all' && !isTabAllowedForPersona(activeTab, persona)) {
+      handleTabChange(config.defaultTab);
+    }
+  };
 
   const [activeTab, setActiveTab] = useState<MainTab>(() => {
     if (typeof window !== 'undefined') {
@@ -202,6 +220,10 @@ export default function App() {
           setDemandInitialQuery('');
           setIsDemandBoxOpen(true);
         }}
+        currentPersona={currentPersona}
+        onSelectPersona={handleSelectPersona}
+        onOpenWorkspaceSelector={() => setShowWorkspaceSelector(true)}
+        onOpenShareWorkspace={() => setShowShareModal(true)}
       />
 
       {/* Sub-Header Bar when inside Jitomni Verified Jobs */}
@@ -299,6 +321,9 @@ export default function App() {
             lang={lang}
             onNavigateTab={handleTabChange}
             onSelectTopic={(t) => setSelectedTopic(t)}
+            currentPersona={currentPersona}
+            onOpenWorkspaceSelector={() => setShowWorkspaceSelector(true)}
+            onOpenShareWorkspace={() => setShowShareModal(true)}
           />
         )}
 
@@ -597,6 +622,24 @@ export default function App() {
         lang={lang}
         initialQuery={demandInitialQuery}
         onNavigateTab={handleTabChange}
+      />
+
+      {/* 13. User Workspace Persona Selector Modal (Zero-Distraction Demand-Based Routing) */}
+      <UserWorkspaceSelectorModal
+        isOpen={showWorkspaceSelector}
+        onClose={() => setShowWorkspaceSelector(false)}
+        currentPersona={currentPersona}
+        onSelectPersona={handleSelectPersona}
+        lang={lang}
+      />
+
+      {/* 14. Deep-link Share Workspace Modal */}
+      <ShareWorkspaceModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        currentPersona={currentPersona}
+        activeTab={activeTab}
+        lang={lang}
       />
 
       {/* Sovereign Master Global Footer */}

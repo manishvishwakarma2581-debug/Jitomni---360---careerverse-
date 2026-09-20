@@ -53,9 +53,19 @@ export const CompanionMatchingRadar: React.FC<CompanionMatchingRadarProps> = ({
           <h3 className="text-xl sm:text-2xl font-black text-white">
             {scanning ? 'नजदीकी वेरिफाइड साथी खोजे जा रहे हैं...' : 'उपलब्ध प्रमाणित साथी मैच (Verified Gig Companions)'}
           </h3>
-          <p className="text-xs text-slate-300 mt-1">
-            Task: <strong className="text-white">{pendingBooking.address || 'Local Task'}</strong> • Duration:{' '}
-            <strong className="text-amber-400">{pendingBooking.durationHours || 4} Hours</strong>
+          <p className="text-xs text-slate-300 mt-1 flex items-center gap-2 flex-wrap">
+            <span>स्थान: <strong className="text-white">{pendingBooking.address || 'Local Task'}</strong></span>
+            <span>• अवधि: <strong className="text-amber-400">{pendingBooking.durationHours || 2} Hours</strong></span>
+            {pendingBooking.vehicleMode && (
+              <span className={`px-2 py-0.5 rounded font-mono text-[11px] font-bold ${
+                pendingBooking.vehicleMode === 'with_bike' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+              }`}>
+                {pendingBooking.vehicleMode === 'with_bike' ? '🏍️ बाइक वाला साथी' : '🚶 बिना बाइक'}
+              </span>
+            )}
+            {pendingBooking.totalEstimatedAmount && (
+              <span>• राशि: <strong className="text-emerald-400 font-mono">₹{pendingBooking.totalEstimatedAmount}</strong></span>
+            )}
           </p>
         </div>
 

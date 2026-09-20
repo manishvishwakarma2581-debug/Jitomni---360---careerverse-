@@ -1051,6 +1051,11 @@ export function synthesizeCompetitiveTopicDetail(
         en: `Explanation: Applying the JITOMNI 360° shortcut for ${topicName} yields Option (A) as the definitive answer with zero ambiguity.`,
         hinglish: `Explanation: JITOMNI short trick lagakar Option A direct milta hai. No lengthy calculation needed.`,
       },
+      explanation: {
+        hi: `स्पष्टीकरण: JITOMNI 360° विधि के अनुसार ${topicName} के नियम को लागू करने पर विकल्प (A) 100% सही सिद्ध होता है। समय बचत: 40 सेकंड।`,
+        en: `Explanation: Applying the JITOMNI 360° shortcut for ${topicName} yields Option (A) as the definitive answer with zero ambiguity.`,
+        hinglish: `Explanation: JITOMNI short trick lagakar Option A direct milta hai. No lengthy calculation needed.`,
+      },
       trickUsed: `JITOMNI Speed Rule ${((qNum % 4) + 1)}`,
       timeSaveSeconds: 35 + (qNum % 15),
     };
@@ -1073,6 +1078,8 @@ export function synthesizeCompetitiveTopicDetail(
         en: `Consistently tested across ${targetExam}, SSC, State PSC, and Central exams over the past decade. A high-yield rank-decider topic.`,
         hinglish: `${targetExam} ke pichle 10 saal ke papers me ye topic regular pucha gaya hai. High scoring area hai.`,
       },
+      expectedQuestions: '2 - 3 Questions Guaranteed',
+      difficultyLevel: 'Moderate to Advanced (उच्च स्तरीय)',
       frequencyStats: [
         { exam: `${targetExam} Tier-1 / CBT`, frequency: '2 - 3 Questions Guaranteed', marksWeightage: '4 - 6 Marks' },
         { exam: 'SSC CGL / CHSL', frequency: '2 Questions', marksWeightage: '4 Marks' },
@@ -1149,6 +1156,11 @@ export function synthesizeCompetitiveTopicDetail(
       ],
     },
     bestMethodVsShortTrick: {
+      problemStatement: {
+        hi: `परीक्षा प्रश्न: ${topicName} पर आधारित उच्च-अंक समस्या — बेसिक 90s बनाम JITOMNI 10s शॉर्टकट`,
+        en: `Exam Challenge: High-yield problem on ${topicName} — Conventional 90s vs JITOMNI 10s shortcut`,
+        hinglish: `${topicName} exam problem — Basic vs JITOMNI 10-second shortcut comparison`,
+      },
       basicMethod: {
         title: {
           hi: 'बेसिक विधि (पारंपरिक 4-स्टेप तरीका - समय: 60-90 सेकंड)',
@@ -1183,6 +1195,7 @@ export function synthesizeCompetitiveTopicDetail(
       },
     },
     pyqBank: pyqs,
+    practiceSet20: practiceQuestions20,
     practiceQuestions20,
     visualMermaidDiagram: {
       title: {

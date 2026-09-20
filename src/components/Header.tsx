@@ -1,14 +1,19 @@
 import React from 'react';
-import { BookOpen, Award, Mic, BrainCircuit, Globe, Sparkles, Volume2, Globe2, ShieldCheck, Building2, Info, Flag, HeartHandshake, MessageSquarePlus } from 'lucide-react';
-import { Language, MainTab } from '../types';
+import { BookOpen, Award, Mic, BrainCircuit, Globe, Sparkles, Volume2, Globe2, ShieldCheck, Building2, Info, Flag, HeartHandshake, MessageSquarePlus, Share2, Users, HardHat } from 'lucide-react';
+import { Language, MainTab, UserPersona } from '../types';
 import { translations } from '../data/translations';
 import { JitomniEmblemLogo } from './JitomniEmblemLogo';
+import { getPersonaConfig, isTabAllowedForPersona } from '../data/userPersonas';
 
 interface HeaderProps {
   currentLang: Language;
   onLanguageChange: (lang: Language) => void;
   activeTab: MainTab;
   onTabChange: (tab: MainTab) => void;
+  currentPersona?: UserPersona;
+  onSelectPersona?: (persona: UserPersona) => void;
+  onOpenWorkspaceSelector?: () => void;
+  onOpenShareWorkspace?: () => void;
   onOpenPrimeChat?: () => void;
   onOpenRoleModal?: () => void;
   onOpenAboutUs?: () => void;
@@ -23,6 +28,9 @@ export const Header: React.FC<HeaderProps> = ({
   onLanguageChange,
   activeTab,
   onTabChange,
+  currentPersona = 'student',
+  onOpenWorkspaceSelector,
+  onOpenShareWorkspace,
   onOpenPrimeChat,
   onOpenRoleModal,
   onOpenAboutUs,
@@ -31,6 +39,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpen14RadarModal,
   onOpenDemandBox,
 }) => {
+  const personaConfig = getPersonaConfig(currentPersona);
+
   const languages: { code: Language; label: string; flag: string }[] = [
     { code: 'hi', label: 'हिंदी', flag: '🇮🇳' },
     { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -42,6 +52,8 @@ export const Header: React.FC<HeaderProps> = ({
     activeTab === 'company' || 
     activeTab === 'skilled' || 
     activeTab === 'labour';
+
+  const shouldShow = (tab: MainTab) => isTabAllowedForPersona(tab, currentPersona);
 
   return (
     <header className="sticky top-0 z-40 bg-[#000000]/95 backdrop-blur-md border-b border-[#FFD700]/30 shadow-lg shadow-black/80">
@@ -56,6 +68,35 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Quick Sovereign Identity & Verified Jobs Pill */}
         <div className="hidden sm:flex items-center gap-2">
+          {/* Persona Switcher Pill */}
+          {onOpenWorkspaceSelector && (
+            <button
+              id="header-ribbon-workspace-btn"
+              onClick={onOpenWorkspaceSelector}
+              className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-gradient-to-r from-amber-500/25 via-[#FFD700]/30 to-amber-500/25 text-[#FFD700] font-black border border-[#FFD700]/60 hover:bg-[#FFD700]/30 transition-all text-[11px] shadow-sm cursor-pointer"
+              title="अपना कार्यक्षेत्र (मोड) बदलें"
+            >
+              <span>{personaConfig.icon}</span>
+              <span className="font-extrabold">{personaConfig.name[currentLang]}</span>
+              <span className="text-[9px] px-1 py-0.2 rounded bg-[#FFD700] text-slate-950 font-black">
+                बदलें ▾
+              </span>
+            </button>
+          )}
+
+          {/* Share Workspace Link Button */}
+          {onOpenShareWorkspace && (
+            <button
+              id="header-ribbon-share-btn"
+              onClick={onOpenShareWorkspace}
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#00D4FF]/20 text-[#00D4FF] font-black border border-[#00D4FF]/50 hover:bg-[#00D4FF]/30 transition-all text-[11px] shadow-sm cursor-pointer"
+              title="छात्रों, कंपनियों या किसानों के लिए सटीक लिंक शेयर करें"
+            >
+              <Share2 className="w-3 h-3 text-[#00D4FF]" />
+              <span>🔗 शेयर लिंक</span>
+            </button>
+          )}
+
           {/* Public Demand & Help Center Button */}
           {onOpenDemandBox && (
             <button
@@ -247,8 +288,9 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Navigation Tabs - Mobile & Desktop */}
+        {/* Navigation Tabs - Mobile & Desktop with Zero-Distraction Filtering */}
         <nav className="flex items-center gap-1.5 sm:gap-2 pb-2.5 overflow-x-auto no-scrollbar">
+          {/* Home Tab - always available */}
           <button
             id="nav-home-btn"
             onClick={() => onTabChange('home')}
@@ -262,245 +304,368 @@ export const Header: React.FC<HeaderProps> = ({
             <span>{translations.nav.home[currentLang]}</span>
           </button>
 
+          {/* Company Recruiter Desk Tab */}
+          {shouldShow('company') && (
+            <button
+              id="nav-company-btn"
+              onClick={() => onTabChange('company')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'company'
+                  ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white shadow-lg shadow-blue-500/40 border border-blue-400 font-black'
+                  : 'bg-[#0A1931]/80 text-blue-300 hover:text-blue-200 hover:bg-[#102447] border border-blue-500/40'
+              }`}
+            >
+              <Building2 className="w-4 h-4 text-blue-400" />
+              <span>{currentLang === 'hi' ? '🏢 कंपनी हायरिंग डेस्क' : '🏢 Company Hiring Desk'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-amber-400 text-slate-950 font-black">RECRUITER</span>
+            </button>
+          )}
+
           {/* Dedicated Verified Jobs Nav Tab */}
-          <button
-            id="nav-verifiedjobs-btn"
-            onClick={() => onTabChange('verifiedjobs')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              isVerifiedJobsActive
-                ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-amber-500 text-white shadow-lg shadow-blue-500/40 border border-blue-400/60'
-                : 'bg-[#0A1931]/80 text-blue-300 hover:text-blue-200 hover:bg-[#102447] border border-blue-500/40'
-            }`}
-          >
-            <ShieldCheck className="w-4 h-4 text-amber-300 animate-pulse" />
-            <span>{translations.nav.verifiedjobs?.[currentLang] || '🏢 वेरिफाइड जॉब्स (No Fake)'}</span>
-            <span className="px-1.5 py-0.2 rounded text-[10px] bg-amber-400 text-slate-950 font-black">NEW</span>
-          </button>
+          {shouldShow('verifiedjobs') && (
+            <button
+              id="nav-verifiedjobs-btn"
+              onClick={() => onTabChange('verifiedjobs')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                isVerifiedJobsActive
+                  ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-amber-500 text-white shadow-lg shadow-blue-500/40 border border-blue-400/60'
+                  : 'bg-[#0A1931]/80 text-blue-300 hover:text-blue-200 hover:bg-[#102447] border border-blue-500/40'
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4 text-amber-300 animate-pulse" />
+              <span>{translations.nav.verifiedjobs?.[currentLang] || '🏢 वेरिफाइड जॉब्स (No Fake)'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-amber-400 text-slate-950 font-black">NEW</span>
+            </button>
+          )}
+
+          {/* AI Interviewer Tab */}
+          {shouldShow('ai-interview') && (
+            <button
+              id="nav-ai-interview-btn"
+              onClick={() => onTabChange('ai-interview')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'ai-interview'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/40 border border-cyan-400 font-black'
+                  : 'bg-[#0A1931]/80 text-cyan-300 hover:text-cyan-200 hover:bg-[#102447] border border-cyan-500/40'
+              }`}
+            >
+              <Mic className="w-4 h-4 text-cyan-400" />
+              <span>{currentLang === 'hi' ? '🎙️ AI इंटरव्यूअर' : '🎙️ AI Interviewer'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-400 text-slate-950 font-black">TEST</span>
+            </button>
+          )}
+
+          {/* Labour & Daily Local Work Tab */}
+          {shouldShow('labour') && (
+            <button
+              id="nav-labour-btn"
+              onClick={() => onTabChange('labour')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'labour'
+                  ? 'bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 text-white shadow-lg shadow-orange-500/40 border border-orange-400 font-black'
+                  : 'bg-[#0A1931]/80 text-orange-300 hover:text-orange-200 hover:bg-[#102447] border border-orange-500/40'
+              }`}
+            >
+              <HardHat className="w-4 h-4 text-orange-400" />
+              <span>{currentLang === 'hi' ? '👷 स्थानीय दैनिक काम (Labour)' : '👷 Daily Local Work'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-orange-400 text-slate-950 font-black">₹450-₹900</span>
+            </button>
+          )}
+
+          {/* Skilled Workforce Pool Tab */}
+          {shouldShow('skilled') && (
+            <button
+              id="nav-skilled-btn"
+              onClick={() => onTabChange('skilled')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'skilled'
+                  ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-500/40 border border-indigo-400 font-black'
+                  : 'bg-[#0A1931]/80 text-indigo-300 hover:text-indigo-200 hover:bg-[#102447] border border-indigo-500/40'
+              }`}
+            >
+              <Users className="w-4 h-4 text-indigo-400" />
+              <span>{currentLang === 'hi' ? '👥 स्किल्ड टैलेंट पूल' : '👥 Skilled Talent'}</span>
+            </button>
+          )}
 
           {/* Dedicated On-Demand Companion & Task Service Nav Tab */}
-          <button
-            id="nav-companion-btn"
-            onClick={() => onTabChange('companion')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'companion'
-                ? 'bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 text-white shadow-lg shadow-rose-500/40 border border-rose-400/60 font-black'
-                : 'bg-[#0A1931]/80 text-rose-300 hover:text-rose-200 hover:bg-[#102447] border border-rose-500/40'
-            }`}
-          >
-            <HeartHandshake className="w-4 h-4 text-amber-300 animate-pulse" />
-            <span>{currentLang === 'hi' ? '🤝 ऑन-डिमांड साथी एवं टास्क' : currentLang === 'hinglish' ? '🤝 Companion & Task Service' : '🤝 On-Demand Companion'}</span>
-            <span className="px-1.5 py-0.2 rounded text-[10px] bg-rose-500 text-white font-black">100% SAFE</span>
-          </button>
+          {shouldShow('companion') && (
+            <button
+              id="nav-companion-btn"
+              onClick={() => onTabChange('companion')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'companion'
+                  ? 'bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 text-white shadow-lg shadow-rose-500/40 border border-rose-400/60 font-black'
+                  : 'bg-[#0A1931]/80 text-rose-300 hover:text-rose-200 hover:bg-[#102447] border border-rose-500/40'
+              }`}
+            >
+              <HeartHandshake className="w-4 h-4 text-amber-300 animate-pulse" />
+              <span>{currentLang === 'hi' ? '🤝 ऑन-डिमांड साथी एवं टास्क' : currentLang === 'hinglish' ? '🤝 Companion & Task Service' : '🤝 On-Demand Companion'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-rose-500 text-white font-black">100% SAFE</span>
+            </button>
+          )}
 
           {/* Dedicated Krishi 360° Agri-Tech Nav Tab */}
-          <button
-            id="nav-agri-btn"
-            onClick={() => onTabChange('agri')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'agri'
-                ? 'bg-gradient-to-r from-[#10B981] via-[#059669] to-[#047857] text-white shadow-lg shadow-emerald-500/40 border border-emerald-400/60'
-                : 'bg-[#0A1931]/80 text-emerald-300 hover:text-emerald-200 hover:bg-[#102447] border border-emerald-500/40'
-            }`}
-          >
-            <span>🌾</span>
-            <span>{translations.nav.agri?.[currentLang] || '🌾 कृषि 360° (Agri-Tech)'}</span>
-            <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-400 text-slate-950 font-black">ICAR/AI</span>
-          </button>
+          {shouldShow('agri') && (
+            <button
+              id="nav-agri-btn"
+              onClick={() => onTabChange('agri')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'agri'
+                  ? 'bg-gradient-to-r from-[#10B981] via-[#059669] to-[#047857] text-white shadow-lg shadow-emerald-500/40 border border-emerald-400/60'
+                  : 'bg-[#0A1931]/80 text-emerald-300 hover:text-emerald-200 hover:bg-[#102447] border border-emerald-500/40'
+              }`}
+            >
+              <span>🌾</span>
+              <span>{translations.nav.agri?.[currentLang] || '🌾 कृषि 360° (Agri-Tech)'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-400 text-slate-950 font-black">ICAR/AI</span>
+            </button>
+          )}
 
           {/* Dedicated ITI Sovereign Nav Tab */}
-          <button
-            id="nav-iti-btn"
-            onClick={() => onTabChange('iti')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'iti'
-                ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 shadow-lg shadow-amber-500/40 border border-amber-400/60 font-black'
-                : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/40'
-            }`}
-          >
-            <span>🛠️</span>
-            <span>{translations.nav.iti?.[currentLang] || '🛠️ ITI हब (A to Z)'}</span>
-            <span className="px-1.5 py-0.2 rounded text-[10px] bg-amber-400 text-slate-950 font-black">NCVT/ALP</span>
-          </button>
+          {shouldShow('iti') && (
+            <button
+              id="nav-iti-btn"
+              onClick={() => onTabChange('iti')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'iti'
+                  ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 shadow-lg shadow-amber-500/40 border border-amber-400/60 font-black'
+                  : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/40'
+              }`}
+            >
+              <span>🛠️</span>
+              <span>{translations.nav.iti?.[currentLang] || '🛠️ ITI हब (A to Z)'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-amber-400 text-slate-950 font-black">NCVT/ALP</span>
+            </button>
+          )}
 
           {/* Dedicated IIT & JEE Sovereign Nav Tab */}
-          <button
-            id="nav-iit-btn"
-            onClick={() => onTabChange('iit')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'iit'
-                ? 'bg-gradient-to-r from-[#00D4FF] via-blue-600 to-indigo-700 text-white shadow-lg shadow-cyan-500/40 border border-cyan-400/60 font-black'
-                : 'bg-[#0A1931]/80 text-cyan-300 hover:text-cyan-200 hover:bg-[#102447] border border-cyan-500/40'
-            }`}
-          >
-            <span>🏛️</span>
-            <span>{translations.nav.iit?.[currentLang] || '🏛️ IIT व JEE (A to Z)'}</span>
-            <span className="px-1.5 py-0.2 rounded text-[10px] bg-[#00D4FF] text-slate-950 font-black">ADVANCED</span>
-          </button>
+          {shouldShow('iit') && (
+            <button
+              id="nav-iit-btn"
+              onClick={() => onTabChange('iit')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'iit'
+                  ? 'bg-gradient-to-r from-[#00D4FF] via-blue-600 to-indigo-700 text-white shadow-lg shadow-cyan-500/40 border border-cyan-400/60 font-black'
+                  : 'bg-[#0A1931]/80 text-cyan-300 hover:text-cyan-200 hover:bg-[#102447] border border-cyan-500/40'
+              }`}
+            >
+              <span>🏛️</span>
+              <span>{translations.nav.iit?.[currentLang] || '🏛️ IIT व JEE (A to Z)'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-[#00D4FF] text-slate-950 font-black">ADVANCED</span>
+            </button>
+          )}
 
-          <button
-            id="nav-school-btn"
-            onClick={() => onTabChange('school')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'school'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
-                : 'bg-[#0A1931]/80 text-slate-300 hover:text-amber-300 hover:bg-[#102447] border border-slate-700/50'
-            }`}
-          >
-            <BookOpen className="w-4 h-4 text-amber-400" />
-            <span>{translations.nav.school[currentLang]}</span>
-          </button>
+          {/* School 360 */}
+          {shouldShow('school') && (
+            <button
+              id="nav-school-btn"
+              onClick={() => onTabChange('school')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'school'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
+                  : 'bg-[#0A1931]/80 text-slate-300 hover:text-amber-300 hover:bg-[#102447] border border-slate-700/50'
+              }`}
+            >
+              <BookOpen className="w-4 h-4 text-amber-400" />
+              <span>{translations.nav.school[currentLang]}</span>
+            </button>
+          )}
 
-          <button
-            id="nav-exam-btn"
-            onClick={() => onTabChange('exam')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'exam'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
-                : 'bg-[#0A1931]/80 text-slate-300 hover:text-amber-300 hover:bg-[#102447] border border-slate-700/50'
-            }`}
-          >
-            <Award className="w-4 h-4 text-amber-400" />
-            <span>{translations.nav.exam[currentLang]}</span>
-          </button>
+          {/* Competitive Exams */}
+          {shouldShow('exam') && (
+            <button
+              id="nav-exam-btn"
+              onClick={() => onTabChange('exam')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'exam'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
+                  : 'bg-[#0A1931]/80 text-slate-300 hover:text-amber-300 hover:bg-[#102447] border border-slate-700/50'
+              }`}
+            >
+              <Award className="w-4 h-4 text-amber-400" />
+              <span>{translations.nav.exam[currentLang]}</span>
+            </button>
+          )}
 
           {/* Dedicated Sovereign Daily Current Affairs Tab */}
-          <button
-            id="nav-current-affairs-btn"
-            onClick={() => onTabChange('current-affairs')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'current-affairs'
-                ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-amber-500 text-white shadow-lg shadow-indigo-500/40 border border-indigo-400/60 font-black ring-2 ring-amber-400'
-                : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/40'
-            }`}
-          >
-            <span>🔥</span>
-            <span>{currentLang === 'hi' ? 'दैनिक समसामयिकी' : currentLang === 'hinglish' ? 'Daily Current Affairs' : 'Daily Current Affairs'}</span>
-            <span className="px-1.5 py-0.2 rounded text-[10px] bg-rose-500 text-white font-black animate-pulse">DAILY</span>
-          </button>
+          {shouldShow('current-affairs') && (
+            <button
+              id="nav-current-affairs-btn"
+              onClick={() => onTabChange('current-affairs')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'current-affairs'
+                  ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-amber-500 text-white shadow-lg shadow-indigo-500/40 border border-indigo-400/60 font-black ring-2 ring-amber-400'
+                  : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/40'
+              }`}
+            >
+              <span>🔥</span>
+              <span>{currentLang === 'hi' ? 'दैनिक समसामयिकी' : currentLang === 'hinglish' ? 'Daily Current Affairs' : 'Daily Current Affairs'}</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-rose-500 text-white font-black animate-pulse">DAILY</span>
+            </button>
+          )}
 
-          <button
-            id="nav-vacancies-btn"
-            onClick={() => onTabChange('vacancies')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'vacancies'
-                ? 'bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 text-white shadow-lg shadow-red-500/30'
-                : 'bg-[#0A1931]/80 text-cyan-300 hover:text-cyan-200 hover:bg-[#102447] border border-cyan-500/40'
-            }`}
-          >
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-            </span>
-            <span>{translations.nav.vacancies?.[currentLang] || '🔥 सरकारी नौकरी (Live)'}</span>
-          </button>
+          {/* Govt Vacancies */}
+          {shouldShow('vacancies') && (
+            <button
+              id="nav-vacancies-btn"
+              onClick={() => onTabChange('vacancies')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'vacancies'
+                  ? 'bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 text-white shadow-lg shadow-red-500/30'
+                  : 'bg-[#0A1931]/80 text-cyan-300 hover:text-cyan-200 hover:bg-[#102447] border border-cyan-500/40'
+              }`}
+            >
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+              </span>
+              <span>{translations.nav.vacancies?.[currentLang] || '🔥 सरकारी नौकरी (Live)'}</span>
+            </button>
+          )}
 
-          <button
-            id="nav-globaljobs-btn"
-            onClick={() => onTabChange('globaljobs')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'globaljobs'
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30 border border-emerald-400/50'
-                : 'bg-[#0A1931]/80 text-emerald-300 hover:text-emerald-200 hover:bg-[#102447] border border-emerald-500/40'
-            }`}
-          >
-            <Globe2 className="w-4 h-4 text-emerald-400 animate-pulse" />
-            <span>{translations.nav.globaljobs?.[currentLang] || '🌍 ग्लोबल AI जॉब्स ($$)'}</span>
-          </button>
+          {/* Global AI Jobs */}
+          {shouldShow('globaljobs') && (
+            <button
+              id="nav-globaljobs-btn"
+              onClick={() => onTabChange('globaljobs')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'globaljobs'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30 border border-emerald-400/50'
+                  : 'bg-[#0A1931]/80 text-emerald-300 hover:text-emerald-200 hover:bg-[#102447] border border-emerald-500/40'
+              }`}
+            >
+              <Globe2 className="w-4 h-4 text-emerald-400 animate-pulse" />
+              <span>{translations.nav.globaljobs?.[currentLang] || '🌍 ग्लोबल AI जॉब्स ($$)'}</span>
+            </button>
+          )}
 
-          <button
-            id="nav-english-btn"
-            onClick={() => onTabChange('english')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'english'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
-                : 'bg-[#0A1931]/80 text-slate-300 hover:text-amber-300 hover:bg-[#102447] border border-slate-700/50'
-            }`}
-          >
-            <Mic className="w-4 h-4 text-amber-400" />
-            <span>{translations.nav.english[currentLang]}</span>
-          </button>
+          {/* English Mentor */}
+          {shouldShow('english') && (
+            <button
+              id="nav-english-btn"
+              onClick={() => onTabChange('english')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'english'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
+                  : 'bg-[#0A1931]/80 text-slate-300 hover:text-amber-300 hover:bg-[#102447] border border-slate-700/50'
+              }`}
+            >
+              <Mic className="w-4 h-4 text-amber-400" />
+              <span>{translations.nav.english[currentLang]}</span>
+            </button>
+          )}
 
-          <button
-            id="nav-doubt-btn"
-            onClick={() => onTabChange('doubt')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'doubt'
-                ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md shadow-violet-500/40'
-                : 'bg-[#0A1931]/80 text-violet-300 hover:text-violet-200 hover:bg-[#102447] border border-violet-500/30'
-            }`}
-          >
-            <span>🎯</span>
-            <span>{translations.nav.doubt?.[currentLang] || 'AI डाउट सॉल्वर'}</span>
-          </button>
+          {/* Doubt Solver */}
+          {shouldShow('doubt') && (
+            <button
+              id="nav-doubt-btn"
+              onClick={() => onTabChange('doubt')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'doubt'
+                  ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md shadow-violet-500/40'
+                  : 'bg-[#0A1931]/80 text-violet-300 hover:text-violet-200 hover:bg-[#102447] border border-violet-500/30'
+              }`}
+            >
+              <span>🎯</span>
+              <span>{translations.nav.doubt?.[currentLang] || 'AI डाउट सॉल्वर'}</span>
+            </button>
+          )}
 
-          <button
-            id="nav-flashcards-btn"
-            onClick={() => onTabChange('flashcards')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'flashcards'
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-amber-500/40'
-                : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/30'
-            }`}
-          >
-            <span>⚡</span>
-            <span>{translations.nav.flashcards?.[currentLang] || 'फ्लैशकार्ड्स'}</span>
-          </button>
+          {/* Flashcards */}
+          {shouldShow('flashcards') && (
+            <button
+              id="nav-flashcards-btn"
+              onClick={() => onTabChange('flashcards')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'flashcards'
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-amber-500/40'
+                  : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/30'
+              }`}
+            >
+              <span>⚡</span>
+              <span>{translations.nav.flashcards?.[currentLang] || 'फ्लैशकार्ड्स'}</span>
+            </button>
+          )}
 
-          <button
-            id="nav-prime-btn"
-            onClick={() => onTabChange('prime')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'prime'
-                ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-md shadow-amber-500/40'
-                : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/30'
-            }`}
-          >
-            <BrainCircuit className="w-4 h-4 text-amber-400" />
-            <span>{translations.nav.prime[currentLang]}</span>
-          </button>
+          {/* Prime AI Brain */}
+          {shouldShow('prime') && (
+            <button
+              id="nav-prime-btn"
+              onClick={() => onTabChange('prime')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'prime'
+                  ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-md shadow-amber-500/40'
+                  : 'bg-[#0A1931]/80 text-amber-300 hover:text-amber-200 hover:bg-[#102447] border border-amber-500/30'
+              }`}
+            >
+              <BrainCircuit className="w-4 h-4 text-amber-400" />
+              <span>{translations.nav.prime[currentLang]}</span>
+            </button>
+          )}
 
-          <button
-            id="nav-admin-btn"
-            onClick={() => onTabChange('admin')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'admin'
-                ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-md shadow-amber-500/40'
-                : 'bg-[#0A1931]/80 text-amber-400 hover:text-amber-300 hover:bg-[#102447] border border-amber-500/40'
-            }`}
-          >
-            <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
-            <span>⚡ {translations.nav.admin?.[currentLang] || 'Roz 5 Topics Auto'}</span>
-          </button>
+          {/* Admin Roz 5 Topics */}
+          {shouldShow('admin') && (
+            <button
+              id="nav-admin-btn"
+              onClick={() => onTabChange('admin')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'admin'
+                  ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-md shadow-amber-500/40'
+                  : 'bg-[#0A1931]/80 text-amber-400 hover:text-amber-300 hover:bg-[#102447] border border-amber-500/40'
+              }`}
+            >
+              <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+              <span>⚡ {translations.nav.admin?.[currentLang] || 'Roz 5 Topics Auto'}</span>
+            </button>
+          )}
 
           {/* Super Admin Manish Vishwakarma Navigation Tab */}
-          <button
-            id="nav-super-admin-btn"
-            onClick={() => onTabChange('super-admin')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'super-admin'
-                ? 'bg-gradient-to-r from-[#FFD700] via-amber-500 to-amber-600 text-slate-950 shadow-lg shadow-amber-500/40 border border-white'
-                : 'bg-[#0A1931]/80 text-[#FFD700] hover:bg-[#102447] border border-[#FFD700]/50'
-            }`}
-          >
-            <span>👑</span>
-            <span>सुपर एडमिन (मनीष)</span>
-            <span className="px-1.5 py-0.2 rounded text-[9px] bg-black text-[#FFD700] font-mono">14 MODS</span>
-          </button>
+          {shouldShow('super-admin') && (
+            <button
+              id="nav-super-admin-btn"
+              onClick={() => onTabChange('super-admin')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'super-admin'
+                  ? 'bg-gradient-to-r from-[#FFD700] via-amber-500 to-amber-600 text-slate-950 shadow-lg shadow-amber-500/40 border border-white'
+                  : 'bg-[#0A1931]/80 text-[#FFD700] hover:bg-[#102447] border border-[#FFD700]/50'
+              }`}
+            >
+              <span>👑</span>
+              <span>सुपर एडमिन (मनीष)</span>
+              <span className="px-1.5 py-0.2 rounded text-[9px] bg-black text-[#FFD700] font-mono">14 MODS</span>
+            </button>
+          )}
 
           {/* Krishi Admin Mahi Pawar Navigation Tab */}
-          <button
-            id="nav-krishi-admin-btn"
-            onClick={() => onTabChange('krishi-admin')}
-            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'krishi-admin'
-                ? 'bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-700 text-white shadow-lg shadow-emerald-500/40 border border-emerald-300'
-                : 'bg-[#0A1931]/80 text-emerald-300 hover:bg-[#102447] border border-emerald-500/50'
-            }`}
-          >
-            <span>🌾</span>
-            <span>माहि पवार कृषि हब</span>
-            <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-950 text-emerald-300 font-mono">DIRECTOR</span>
-          </button>
+          {shouldShow('krishi-admin') && (
+            <button
+              id="nav-krishi-admin-btn"
+              onClick={() => onTabChange('krishi-admin')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'krishi-admin'
+                  ? 'bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-700 text-white shadow-lg shadow-emerald-500/40 border border-emerald-300'
+                  : 'bg-[#0A1931]/80 text-emerald-300 hover:bg-[#102447] border border-emerald-500/50'
+              }`}
+            >
+              <span>🌾</span>
+              <span>माहि पवार कृषि हब</span>
+              <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-950 text-emerald-300 font-mono">DIRECTOR</span>
+            </button>
+          )}
+
+          {/* Persona Switch / Explore All Button */}
+          {onOpenWorkspaceSelector && (
+            <button
+              id="nav-explore-all-btn"
+              onClick={onOpenWorkspaceSelector}
+              className="px-3.5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 bg-[#FFD700]/15 text-[#FFD700] hover:bg-[#FFD700]/25 border border-[#FFD700]/40 shadow-sm shrink-0"
+              title="अन्य सभी 14 मॉड्यूल्स देखें या मोड बदलें"
+            >
+              <span>🌐</span>
+              <span>{currentPersona === 'all' ? 'मोड बदलें' : '+ अन्य मॉड्यूल्स (All 14)'}</span>
+            </button>
+          )}
         </nav>
       </div>
     </header>

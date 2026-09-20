@@ -29,6 +29,7 @@ import { competitiveCurriculumData, mockExamConfigs, mockQuestionsByExam } from 
 import { examPatternsData } from '../data/examPatternsData';
 import { competitiveSpecialTopics, getCompetitiveTopicDetail } from '../data/competitiveSpecialTopics';
 import { CompetitiveTopicModal } from './CompetitiveTopicModal';
+import { ErrorBoundary } from './ErrorBoundary';
 import { translations } from '../data/translations';
 import { generateTopicPdf, downloadPdfBlob } from '../utils/pdfGenerator';
 import { buildFallbackFramework, buildFallbackQuiz } from '../utils/aiTopicSynthesizer';

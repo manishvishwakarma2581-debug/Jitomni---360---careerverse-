@@ -1,15 +1,19 @@
-import React from 'react';
-import { BookOpen, Award, Mic, BrainCircuit, ArrowRight, Sparkles, FileText, CheckCircle2, ShieldCheck, HelpCircle, HeartHandshake, Briefcase, Globe2, Building2, GraduationCap, HardHat, Flag, Cpu, Video, Sprout, MessageSquarePlus } from 'lucide-react';
-import { Language, MainTab, TopicItem } from '../types';
+import React, { useState } from 'react';
+import { BookOpen, Award, Mic, BrainCircuit, ArrowRight, Sparkles, FileText, CheckCircle2, ShieldCheck, HelpCircle, HeartHandshake, Briefcase, Globe2, Building2, GraduationCap, HardHat, Flag, Cpu, Video, Sprout, MessageSquarePlus, Share2, SlidersHorizontal } from 'lucide-react';
+import { Language, MainTab, TopicItem, UserPersona } from '../types';
 import { translations } from '../data/translations';
 import { schoolCurriculumData, competitiveCurriculumData } from '../data/curriculumData';
 import { JitomniEmblemLogo } from './JitomniEmblemLogo';
+import { getPersonaConfig, isTabAllowedForPersona } from '../data/userPersonas';
 
 interface HomeDashboardProps {
   lang: Language;
   onNavigateTab: (tab: MainTab) => void;
   onSelectTopic: (topic: TopicItem) => void;
   onOpenAboutUs?: () => void;
+  currentPersona?: UserPersona;
+  onOpenWorkspaceSelector?: () => void;
+  onOpenShareWorkspace?: () => void;
 }
 
 export const HomeDashboard: React.FC<HomeDashboardProps> = ({
@@ -17,7 +21,12 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
   onNavigateTab,
   onSelectTopic,
   onOpenAboutUs,
+  currentPersona = 'student',
+  onOpenWorkspaceSelector,
+  onOpenShareWorkspace,
 }) => {
+  const [showAllOverride, setShowAllOverride] = useState(false);
+  const personaConfig = getPersonaConfig(currentPersona);
   const modules = [
     {
       id: 'agri' as MainTab,
@@ -49,8 +58,8 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       icon: <HeartHandshake className="w-8 h-8 text-rose-400" />,
       color: 'from-rose-950/80 via-[#240813] to-[#0A0205]',
       border: 'border-rose-500/50 hover:border-rose-400',
-      tag: 'Hospital • Wedding • Elderly • Errands',
-      features: ['4 प्रमुख श्रेणियां (प्रति घंटा आधार)', 'लाइव जीपीएस लोकेशन ट्रैकिंग', '1-टैप इमरजेंसी एसओएस व पुलिस 112'],
+      tag: 'Hospital Escort • Nurse • Doctor • Elderly',
+      features: ['HUMARA 3-Level मेडिकल साथी (Nurse+Doctor)', 'लाइव जीपीएस व विटल्स ट्रैकिंग', '1-टैप इमरजेंसी एसओएस व पुलिस 112'],
     },
     {
       id: 'iti' as MainTab,
@@ -267,6 +276,129 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         <div className="absolute top-1/2 -right-16 -translate-y-1/2 w-96 h-96 bg-[#FFD700]/10 rounded-full blur-3xl pointer-events-none" />
       </div>
 
+      {/* ========================================================================= */}
+      {/* NEW FEATURE HOMEPAGE BANNER: 3-LEVEL HUMARA MEDICAL SATHI HOSPITAL ESCORT */}
+      {/* Dark Blue + Gold + White Premium Theme */}
+      {/* ========================================================================= */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#020B1A] via-[#061838] to-[#040E24] border-2 border-[#FFD700] p-6 sm:p-8 shadow-[0_0_40px_rgba(255,215,0,0.25)] space-y-6">
+        <div className="absolute -top-20 -right-20 w-80 h-80 bg-[#FFD700]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-3.5 py-1 rounded-full bg-red-600 text-white text-xs font-black tracking-wider uppercase shadow-md flex items-center gap-1.5 animate-pulse">
+                <Sparkles className="w-3.5 h-3.5" />
+                NEW FEATURE
+              </span>
+              <span className="px-3 py-1 rounded-full bg-[#FFD700]/20 text-[#FFD700] text-xs font-black border border-[#FFD700]/50 font-mono">
+                100% Police & Aadhaar Verified Crew
+              </span>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/40">
+                Live GPS + SOS 112
+              </span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white font-heading tracking-tight leading-tight">
+              NEW FEATURE: Railway Station → Hospital Patient Pickup Service - Now with Nurse + Doctor.
+            </h2>
+
+            <div className="space-y-1">
+              <div className="text-base sm:text-lg font-black text-[#FFD700] tracking-wide">
+                HUMARA Medical Sathi - Complete Hospital Escort Service
+              </div>
+              <p className="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
+                <strong>Railway Station / Home Se Hospital Tak — Nurse + Doctor Ki Nigrani Me</strong>. 
+                {lang === 'hi' 
+                  ? ' चाहे अकेले सफर कर रहे बुजुर्ग हों या गंभीर मरीज—रेलवे स्टेशन प्लेटफॉर्म से व्हीलचेयर, बीपी/शुगर चेक, ओपीडी कतार व डॉक्टर सुपरविजन तक सुरक्षित एस्कॉर्ट।'
+                  : ' From railway platforms or home doorsteps straight into doctor consultation with licensed nurses and private medical supervision.'}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => onNavigateTab('companion')}
+            className="self-stretch lg:self-center px-6 py-4 rounded-2xl bg-gradient-to-r from-[#FFD700] via-amber-400 to-[#FFD700] hover:brightness-110 text-slate-950 font-black text-sm transition-all hover:scale-105 shadow-xl shadow-[#FFD700]/30 flex items-center justify-center gap-2 border-2 border-white/60 whitespace-nowrap"
+          >
+            <span>🏥 Book Medical Sathi Now</span>
+            <ArrowRight className="w-4 h-4 text-slate-950" />
+          </button>
+        </div>
+
+        {/* 3 Level Mini-Cards Preview */}
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/60">
+          {/* Level 1 */}
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-4 rounded-2xl bg-[#030E24]/80 border border-slate-700 hover:border-[#FFD700]/60 transition-all cursor-pointer group space-y-2 hover:bg-[#07193D]"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl">🧳</span>
+              <span className="px-2 py-0.5 rounded-md bg-white/10 text-white font-mono text-xs font-bold">
+                ₹100 - ₹250 / hr
+              </span>
+            </div>
+            <div className="font-bold text-white text-sm group-hover:text-[#FFD700] transition-colors">
+              LEVEL 1: Basic Sathi Escort
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              Station/Bus pickup, luggage help, taxi booking, hospital counter & OPD token lines.
+            </p>
+            <div className="text-[10px] text-emerald-400 font-bold">
+              ✓ Best for: Normal patients who can walk
+            </div>
+          </div>
+
+          {/* Level 2 */}
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-4 rounded-2xl bg-gradient-to-b from-[#0A224E] to-[#041029] border-2 border-cyan-400/80 hover:border-[#FFD700] transition-all cursor-pointer group space-y-2 shadow-lg relative"
+          >
+            <div className="absolute -top-2.5 right-4 px-2 py-0.5 rounded-full bg-cyan-400 text-slate-950 font-black text-[9px] uppercase tracking-wider">
+              MOST POPULAR
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-2xl">🩺</span>
+              <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-400/40">
+                ₹500 - ₹700 / hr
+              </span>
+            </div>
+            <div className="font-bold text-white text-sm group-hover:text-cyan-300 transition-colors">
+              LEVEL 2: Sathi + Nurse Support
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              All in L1 + Wheelchair support, BP/Sugar checks on the way, first-aid & elderly/female patient care.
+            </p>
+            <div className="text-[10px] text-cyan-300 font-bold">
+              ✓ Best for: Elderly, weak or mobility-impaired
+            </div>
+          </div>
+
+          {/* Level 3 */}
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-4 rounded-2xl bg-gradient-to-b from-[#1C1402] via-[#0E1026] to-[#040816] border-2 border-[#FFD700] hover:border-amber-300 transition-all cursor-pointer group space-y-2 shadow-xl"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl">👨‍⚕️</span>
+              <span className="px-2 py-0.5 rounded-md bg-[#FFD700]/20 text-[#FFD700] font-mono text-xs font-black border border-[#FFD700]/50">
+                ₹1200 - ₹1800 / hr
+              </span>
+            </div>
+            <div className="font-bold text-[#FFD700] text-sm">
+              LEVEL 3: Sathi + Nurse + Doctor
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              Complete supervision by private doctor, tele/in-person transit consult, ICU ambulance coordination & medicine chart.
+            </p>
+            <div className="text-[10px] text-amber-300 font-bold">
+              ⚡ Doctor Network Alert: Nearest MD/MBBS alerted
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* LEADERSHIP PHILOSOPHY - FOUNDER'S CODE (GOLDEN BORDER QUOTE BOX) */}
       <div className="p-6 sm:p-8 rounded-3xl bg-[#000000] border-2 border-[#FFD700] shadow-[0_0_35px_rgba(255,215,0,0.2)] relative overflow-hidden">
         <div className="absolute -top-3.5 left-6 px-4 py-1 rounded-full bg-[#FFD700] text-black text-xs font-black tracking-wider uppercase shadow-md">
@@ -454,17 +586,89 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
       </div>
 
+      {/* PERSONALIZED WORKSPACE FOCUS BAR (Zero-Distraction Mode) */}
+      <div className={`p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r ${personaConfig.bgGradient} border ${personaConfig.borderColor} shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4`}>
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-[#030B1E]/80 border border-white/20 flex items-center justify-center text-2xl shadow-inner shrink-0">
+            {personaConfig.icon}
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-white/20 text-white uppercase tracking-wider">
+                {lang === 'hi' ? 'सक्रिय वर्कस्पेस' : 'Active Workspace'}
+              </span>
+              <span className="text-xs text-slate-200">
+                {currentPersona !== 'all' && !showAllOverride 
+                  ? (lang === 'hi' ? '🎯 जीरो-डिस्ट्रैक्शन (सिर्फ आपके काम के मॉड्यूल्स)' : '🎯 Zero-Distraction (Only relevant modules)') 
+                  : (lang === 'hi' ? '🌐 सभी 14 मॉड्यूल्स दृश्यमान' : '🌐 All 14 Modules Visible')}
+              </span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-black text-white font-heading mt-0.5">
+              {personaConfig.name[lang] || personaConfig.name.hi}
+            </h3>
+            <p className="text-xs text-slate-300">
+              {personaConfig.subtitle[lang] || personaConfig.subtitle.hi}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 w-full md:w-auto shrink-0 justify-end flex-wrap">
+          {currentPersona !== 'all' && (
+            <button
+              id="home-toggle-all-modules-btn"
+              onClick={() => setShowAllOverride(!showAllOverride)}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all flex items-center gap-1.5"
+            >
+              <span>{showAllOverride ? '🎯 केवल मेरे मॉड्यूल्स' : '🌐 सभी 14 मॉड्यूल्स देखें'}</span>
+            </button>
+          )}
+
+          {onOpenWorkspaceSelector && (
+            <button
+              id="home-switch-persona-btn"
+              onClick={onOpenWorkspaceSelector}
+              className="px-4 py-2 rounded-xl text-xs font-black bg-white text-slate-950 hover:bg-amber-300 transition-all shadow-md flex items-center gap-1.5"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>{lang === 'hi' ? 'मोड बदलें' : 'Switch Mode'}</span>
+            </button>
+          )}
+
+          {onOpenShareWorkspace && (
+            <button
+              id="home-share-persona-btn"
+              onClick={onOpenShareWorkspace}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 transition-all flex items-center gap-1.5"
+              title="अपने दोस्तों या टीम को सीधा यही मोड शेयर करें"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>{lang === 'hi' ? 'शेयर' : 'Share'}</span>
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* ALL MAIN MODULE CARDS */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-black text-white font-heading tracking-wide">
-            {translations.home.selectModule[lang]}
-          </h2>
-          <span className="text-xs text-amber-400 font-bold">Comprehensive 360° Learning & Career Portals</span>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-white font-heading tracking-wide">
+              {translations.home.selectModule[lang]}
+            </h2>
+            {currentPersona !== 'all' && !showAllOverride && (
+              <p className="text-xs text-amber-300 font-medium mt-0.5">
+                {lang === 'hi' ? `🎯 ${personaConfig.name[lang] || personaConfig.name.hi} हेतु चयनित मॉड्यूल्स:` : `🎯 Curated Modules for ${personaConfig.name.en}:`}
+              </p>
+            )}
+          </div>
+          <span className="text-xs text-amber-400 font-bold hidden sm:inline">Comprehensive 360° Learning & Career Portals</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {modules.map((mod) => (
+          {(currentPersona !== 'all' && !showAllOverride
+            ? modules.filter((mod) => isTabAllowedForPersona(mod.id, currentPersona))
+            : modules
+          ).map((mod) => (
             <div
               key={mod.id}
               id={`home-module-card-${mod.id}`}
