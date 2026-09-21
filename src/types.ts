@@ -4,7 +4,7 @@ export type UserPersona = 'student' | 'company' | 'jobseeker' | 'kisan' | 'worke
 
 export type AppRole = 'home' | 'company' | 'skilled' | 'labour';
 
-export type MainTab = AppRole | 'verifiedjobs' | 'companion' | 'ai-interview' | 'agri' | 'iti' | 'iit' | 'school' | 'exam' | 'current-affairs' | 'vacancies' | 'globaljobs' | 'english' | 'prime' | 'doubt' | 'flashcards' | 'admin' | 'super-admin' | 'krishi-admin';
+export type MainTab = AppRole | 'verifiedjobs' | 'companion' | 'ai-interview' | 'agri' | 'iti' | 'iit' | 'school' | 'exam' | 'current-affairs' | 'vacancies' | 'globaljobs' | 'english' | 'prime' | 'doubt' | 'flashcards' | 'franchise' | 'admin' | 'super-admin' | 'krishi-admin';
 
 export type ITITabSection =
   | 'overview'
@@ -1059,6 +1059,7 @@ export interface MedicalSathiBooking {
   distance_km: number;
   distance_charge: number;
   total_fare: number;
+  estimated_fare?: number;
   assigned_staff: {
     sathi?: MedicalSathiStaffMember;
     nurse?: MedicalSathiStaffMember;
@@ -1076,6 +1077,87 @@ export interface MedicalSathiBooking {
   status: 'booked' | 'assigned' | 'in_transit' | 'reached_hospital' | 'completed';
   user_phone: string;
   created_at: string;
+  customer_tier?: CustomerTier;
+  service_type?: ServicePricingType;
+  duration?: ServicePricingDuration;
+  base_price?: number;
+  travel_charges?: number;
+  has_gst_bill?: boolean;
+  has_sos_enabled?: boolean;
+  has_live_location?: boolean;
+  has_family_dashboard?: boolean;
+}
+
+// ==========================================
+// 3-TIER SERVICE PRICING SCHEMA (MIDDLE / BUSINESS / ROYAL)
+// ==========================================
+export type CustomerTier = 'middle' | 'business' | 'royal';
+
+export type ServicePricingType = 
+  | 'nurse' 
+  | 'doctor' 
+  | 'royal_concierge' 
+  | 'icu_setup' 
+  | 'medical_escort';
+
+export type ServicePricingDuration = 
+  | '4hr' 
+  | '8hr' 
+  | '12hr' 
+  | '24hr' 
+  | '1_visit' 
+  | 'monthly_retainer'
+  | 'per_trip'
+  | 'per_day'
+  | 'monthly';
+
+export interface ServicePricingTier {
+  id: string;
+  service_type: ServicePricingType;
+  duration: ServicePricingDuration;
+  middle_price: number | null;
+  business_price: number | null;
+  royal_price: number | null;
+  description: string;
+  is_active: boolean;
+  features?: string[];
+  title?: string;
+  category?: string;
+  icon?: string;
+  hasTravelCharges?: boolean;
+  travel_applicable?: boolean;
+  displayPriceString?: string;
+}
+
+export interface TierCardConfig {
+  id: CustomerTier;
+  title: string;
+  hindiTitle: string;
+  badge?: string;
+  colorScheme: {
+    cardBg: string;
+    border: string;
+    activeBorder: string;
+    textAccent: string;
+    badgeBg: string;
+    badgeText: string;
+    radioColor: string;
+  };
+  features: string[];
+}
+
+export interface ServiceBookingPayload {
+  customer_tier: CustomerTier;
+  service_type: ServicePricingType;
+  duration: ServicePricingDuration;
+  patient_name: string;
+  patient_age: number;
+  pickup_location: string;
+  drop_destination: string;
+  travel_charges?: number;
+  user_phone: string;
+  special_requirements?: string;
+  doctor_specialty?: string;
 }
 
 // ==========================================

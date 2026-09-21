@@ -20,6 +20,7 @@ import { PrimeManager } from './components/PrimeManager';
 import { AdminSchedulerModule } from './components/AdminSchedulerModule';
 import { AIInterviewerModule } from './components/AIInterviewerModule';
 import { CompanionServiceModule } from './components/companion/CompanionServiceModule';
+import { FranchiseModule } from './components/franchise/FranchiseModule';
 import { DailyCurrentAffairsHub } from './components/DailyCurrentAffairsHub';
 import { TopicDetailModal } from './components/TopicDetailModal';
 import { MockTestModal } from './components/MockTestModal';
@@ -73,6 +74,7 @@ export default function App() {
       if (path === '/labour-jobs' || path === '/labour') return 'labour';
       if (path === '/verifiedjobs' || path === '/verified-jobs') return 'verifiedjobs';
       if (path === '/companion' || path === '/on-demand-companion' || path === '/task-service') return 'companion';
+      if (path === '/franchise' || path === '/franchise-lo') return 'franchise';
       if (path === '/ai-interview' || path === '/interview') return 'ai-interview';
       if (path === '/agri' || path === '/krishi' || path === '/agriculture') return 'agri';
       if (path === '/iti' || path === '/iti-trades') return 'iti';
@@ -140,6 +142,7 @@ export default function App() {
       else if (tab === 'labour') path = '/labour-jobs';
       else if (tab === 'verifiedjobs') path = '/verified-jobs';
       else if (tab === 'companion') path = '/companion';
+      else if (tab === 'franchise') path = '/franchise';
       else if (tab === 'ai-interview') path = '/ai-interview';
       else if (tab === 'agri') path = '/agri';
       else if (tab === 'iti') path = '/iti';
@@ -169,6 +172,7 @@ export default function App() {
       else if (path === '/labour-jobs' || path === '/labour') setActiveTab('labour');
       else if (path === '/verifiedjobs' || path === '/verified-jobs') setActiveTab('verifiedjobs');
       else if (path === '/companion' || path === '/on-demand-companion' || path === '/task-service') setActiveTab('companion');
+      else if (path === '/franchise' || path === '/franchise-lo') setActiveTab('franchise');
       else if (path === '/ai-interview' || path === '/interview') setActiveTab('ai-interview');
       else if (path === '/agri' || path === '/krishi' || path === '/agriculture') setActiveTab('agri');
       else if (path === '/iti' || path === '/iti-trades') setActiveTab('iti');
@@ -338,6 +342,11 @@ export default function App() {
         {/* TAB 2.5: ON-DEMAND COMPANION & TASK SERVICE */}
         {activeTab === 'companion' && (
           <CompanionServiceModule lang={lang} />
+        )}
+
+        {/* TAB 2.6: PAN-INDIA ALL FRANCHISE SYSTEM (PART A, B, C) */}
+        {activeTab === 'franchise' && (
+          <FranchiseModule lang={lang} />
         )}
 
         {/* TAB 3: COMPANY ROLE */}

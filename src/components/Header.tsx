@@ -405,6 +405,23 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
+          {/* Franchise Module: Franchise Lo - Apne Sheher Ke Boss Bano */}
+          <button
+            id="nav-franchise-btn"
+            onClick={() => onTabChange('franchise')}
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              activeTab === 'franchise'
+                ? 'bg-gradient-to-r from-[#D4AF37] via-amber-400 to-[#D4AF37] text-slate-950 shadow-lg shadow-[#D4AF37]/40 border border-white'
+                : 'bg-[#0A1931]/90 text-[#D4AF37] hover:text-white hover:bg-[#102447] border border-[#D4AF37]/60'
+            }`}
+          >
+            <span>🏛️</span>
+            <span>{currentLang === 'hi' ? 'फ्रैंचाइज़ी लो — अपने शहर के बॉस बनो' : 'Franchise Lo — Apne Sheher Ke Boss Bano'}</span>
+            <span className="px-1.5 py-0.2 rounded text-[10px] bg-slate-950 text-[#D4AF37] font-black border border-[#D4AF37]/50 font-mono">
+              ₹75K
+            </span>
+          </button>
+
           {/* Dedicated Krishi 360° Agri-Tech Nav Tab */}
           {shouldShow('agri') && (
             <button

@@ -23,12 +23,15 @@ import {
   Compass, 
   Info,
   Calendar,
-  Layers
+  Layers,
+  Crown
 } from 'lucide-react';
 import { 
   MedicalSathiLevel, 
   MedicalSathiAddon, 
   MedicalSathiBooking, 
+  CustomerTier,
+  ServicePricingTier,
   Language 
 } from '../../types';
 import { 
@@ -37,8 +40,11 @@ import {
   POPULAR_DESTINATION_HOSPITALS, 
   NETWORK_SATHI_STAFF, 
   NETWORK_NURSE_STAFF, 
-  NETWORK_DOCTOR_STAFF 
+  NETWORK_DOCTOR_STAFF,
+  INITIAL_SERVICE_PRICING_TIERS
 } from '../../data/companionData';
+import { ThreeTierPricingSection } from './ThreeTierPricingSection';
+import { MedicalSathiServicePoster } from './MedicalSathiServicePoster';
 
 interface HumaraMedicalSathiHubProps {
   lang: Language;
@@ -51,11 +57,15 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
   onNavigateToGeneralBooking,
   onOpenSOS
 }) => {
-  // Selected Package
+  // 3-Tier Pricing State: 'middle' | 'business' | 'royal'
+  const [selectedCustomerTier, setSelectedCustomerTier] = useState<CustomerTier>('business');
+  const [selectedPricingRow, setSelectedPricingRow] = useState<ServicePricingTier | null>(INITIAL_SERVICE_PRICING_TIERS[1]); // Nurse 8hr
+
+  // Selected Package (Legacy/Hourly Escort)
   const [selectedLevel, setSelectedLevel] = useState<MedicalSathiLevel>('level2');
 
-  // Booking Flow Steps: 'packages' | 'booking_form' | 'confirmed_dossier' | 'live_tracking'
-  const [activeStep, setActiveStep] = useState<'packages' | 'booking_form' | 'confirmed_dossier' | 'live_tracking'>('packages');
+  // Booking Flow Steps: 'packages' | 'booking_form' | 'confirmed_dossier' | 'live_tracking' | 'service_poster'
+  const [activeStep, setActiveStep] = useState<'packages' | 'booking_form' | 'confirmed_dossier' | 'live_tracking' | 'service_poster'>('packages');
 
   // Form State
   const [pickupType, setPickupType] = useState<'railway' | 'home'>('railway');
@@ -102,6 +112,7 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
 
   // Live active booking object
   const [activeBooking, setActiveBooking] = useState<MedicalSathiBooking | null>(null);
+  const [confirmedServiceBooking, setConfirmedServiceBooking] = useState<any | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [level3DoctorAlertActive, setLevel3DoctorAlertActive] = useState<boolean>(false);
 
@@ -109,12 +120,26 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
   const [transitStep, setTransitStep] = useState<'pickup_arrived' | 'patient_escorted' | 'in_transit' | 'hospital_counter' | 'completed'>('in_transit');
   const [etaMinutes, setEtaMinutes] = useState<number>(14);
 
-  // Calculate transparent charges
-  const baseHourlyTotal = hourlyRate * hours;
-  const distanceCharge = Math.max(0, distanceKm * 10);
+  // 3-Tier Dynamic Fare Calculations
+  const getActiveBaseFare = (): number => {
+    if (selectedPricingRow) {
+      if (selectedCustomerTier === 'middle' && selectedPricingRow.middle_price !== null) {
+        return selectedPricingRow.middle_price;
+      }
+      if (selectedCustomerTier === 'business' && selectedPricingRow.business_price !== null) {
+        return selectedPricingRow.business_price;
+      }
+      if (selectedCustomerTier === 'royal' && selectedPricingRow.royal_price !== null) {
+        return selectedPricingRow.royal_price;
+      }
+    }
+    return hourlyRate * hours;
+  };
+
+  const activeBaseFare = getActiveBaseFare();
+  const travelChargesCalculated = Math.max(0, distanceKm * 20); // standard ₹20/km
   const addonsFee = selectedAddons.length * 30;
-  const platformAdminCharge = Math.round(baseHourlyTotal * 0.20);
-  const totalEstimatedFare = baseHourlyTotal + distanceCharge + addonsFee + 29;
+  const totalEstimatedFare = activeBaseFare + travelChargesCalculated + addonsFee + 29;
 
   // Handle Book CTA click on package card
   const handleSelectPackageCTA = (level: MedicalSathiLevel) => {
@@ -128,22 +153,19 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
     setIsSubmitting(true);
     try {
       const payload = {
-        level: selectedLevel,
-        pickup_type: pickupType,
+        customer_tier: selectedCustomerTier,
+        service_type: selectedPricingRow?.service_type || (selectedLevel === 'level3' ? 'doctor' : selectedLevel === 'level2' ? 'nurse' : 'medical_escort'),
+        duration: selectedPricingRow?.duration || '8hr',
         pickup_location: pickupLocation,
         drop_hospital: dropHospital,
         patient_name: patientName,
         patient_age: patientAge,
-        can_walk: canWalk,
-        wheelchair_needed: wheelchairNeeded,
-        addons: selectedAddons,
-        hours,
-        hourly_rate: hourlyRate,
+        user_phone: userPhone,
         distance_km: distanceKm,
-        user_phone: userPhone
+        travel_charge: travelChargesCalculated
       };
 
-      const res = await fetch('/api/companion/medical-sathi/book', {
+      const res = await fetch('/api/book-service', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -151,13 +173,66 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
 
       if (res.ok) {
         const data = await res.json();
-        setActiveBooking(data.booking);
-        if (selectedLevel === 'level3') {
+        setConfirmedServiceBooking(data.booking);
+
+        const sathi = NETWORK_SATHI_STAFF[0];
+        const nurse = NETWORK_NURSE_STAFF[0];
+        const doctor = NETWORK_DOCTOR_STAFF[0];
+
+        const bookingObj: MedicalSathiBooking = {
+          id: data.booking.booking_id,
+          level: selectedLevel,
+          customer_tier: selectedCustomerTier,
+          pickup_type: pickupType,
+          pickup_location: pickupLocation,
+          drop_hospital: dropHospital,
+          patient_name: patientName,
+          patient_age: patientAge,
+          can_walk: canWalk,
+          wheelchair_needed: wheelchairNeeded,
+          nurse_required: true,
+          doctor_required: selectedCustomerTier === 'royal' || selectedLevel === 'level3',
+          primary_care_needed: true,
+          addons: selectedAddons,
+          hours,
+          hourly_rate: data.booking.base_price,
+          distance_km: distanceKm,
+          distance_charge: data.booking.travel_charge,
+          total_fare: data.booking.final_total_fare,
+          assigned_staff: {
+            sathi,
+            nurse,
+            doctor
+          },
+          transit_tracking: {
+            currentLat: 23.2599,
+            currentLng: 77.4126,
+            currentLocationName: `${pickupLocation} (गेट 1 प्लेटफॉर्म पर)`,
+            step: 'pickup_arrived',
+            etaMinutes: 14,
+            speedKmh: 30,
+            vitalsLogged: {
+              bp: '124/80 mmHg',
+              sugar: '125 mg/dL',
+              pulse: '72 bpm',
+              notes: selectedCustomerTier === 'royal'
+                ? 'राजसी परिवार विंग: 100% प्राइवेट स्टाफ व पर्सनल एमडी फिजिशियन तैनात। रियल-टाइम टेलीमेट्री एक्टिव।'
+                : selectedCustomerTier === 'business'
+                ? 'बिजनेस क्लास: होटल/ऑफिस विजिट व जीएसटी इनवॉइस सक्रिय।'
+                : 'मरीज को सुरक्षित स्टेशन से रिसीव किया गया, व्हीलचेयर तैयार है।'
+            }
+          },
+          status: 'assigned',
+          user_phone: userPhone,
+          created_at: new Date().toISOString()
+        };
+
+        setActiveBooking(bookingObj);
+        if (selectedCustomerTier === 'royal' || selectedLevel === 'level3') {
           setLevel3DoctorAlertActive(true);
         }
         setActiveStep('confirmed_dossier');
       } else {
-        // Fallback local booking
         createFallbackBooking();
       }
     } catch (e) {
@@ -190,7 +265,7 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
       hours,
       hourly_rate: hourlyRate,
       distance_km: distanceKm,
-      distance_charge: distanceCharge,
+      distance_charge: travelChargesCalculated,
       total_fare: totalEstimatedFare,
       assigned_staff: {
         sathi,
@@ -308,7 +383,8 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
                 : 'bg-[#071938] text-slate-300 hover:text-white border border-slate-700'
             }`}
           >
-            <span>1. 3 Service Packages</span>
+            <Crown className="w-3.5 h-3.5" />
+            <span>1. 3-Tier Pricing & Services</span>
           </button>
 
           <button
@@ -320,6 +396,17 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
             }`}
           >
             <span>2. Booking & Patient Details</span>
+          </button>
+
+          <button
+            onClick={() => setActiveStep('service_poster')}
+            className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
+              activeStep === 'service_poster'
+                ? 'bg-[#FFD700] text-slate-950 shadow-md'
+                : 'bg-[#071938] text-[#FFD700] hover:text-white border border-[#FFD700]/40'
+            }`}
+          >
+            <span>📸 Official Service Poster</span>
           </button>
 
           {activeBooking && (
@@ -353,7 +440,7 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
         {onOpenSOS && (
           <button
             onClick={onOpenSOS}
-            className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs flex items-center gap-1.5 shadow-lg shadow-red-600/30"
+            className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs flex items-center gap-1.5 shadow-lg shadow-red-600/30 shrink-0"
           >
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>Emergency SOS</span>
@@ -361,137 +448,33 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
         )}
       </div>
 
-      {/* STEP 1: 3 SERVICE PACKAGES CARDS */}
+      {/* STEP 1: 3-TIER PRICING & VERIFIED SERVICES */}
       {activeStep === 'packages' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-                <span>Select Escort Service Level</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-mono border border-blue-500/30">
-                  3 Levels
-                </span>
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-400">
-                मरीज की शारीरिक स्थिति व जरूरत के अनुसार उपयुक्त स्तर चुनें।
-              </p>
-            </div>
-            <div className="text-xs text-[#FFD700] font-mono font-bold bg-[#FFD700]/10 px-3 py-1.5 rounded-lg border border-[#FFD700]/30">
-              ⚡ 100% Guaranteed On-Time Station Meet
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {HUMARA_MEDICAL_PACKAGES.map((pkg) => {
-              const isSelected = selectedLevel === pkg.id;
-
-              return (
-                <div
-                  key={pkg.id}
-                  className={`rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 relative border-2 bg-gradient-to-b ${pkg.colorTheme.bgGradient} ${
-                    isSelected ? pkg.colorTheme.border : 'border-slate-800 hover:border-slate-700'
-                  }`}
-                >
-                  {/* Top Badge */}
-                  {pkg.badge && (
-                    <div className="absolute -top-3.5 right-6">
-                      <span className={`px-3 py-1 rounded-full text-[11px] uppercase tracking-wider shadow-lg ${pkg.colorTheme.badgeBg}`}>
-                        {pkg.badge}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="space-y-4">
-                    {/* Header with Icon */}
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-3xl shadow-inner">
-                        {pkg.iconName === 'luggage' ? '🧳' : pkg.iconName === 'nurse' ? '👩‍⚕️' : '🩺'}
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">Hourly Rate</span>
-                        <div className="text-xl sm:text-2xl font-black text-white">
-                          ₹{pkg.minPrice} - ₹{pkg.maxPrice}
-                        </div>
-                        <span className="text-[11px] text-slate-400">Per Hour</span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg sm:text-xl font-black text-white leading-snug">
-                        {pkg.name}
-                      </h3>
-                      <p className="text-xs text-slate-300 mt-1">
-                        {pkg.tagline}
-                      </p>
-                    </div>
-
-                    {/* Hourly Rate Slider for Level 1 or Interactive adjustments */}
-                    <div className="p-3 rounded-2xl bg-black/40 border border-white/10 space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400 flex items-center gap-1">
-                          <Sliders className="w-3.5 h-3.5 text-[#FFD700]" />
-                          Rate Slider:
-                        </span>
-                        <span className="font-mono font-bold text-[#FFD700]">
-                          ₹{selectedLevel === pkg.id ? hourlyRate : pkg.defaultPrice} / hr
-                        </span>
-                      </div>
-                      <input
-                        type="range"
-                        min={pkg.minPrice}
-                        max={pkg.maxPrice}
-                        step={pkg.id === 'level1' ? 25 : pkg.id === 'level2' ? 50 : 100}
-                        value={selectedLevel === pkg.id ? hourlyRate : pkg.defaultPrice}
-                        onChange={(e) => {
-                          setSelectedLevel(pkg.id);
-                          setHourlyRate(Number(e.target.value));
-                        }}
-                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#FFD700]"
-                      />
-                      <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                        <span>₹{pkg.minPrice}</span>
-                        <span>₹{pkg.defaultPrice} (Standard)</span>
-                        <span>₹{pkg.maxPrice}</span>
-                      </div>
-                    </div>
-
-                    {/* Features List */}
-                    <div className="space-y-2 pt-2">
-                      <span className="text-xs font-bold text-slate-300 uppercase tracking-wider font-mono">
-                        Features Included:
-                      </span>
-                      <ul className="space-y-2 text-xs">
-                        {pkg.features.map((feat, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-slate-200">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                            <span>{feat}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Best For Callout */}
-                    <div className="p-3 rounded-xl bg-blue-950/40 border border-blue-500/30 text-xs">
-                      <span className="font-bold text-[#FFD700] block mb-0.5">Best for:</span>
-                      <span className="text-slate-300">{pkg.bestFor}</span>
-                    </div>
-                  </div>
-
-                  {/* CTA Button */}
-                  <div className="pt-6">
-                    <button
-                      onClick={() => handleSelectPackageCTA(pkg.id)}
-                      className={`w-full py-3.5 rounded-2xl font-black text-xs sm:text-sm shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 bg-gradient-to-r ${pkg.colorTheme.ctaGradient}`}
-                    >
-                      <span>{pkg.ctaText}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        <div className="space-y-8 animate-fadeIn">
+          <ThreeTierPricingSection
+            selectedTier={selectedCustomerTier}
+            onSelectTier={(tier) => setSelectedCustomerTier(tier)}
+            onSelectServiceRow={(row, tier) => {
+              setSelectedCustomerTier(tier);
+              setSelectedPricingRow(row);
+              setActiveStep('booking_form');
+              window.scrollTo({ top: 350, behavior: 'smooth' });
+            }}
+            selectedRowId={selectedPricingRow?.id}
+          />
         </div>
+      )}
+
+      {/* STEP: SERVICE POSTER */}
+      {activeStep === 'service_poster' && (
+        <MedicalSathiServicePoster
+          onSelectTierAndBook={(tier) => {
+            setSelectedCustomerTier(tier);
+            setActiveStep('packages');
+            window.scrollTo({ top: 350, behavior: 'smooth' });
+          }}
+          onOpenSOS={onOpenSOS}
+        />
       )}
 
       {/* STEP 2: BOOKING FLOW (Locations, Patient Condition, Add-ons, Transparent Fare) */}
@@ -501,25 +484,161 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
           {/* Left Form (7 Cols) */}
           <div className="lg:col-span-7 space-y-6">
             
-            {/* Level Selected Header Bar */}
-            <div className="p-4 rounded-2xl bg-[#071938] border border-[#FFD700]/50 flex items-center justify-between flex-wrap gap-2">
+            {/* 3-Tier Selector Ribbon inside Booking Screen */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black uppercase tracking-wider text-slate-300 font-mono">
+                  Active Service Tier (सेवा श्रेणी):
+                </span>
+                <span className="text-xs font-mono text-[#D4AF37]">
+                  Instant Tier Switch
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2.5">
+                {/* Middle Class Card */}
+                <div
+                  onClick={() => setSelectedCustomerTier('middle')}
+                  className={`p-3 rounded-2xl border-2 cursor-pointer transition-all text-center flex flex-col justify-between ${
+                    selectedCustomerTier === 'middle'
+                      ? 'bg-slate-900 border-slate-400 shadow-lg scale-[1.02]'
+                      : 'bg-[#040E24] border-slate-800 hover:border-slate-700 opacity-80'
+                  }`}
+                >
+                  <div className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 mx-auto flex items-center justify-center text-slate-200 text-xs font-bold mb-1.5">
+                    M
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black text-white">Middle Class</h4>
+                    <span className="text-[10px] text-slate-400 font-mono block">Standard Care</span>
+                  </div>
+                  <div className="mt-2 pt-1 border-t border-slate-800 text-[11px] font-bold text-slate-300">
+                    {selectedCustomerTier === 'middle' ? '✓ Selected' : 'Select'}
+                  </div>
+                </div>
+
+                {/* Business Class Card */}
+                <div
+                  onClick={() => setSelectedCustomerTier('business')}
+                  className={`p-3 rounded-2xl border-2 cursor-pointer transition-all text-center relative flex flex-col justify-between ${
+                    selectedCustomerTier === 'business'
+                      ? 'bg-[#0A1931] border-blue-400 shadow-xl shadow-blue-950/60 scale-[1.02]'
+                      : 'bg-[#040E24] border-slate-800 hover:border-blue-900 opacity-80'
+                  }`}
+                >
+                  {/* Badge: Hotel/Office Visit + GST Bill */}
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                    <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-blue-600 text-white border border-blue-400 shadow-md">
+                      Hotel/Office Visit + GST Bill
+                    </span>
+                  </div>
+
+                  <div className="w-8 h-8 rounded-xl bg-blue-900/50 border border-blue-500/40 mx-auto flex items-center justify-center text-blue-300 text-xs font-bold mb-1.5 mt-1">
+                    B
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black text-white">Business Class</h4>
+                    <span className="text-[10px] text-blue-300 font-mono block">Executive VIP</span>
+                  </div>
+                  <div className="mt-2 pt-1 border-t border-slate-800 text-[11px] font-bold text-blue-400">
+                    {selectedCustomerTier === 'business' ? '✓ Selected' : 'Select'}
+                  </div>
+                </div>
+
+                {/* Royal Family Card */}
+                <div
+                  onClick={() => setSelectedCustomerTier('royal')}
+                  className={`p-3 rounded-2xl border-2 cursor-pointer transition-all text-center relative flex flex-col justify-between ${
+                    selectedCustomerTier === 'royal'
+                      ? 'bg-gradient-to-b from-[#120E02] via-[#0A1931] to-[#040E24] border-[#D4AF37] shadow-xl shadow-amber-950/60 scale-[1.02]'
+                      : 'bg-[#040E24] border-slate-800 hover:border-[#D4AF37]/50 opacity-80'
+                  }`}
+                >
+                  {/* Badge: 100% Private + Same Staff + Jet Escort */}
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                    <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-[#D4AF37] text-slate-950 border border-[#ffe033] shadow-md">
+                      100% Private + Same Staff + Jet Escort
+                    </span>
+                  </div>
+
+                  <div className="w-8 h-8 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 mx-auto flex items-center justify-center text-[#D4AF37] text-xs font-black mb-1.5 mt-1">
+                    👑
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black text-[#FFD700]">Royal Family</h4>
+                    <span className="text-[10px] text-amber-300 font-mono block">Sovereign Wing</span>
+                  </div>
+                  <div className="mt-2 pt-1 border-t border-slate-800 text-[11px] font-black text-[#D4AF37]">
+                    {selectedCustomerTier === 'royal' ? '✓ Selected' : 'Select'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Royal Concierge Benefits Banner (Visible ONLY when Royal selected) */}
+            {selectedCustomerTier === 'royal' && (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-[#1a1300] via-[#0A1931] to-[#120E02] border border-[#D4AF37] shadow-xl space-y-2 animate-fadeIn">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">👑</span>
+                    <span className="text-xs font-black text-[#FFD700] uppercase tracking-wider">
+                      Royal Concierge Sovereign Benefits Active
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#D4AF37] text-slate-950">
+                    VIP ACCESS
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300 pt-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#D4AF37]">✓</span>
+                    <span><strong>100% Private & Same Staff</strong> (Same dedicated caregiver)</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#D4AF37]">✓</span>
+                    <span><strong>Private Jet & Air Ambulance</strong> Priority Coordination</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#D4AF37]">✓</span>
+                    <span><strong>Dedicated MD Doctor + ICU Nurse</strong> 24x7 Team</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#D4AF37]">✓</span>
+                    <span><strong>Family Telemetry Dashboard</strong> & Zero-Wait VIP Bed</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Selected Service Row Card */}
+            <div className="p-4 rounded-2xl bg-[#071938] border border-blue-500/40 flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#FFD700]/20 flex items-center justify-center text-xl">
-                  {currentPkg.iconName === 'luggage' ? '🧳' : currentPkg.iconName === 'nurse' ? '👩‍⚕️' : '🩺'}
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-xl">
+                  {selectedPricingRow?.service_type === 'doctor' ? '🩺' : selectedPricingRow?.service_type === 'nurse' ? '👩‍⚕️' : selectedPricingRow?.service_type === 'royal_concierge' ? '👑' : '🚆'}
                 </div>
                 <div>
-                  <div className="text-xs text-[#FFD700] font-mono font-bold">SELECTED LEVEL:</div>
-                  <div className="text-sm sm:text-base font-black text-white">{currentPkg.name}</div>
+                  <div className="text-[10px] text-blue-300 font-mono font-bold uppercase">
+                    SELECTED SERVICE ({selectedCustomerTier.toUpperCase()} CLASS):
+                  </div>
+                  <div className="text-sm font-black text-white capitalize">
+                    {selectedPricingRow ? `${selectedPricingRow.service_type.replace('_', ' ')} (${selectedPricingRow.duration.replace('_', ' ')})` : currentPkg.name}
+                  </div>
+                  <div className="text-xs text-slate-300">
+                    {selectedPricingRow?.description || currentPkg.tagline}
+                  </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-300 font-mono font-bold">₹{hourlyRate}/hr</span>
+                <span className="text-sm text-[#FFD700] font-mono font-black">
+                  Base: ₹{activeBaseFare.toLocaleString()}
+                </span>
                 <button
+                  type="button"
                   onClick={() => setActiveStep('packages')}
                   className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-slate-300 transition-all"
                 >
-                  Change Level
+                  Change Service
                 </button>
               </div>
             </div>
@@ -845,27 +964,27 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
               {/* Itemized Fare Breakdown */}
               <div className="p-4 rounded-2xl bg-black/50 border border-slate-800 space-y-2 text-xs">
                 <div className="flex justify-between text-slate-300">
-                  <span>Hourly Escort Charge ({hours}hr × ₹{hourlyRate}):</span>
-                  <span className="font-mono font-bold text-white">₹{baseHourlyTotal}</span>
+                  <span>Base Service Fare ({selectedCustomerTier.toUpperCase()} Tier):</span>
+                  <span className="font-mono font-bold text-[#FFD700]">₹{activeBaseFare.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-slate-300">
-                  <span>Transit Distance Charge ({distanceKm}km × ₹10):</span>
-                  <span className="font-mono font-bold text-white">₹{distanceCharge}</span>
+                  <span>Transit Distance ({distanceKm} km × ₹20/km travel charge):</span>
+                  <span className="font-mono font-bold text-white">₹{travelChargesCalculated.toLocaleString()}</span>
                 </div>
                 {selectedAddons.length > 0 && (
                   <div className="flex justify-between text-slate-300">
                     <span>Add-ons ({selectedAddons.length} services):</span>
-                    <span className="font-mono font-bold text-white">₹{addonsFee}</span>
+                    <span className="font-mono font-bold text-white">₹{addonsFee.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-slate-400">
-                  <span>Safety & Insurance Kit:</span>
+                  <span>Safety & Sovereign Insurance Kit:</span>
                   <span className="font-mono text-slate-300">₹29</span>
                 </div>
 
                 <div className="pt-2 border-t border-slate-800 flex justify-between items-center text-sm sm:text-base">
                   <span className="font-black text-white">Total Estimated Fare:</span>
-                  <span className="font-mono font-black text-xl text-[#FFD700]">₹{totalEstimatedFare}</span>
+                  <span className="font-mono font-black text-xl text-[#FFD700]">₹{totalEstimatedFare.toLocaleString()}</span>
                 </div>
 
                 <div className="text-[10px] text-emerald-400 font-mono pt-1">
@@ -876,23 +995,23 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
               {/* What You Get Summary in this level */}
               <div className="space-y-1 text-xs">
                 <span className="text-slate-400 font-bold uppercase tracking-wider font-mono text-[10px]">
-                  Squad Deployed for this Booking:
+                  Squad & Service Privileges ({selectedCustomerTier.toUpperCase()}):
                 </span>
                 <div className="p-3 rounded-xl bg-blue-950/30 border border-blue-500/30 space-y-1 text-xs text-slate-200">
                   <div className="flex items-center gap-2">
                     <span className="text-emerald-400 font-black">✓</span>
                     <span>100% Aadhaar & Police Verified Companion (Rohit / Pooja)</span>
                   </div>
-                  {selectedLevel !== 'level1' && (
+                  {selectedCustomerTier !== 'middle' && (
                     <div className="flex items-center gap-2 text-cyan-300 font-semibold">
                       <span className="text-cyan-400 font-black">✓</span>
-                      <span>Certified GNM/B.Sc Nurse (Sister Sunita / Anjali)</span>
+                      <span>Hotel/Office Visit Protocol + GST Invoicing + Certified GNM Nurse</span>
                     </div>
                   )}
-                  {selectedLevel === 'level3' && (
+                  {selectedCustomerTier === 'royal' && (
                     <div className="flex items-center gap-2 text-[#FFD700] font-black">
                       <span className="text-[#FFD700]">★</span>
-                      <span>Private Doctor Supervision (Dr. Rajesh Sharma, MD)</span>
+                      <span>100% Private Dedicated Staff + Jet Escort + MD Doctor Coordination</span>
                     </div>
                   )}
                 </div>
@@ -909,7 +1028,7 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
                   <span>Deploying Medical Squad...</span>
                 ) : (
                   <>
-                    <span>Confirm & Book {currentPkg.name.split(':')[1] || currentPkg.name}</span>
+                    <span>Confirm & Book {selectedCustomerTier.toUpperCase()} Class</span>
                     <ArrowRight className="w-5 h-5" />
                   </>
                 )}
@@ -951,21 +1070,30 @@ export const HumaraMedicalSathiHub: React.FC<HumaraMedicalSathiHubProps> = ({
           )}
 
           {/* Booking Confirmation Header */}
-          <div className="p-6 rounded-3xl bg-gradient-to-r from-[#071938] to-[#040E24] border border-[#FFD700]/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-3xl bg-gradient-to-r from-[#071938] via-[#0A1931] to-[#040E24] border-2 border-[#FFD700] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-mono font-bold border border-emerald-500/40">
-                  ✓ BOOKING CONFIRMED: {activeBooking.id}
+                  ✓ SQUAD DEPLOYED: {activeBooking.id}
+                </span>
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-black font-mono uppercase ${
+                  (activeBooking.customer_tier || selectedCustomerTier) === 'royal'
+                    ? 'bg-[#D4AF37] text-slate-950 shadow-md'
+                    : (activeBooking.customer_tier || selectedCustomerTier) === 'business'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-slate-700 text-slate-200'
+                }`}>
+                  👑 {(activeBooking.customer_tier || selectedCustomerTier).toUpperCase()} CLASS
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#FFD700]/20 text-[#FFD700] text-xs font-bold font-mono">
                   {activeBooking.level.toUpperCase()}
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white mt-1">
-                Assigned Medical Escort Squad
+                Verified Medical Squad & Escort Dossier
               </h2>
               <p className="text-xs text-slate-300">
-                रूट: <strong>{activeBooking.pickup_location}</strong> ➔ <strong>{activeBooking.drop_hospital}</strong>
+                रूट: <strong>{activeBooking.pickup_location}</strong> ➔ <strong>{activeBooking.drop_hospital}</strong> • Total: <strong className="text-[#FFD700]">₹{activeBooking.total_fare.toLocaleString()}</strong>
               </p>
             </div>
 

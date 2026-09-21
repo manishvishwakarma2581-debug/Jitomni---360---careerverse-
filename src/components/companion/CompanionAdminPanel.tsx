@@ -25,9 +25,12 @@ import {
   Bike,
   Navigation,
   Info,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Crown,
+  ShieldAlert
 } from 'lucide-react';
 import { CompanionDailyHisabSheet } from './CompanionDailyHisabSheet';
+import { PricingTiersAdminManager } from './PricingTiersAdminManager';
 import {
   CompanionWorker,
   CompanionTaskCommissionRecord,
@@ -62,11 +65,12 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
   const [commissionRecords, setCommissionRecords] = useState<CompanionTaskCommissionRecord[]>(initialPlatformCommissionRecords);
   const [rideFeeRecords, setRideFeeRecords] = useState<RidePlatformFeeRecord[]>(initialRidePlatformFeeRecords);
   const [platformBalance, setPlatformBalance] = useState<number>(634); // Platform Wallet 20%
-  const [activeAdminTab, setActiveAdminTab] = useState<'daily_hisab' | 'provider_submissions' | 'verification' | 'financials' | 'rating_audit'>('daily_hisab');
+  const [activeAdminTab, setActiveAdminTab] = useState<'daily_hisab' | 'pricing_tiers_mgmt' | 'provider_submissions' | 'verification' | 'financials' | 'rating_audit'>('pricing_tiers_mgmt');
   const [financialsSubTab, setFinancialsSubTab] = useState<'rides' | 'tasks'>('rides');
 
   // Filter for workers: 'all' | 'pending' | 'verified' | 'flagged'
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'verified' | 'flagged'>('all');
+  const [ssmcFilterActive, setSsmcFilterActive] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   // Rating Simulator State (allows testing the <4.0★ auto-flagging directly)
@@ -421,6 +425,19 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
 
         <button
           type="button"
+          onClick={() => setActiveAdminTab('pricing_tiers_mgmt')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border ${
+            activeAdminTab === 'pricing_tiers_mgmt'
+              ? 'bg-[#D4AF37] text-slate-950 border-[#D4AF37] shadow-md shadow-[#D4AF37]/20 font-black'
+              : 'bg-[#07132B] text-slate-300 hover:text-white border-slate-700'
+          }`}
+        >
+          <Crown className="w-3.5 h-3.5 text-[#D4AF37]" />
+          <span>👑 3-टियर प्राइसिंग व SSMC ऑडिट (3-Tier Pricing & SSMC Filter)</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveAdminTab('provider_submissions')}
           className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border ${
             activeAdminTab === 'provider_submissions'
@@ -499,6 +516,13 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
       {/* ============================================================ */}
       {activeAdminTab === 'daily_hisab' && (
         <CompanionDailyHisabSheet lang={lang} onRefreshParent={loadAdminData} />
+      )}
+
+      {/* ============================================================ */}
+      {/* SUB-TAB: 3-TIER PRICING & SSMC AUDIT MANAGEMENT */}
+      {/* ============================================================ */}
+      {activeAdminTab === 'pricing_tiers_mgmt' && (
+        <PricingTiersAdminManager onNotify={(msg) => setActionSuccessMsg(msg)} />
       )}
 
       {/* ============================================================ */}
@@ -784,6 +808,20 @@ export const CompanionAdminPanel: React.FC<CompanionAdminPanelProps> = ({
                 }`}
               >
                 ⚠️ फ्लैग्ड (&lt;4★: {flaggedCount})
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSsmcFilterActive(!ssmcFilterActive)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border ${
+                  ssmcFilterActive
+                    ? 'bg-red-950/90 text-red-300 border-red-500 shadow-md shadow-red-950/50 font-black'
+                    : 'bg-[#07132B] text-slate-400 border-slate-700 hover:text-white'
+                }`}
+                title="Auto-reject staff from Shyam Shah Medical College / Sanjay Gandhi"
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
+                <span>SSMC Not Eligible: {ssmcFilterActive ? 'ACTIVE (Reject)' : 'OFF'}</span>
               </button>
             </div>
 

@@ -7,7 +7,9 @@ import {
   CompanionNotification,
   SovereignTaskRateCard,
   SovereignTaskServiceId,
-  CompanionVehicleMode
+  CompanionVehicleMode,
+  ServicePricingTier,
+  TierCardConfig
 } from '../types';
 
 export const companionCategories: CompanionServiceCategory[] = [
@@ -2263,6 +2265,199 @@ export const NETWORK_DOCTOR_STAFF = [
     registrationNumber: 'MPMC-18754',
     rating: 4.9,
     experienceYears: 9
+  }
+];
+
+// ==========================================
+// 3-TIER PRICING SPECIFICATION & DATA
+// Middle Class, Business Class, Royal Family
+// ==========================================
+
+export const TIER_CARD_CONFIGS: TierCardConfig[] = [
+  {
+    id: 'middle',
+    title: 'Middle Class',
+    hindiTitle: 'मध्यम वर्गीय परिवार',
+    badge: 'Standard Verified Care',
+    colorScheme: {
+      cardBg: 'bg-gradient-to-b from-slate-900 via-slate-800 to-slate-950',
+      border: 'border-slate-600/70',
+      activeBorder: 'border-slate-300 ring-2 ring-slate-400/50 shadow-[0_0_20px_rgba(148,163,184,0.3)]',
+      textAccent: 'text-slate-200',
+      badgeBg: 'bg-slate-700/80',
+      badgeText: 'text-slate-200',
+      radioColor: 'text-slate-400'
+    },
+    features: [
+      '100% Aadhaar & Background Verified Staff',
+      'Fixed transparent hourly rates',
+      'Emergency vitals & basic medication escort',
+      'Direct call connection with hospital desk'
+    ]
+  },
+  {
+    id: 'business',
+    title: 'Business Class',
+    hindiTitle: 'बिजनेस क्लास',
+    badge: 'Hotel/Office Visit + GST Bill',
+    colorScheme: {
+      cardBg: 'bg-gradient-to-b from-[#0A1931] via-[#081528] to-[#040C1A]',
+      border: 'border-blue-500/60',
+      activeBorder: 'border-blue-400 ring-2 ring-blue-500/60 shadow-[0_0_25px_rgba(59,130,246,0.35)]',
+      textAccent: 'text-blue-300',
+      badgeBg: 'bg-blue-600/30 border border-blue-400/40',
+      badgeText: 'text-blue-200',
+      radioColor: 'text-blue-500'
+    },
+    features: [
+      'Hotel & Corporate Office Visits Included',
+      'Official 18% GST Compliant Tax Invoice',
+      'Fluent English-Speaking Certified Nursing Staff',
+      'Priority 15-Minute Emergency Dispatch Buffer'
+    ]
+  },
+  {
+    id: 'royal',
+    title: 'Royal Family',
+    hindiTitle: 'रॉयल फैमिली',
+    badge: '100% Private + Same Staff + Jet Escort',
+    colorScheme: {
+      cardBg: 'bg-gradient-to-b from-[#1C1504] via-[#120D02] to-[#080601]',
+      border: 'border-[#D4AF37]/70',
+      activeBorder: 'border-[#D4AF37] ring-2 ring-[#D4AF37]/70 shadow-[0_0_30px_rgba(212,175,55,0.45)]',
+      textAccent: 'text-[#D4AF37]',
+      badgeBg: 'bg-[#D4AF37] border border-amber-300',
+      badgeText: 'text-slate-950 font-black',
+      radioColor: 'text-[#D4AF37]'
+    },
+    features: [
+      '100% Private Healthcare Wing & Same Staff Guarantee',
+      '24x7 Dedicated Dual Doctor + Critical Nurse Team',
+      'Private Jet & Air Ambulance Evacuation Ready',
+      'Dedicated SOS + Live GPS + Family Multi-User Dashboard'
+    ]
+  }
+];
+
+export const INITIAL_SERVICE_PRICING_TIERS: ServicePricingTier[] = [
+  {
+    id: 'spt-nurse-4hr',
+    service_type: 'nurse',
+    duration: '4hr',
+    title: 'Nurse 4 Hours Duty',
+    middle_price: 800,
+    business_price: 1500,
+    royal_price: 3000,
+    description: '4-Hour Dedicated GNM/B.Sc Registered Nurse Shift for Post-Operative, Wound & Vitals Care',
+    category: 'nursing',
+    icon: 'heart-pulse',
+    is_active: true
+  },
+  {
+    id: 'spt-nurse-8hr',
+    service_type: 'nurse',
+    duration: '8hr',
+    title: 'Nurse 8 Hours Duty',
+    middle_price: 1200,
+    business_price: 2200,
+    royal_price: 4500,
+    description: '8-Hour Complete Nursing & Vitals Care Shift with Medication Timing & Mobility Escort',
+    category: 'nursing',
+    icon: 'heart-pulse',
+    is_active: true
+  },
+  {
+    id: 'spt-nurse-12hr',
+    service_type: 'nurse',
+    duration: '12hr',
+    title: 'Nurse 12hr / Night Duty',
+    middle_price: 1800,
+    business_price: 3500,
+    royal_price: 7000,
+    description: '12-Hour Night/Day ICU Support, Tracheostomy Care & Emergency Medication Shift',
+    category: 'nursing',
+    icon: 'clock',
+    is_active: true
+  },
+  {
+    id: 'spt-doctor-1visit',
+    service_type: 'doctor',
+    duration: '1_visit',
+    title: 'Doctor 1 In-Person Visit',
+    middle_price: 1500,
+    business_price: 2500,
+    royal_price: 5000,
+    description: 'Single Comprehensive Home / Hotel / Hospital Bedside Consultation by MD Specialist',
+    category: 'doctor',
+    icon: 'stethoscope',
+    is_active: true
+  },
+  {
+    id: 'spt-doctor-monthly',
+    service_type: 'doctor',
+    duration: 'monthly_retainer',
+    title: 'Doctor Monthly Retainer',
+    middle_price: 15000,
+    business_price: 25000,
+    royal_price: 60000,
+    description: 'Monthly Family Physician Retainer with Weekly Scheduled Visits & 24/7 Teleconsults',
+    category: 'doctor',
+    icon: 'award',
+    is_active: true
+  },
+  {
+    id: 'spt-team-24x7',
+    service_type: 'nurse',
+    duration: '24hr',
+    title: '24x7 Nurse + Doctor Team (Per Day)',
+    middle_price: null, // Middle NULL
+    business_price: 15000,
+    royal_price: 25000,
+    description: '24x7 Dedicated Nurse + MD Doctor On-Call Round-the-Clock Critical Care Team',
+    category: 'team',
+    icon: 'users',
+    is_active: true
+  },
+  {
+    id: 'spt-icu-home',
+    service_type: 'icu_setup',
+    duration: '24hr',
+    title: 'ICU at Home Setup (Per Day)',
+    middle_price: null, // Middle NULL
+    business_price: 8000,
+    royal_price: 15000,
+    description: 'Advanced ICU at Home (Multi-Para Monitor, Syringe Pump, BiPAP/CPAP, Oxygen Concentrator)',
+    category: 'icu',
+    icon: 'activity',
+    is_active: true
+  },
+  {
+    id: 'spt-medical-escort',
+    service_type: 'medical_escort',
+    duration: 'per_trip',
+    title: 'Medical Escort (Per Trip + Travel)',
+    middle_price: null, // Middle NULL
+    business_price: 5000,
+    royal_price: 12000,
+    description: 'Specialized Medical Transit Escort per trip (Station/Airport to Hospital + Travel Charges)',
+    category: 'transit',
+    icon: 'navigation',
+    is_active: true,
+    hasTravelCharges: true
+  },
+  {
+    id: 'spt-royal-concierge',
+    service_type: 'royal_concierge',
+    duration: 'monthly_retainer',
+    title: 'Full Royal Concierge (Monthly)',
+    middle_price: null, // Middle NULL
+    business_price: null, // Business NULL
+    royal_price: 215000, // Range ₹1,80,000 - ₹2,50,000
+    displayPriceString: '₹1,80,000 – ₹2,50,000',
+    description: 'Full Royal Concierge 24x7 Private Medical Wing, Dedicated Staff, Air Ambulance / Jet Option',
+    category: 'royal',
+    icon: 'crown',
+    is_active: true
   }
 ];
 

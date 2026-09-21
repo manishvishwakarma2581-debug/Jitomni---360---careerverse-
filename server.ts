@@ -9,8 +9,10 @@ import { geminiRouter } from './server/routes/gemini';
 import { vacanciesAndJobsRouter } from './server/routes/vacanciesAndJobs';
 import { hiringRouter } from './server/routes/hiring';
 import { companionRouter } from './server/routes/companion';
+import { pricingRouter } from './server/routes/pricingRoutes';
 import { kritiRouter } from './server/routes/kriti';
 import { adminAndDemandsRouter } from './server/routes/adminAndDemands';
+import { gigWorkersRouter } from './server/routes/gigWorkersRoutes';
 
 dotenv.config();
 
@@ -76,8 +78,10 @@ app.use(geminiRouter);
 app.use(vacanciesAndJobsRouter);
 app.use(hiringRouter);
 app.use(companionRouter);
+app.use(pricingRouter);
 app.use(kritiRouter);
 app.use(adminAndDemandsRouter);
+app.use(gigWorkersRouter);
 
 // ============================================================
 // VITE MIDDLEWARE & STATIC PRODUCTION SERVING

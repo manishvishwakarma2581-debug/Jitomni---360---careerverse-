@@ -42,6 +42,7 @@ import { HumaraMedicalSathiHub } from './HumaraMedicalSathiHub';
 import { RewaCityLiveMap } from './RewaCityLiveMap';
 import { AIDemandTaskEngine } from './AIDemandTaskEngine';
 import { ServiceProviderRegistrationModal } from './ServiceProviderRegistrationModal';
+import { GigWorkersHub } from './GigWorkersHub';
 import { RewaMapLocationPin, AIParsedTaskResult } from '../../types';
 
 interface CompanionServiceModuleProps {
@@ -53,7 +54,7 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
   const [activeRole, setActiveRole] = useState<'citizen' | 'worker' | 'admin'>('citizen');
 
   // Current Active Sub-View inside the Citizen Module (default to new 3-Level Medical Sathi)
-  const [activeSubView, setActiveSubView] = useState<'medical_sathi' | 'rewa_map' | 'ai_demand' | 'categories' | 'rides' | 'book' | 'radar' | 'tracking' | 'safety'>('medical_sathi');
+  const [activeSubView, setActiveSubView] = useState<'medical_sathi' | 'rewa_map' | 'ai_demand' | 'categories' | 'rides' | 'book' | 'radar' | 'tracking' | 'safety' | 'gig_workers'>('medical_sathi');
   
   // Registration Modal for local providers/vendors/sathis
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false);
@@ -370,6 +371,23 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
             </span>
           </button>
 
+          {/* GIG WORKERS PAN-INDIA ALL SERVICES */}
+          <button
+            type="button"
+            onClick={() => setActiveSubView('gig_workers')}
+            className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border-2 ${
+              activeSubView === 'gig_workers'
+                ? 'bg-gradient-to-r from-[#D4AF37] via-amber-400 to-[#D4AF37] text-slate-950 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/30 scale-105'
+                : 'bg-[#071938] text-[#D4AF37] hover:text-white border-[#D4AF37]/60'
+            }`}
+          >
+            <span className="text-sm">⚡</span>
+            <span>गिग वर्कर्स (Pan-India 35+ Services)</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[9px] font-black uppercase tracking-wider animate-pulse">
+              35+ GIGS
+            </span>
+          </button>
+
           <button
             type="button"
             onClick={() => setActiveSubView('rewa_map')}
@@ -529,19 +547,54 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
         />
       )}
 
+      {/* VIEW: GIG WORKERS - PAN INDIA ALL SERVICES (35+ CATEGORIES IN GROUPS A-F) */}
+      {activeSubView === 'gig_workers' && (
+        <div className="space-y-6">
+          <GigWorkersHub lang={lang} />
+        </div>
+      )}
+
       {/* VIEW 1: Service Selection Screen (The 5 Categories with distinct visual anchors) */}
       {activeSubView === 'categories' && (
-        <CompanionServiceSelector
-          selectedCategory={selectedCategory}
-          onSelectCategory={handleSelectCategory}
-          onQuickBook={handleQuickBook}
-          onSelectTask={(taskId, mode) => {
-            setSelectedTaskId(taskId);
-            setSelectedVehicleMode(mode);
-            setActiveSubView('book');
-          }}
-          lang={lang}
-        />
+        <div className="space-y-12">
+          <CompanionServiceSelector
+            selectedCategory={selectedCategory}
+            onSelectCategory={handleSelectCategory}
+            onQuickBook={handleQuickBook}
+            onSelectTask={(taskId, mode) => {
+              setSelectedTaskId(taskId);
+              setSelectedVehicleMode(mode);
+              setActiveSubView('book');
+            }}
+            lang={lang}
+          />
+
+          {/* BELOW THE EXISTING 9 SATHI SERVICES: PAN-INDIA GIG WORKERS & HOME SERVICES HUB */}
+          <div className="pt-10 border-t-2 border-[#D4AF37]/40 space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[#0A1931] border-2 border-[#D4AF37]">
+              <div>
+                <span className="px-3 py-1 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-black border border-[#D4AF37]/50 font-mono">
+                  PAN INDIA ALL SERVICES • 35+ GIG CATEGORIES
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-white mt-1">
+                  गिग वर्कर्स - ऑल इंडिया 35+ सेवाएं
+                </h3>
+                <p className="text-xs text-[#D4AF37] font-semibold">
+                  "एक ऐप पे सब काम - घर का प्लंबर से दादाजी का साथी तक"
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveSubView('gig_workers')}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 font-black text-xs hover:brightness-110 shadow-lg whitespace-nowrap"
+              >
+                फुल स्क्रीन व्यू खोलें →
+              </button>
+            </div>
+
+            <GigWorkersHub lang={lang} />
+          </div>
+        </div>
       )}
 
       {/* VIEW: Ride & Travel Booking Hub (Car & Bike Ride - 0% Commission) */}

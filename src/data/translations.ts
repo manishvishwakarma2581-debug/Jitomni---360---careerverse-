@@ -39,6 +39,7 @@ export const translations = {
     doubt: { hi: '🎯 AI डाउट सॉल्वर', en: '🎯 AI Doubt Solver', hinglish: '🎯 AI Doubt Solver' },
     flashcards: { hi: '⚡ स्मार्ट फ्लैशकार्ड्स', en: '⚡ Smart Flashcards', hinglish: '⚡ Flashcards & Streaks' },
     prime: { hi: 'जिटोम्नी प्राइम AI', en: 'JITOMNI PRIME AI', hinglish: 'PRIME AI Brain' },
+    franchise: { hi: '🏛️ फ्रैंचाइज़ी लो (₹75K)', en: '🏛️ Franchise (₹75K)', hinglish: '🏛️ Franchise Lo (₹75K)' },
     admin: { hi: '⚡ ऑटो शेड्यूलर', en: '⚡ Auto Scheduler', hinglish: '⚡ Auto Scheduler' },
   },
   home: {

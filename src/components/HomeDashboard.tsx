@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Award, Mic, BrainCircuit, ArrowRight, Sparkles, FileText, CheckCircle2, ShieldCheck, HelpCircle, HeartHandshake, Briefcase, Globe2, Building2, GraduationCap, HardHat, Flag, Cpu, Video, Sprout, MessageSquarePlus, Share2, SlidersHorizontal } from 'lucide-react';
+import { BookOpen, Award, Mic, BrainCircuit, ArrowRight, Sparkles, FileText, CheckCircle2, ShieldCheck, HelpCircle, HeartHandshake, Briefcase, Globe2, Building2, GraduationCap, HardHat, Flag, Cpu, Video, Sprout, MessageSquarePlus, Share2, SlidersHorizontal, Wrench, PhoneCall, Zap } from 'lucide-react';
 import { Language, MainTab, TopicItem, UserPersona } from '../types';
 import { translations } from '../data/translations';
 import { schoolCurriculumData, competitiveCurriculumData } from '../data/curriculumData';
@@ -60,6 +60,17 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       border: 'border-rose-500/50 hover:border-rose-400',
       tag: 'Hospital Escort • Nurse • Doctor • Elderly',
       features: ['HUMARA 3-Level मेडिकल साथी (Nurse+Doctor)', 'लाइव जीपीएस व विटल्स ट्रैकिंग', '1-टैप इमरजेंसी एसओएस व पुलिस 112'],
+    },
+    {
+      id: 'franchise' as MainTab,
+      badge: 'Pan-India Franchise • ₹75,000',
+      title: lang === 'hi' ? '🏛️ फ्रैंचाइज़ी लो — अपने शहर के बॉस बनो' : '🏛️ Franchise Lo — Be Your City Boss',
+      desc: lang === 'hi' ? 'मात्र ₹75,000 में अपने शहर में 9 साथी व 35+ गिग सर्विसेज की एक्सक्लूसिव फ्रैंचाइज़ी शुरू करें। 70% आपकी कमाई, रीवा में स्टाफ ट्रेनिंग व ब्रांड सपोर्ट।' : 'Start your city exclusive franchise of 9 Sathi & 35+ Gig services for just ₹75,000. 70% owner profit, trained staff in Rewa & complete tech setup.',
+      icon: <Building2 className="w-8 h-8 text-[#D4AF37]" />,
+      color: 'from-amber-950/80 via-[#2A1E05] to-[#0D0A01]',
+      border: 'border-[#D4AF37]/60 hover:border-[#D4AF37]',
+      tag: '70% Owner Share • Rewa HQ Support',
+      features: ['मात्र ₹75,000 निवेश & ₹90,000/माह ROI', 'रीवा में 1 Girl + 2 Boys स्टाफ ट्रेनिंग', 'रॉयल बोर्ड डिज़ाइन & सिटी ऐप पैनल'],
     },
     {
       id: 'iti' as MainTab,
@@ -395,6 +406,141 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             <div className="text-[10px] text-amber-300 font-bold">
               ⚡ Doctor Network Alert: Nearest MD/MBBS alerted
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* SPOTLIGHT BANNER: GIG WORKERS - PAN INDIA ALL SERVICES (35+ CATEGORIES) */}
+      {/* Navy Blue (#0A1931) + Royal Gold (#D4AF37) Premium Theme */}
+      {/* "Ek App Pe Sab Kaam - Ghar Ka Plumber Se Dadaji Ka Sathi Tak" */}
+      {/* ========================================================================= */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#061224] via-[#0A1931] to-[#040C1A] border-2 border-[#D4AF37] p-6 sm:p-8 shadow-[0_0_40px_rgba(212,175,55,0.25)] space-y-6">
+        <div className="absolute -top-24 -right-24 w-88 h-88 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-88 h-88 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-3.5 py-1 rounded-full bg-gradient-to-r from-[#D4AF37] to-amber-500 text-slate-950 text-xs font-black tracking-wider uppercase shadow-md flex items-center gap-1.5 animate-pulse">
+                <Zap className="w-3.5 h-3.5 fill-slate-950" />
+                PAN INDIA 35+ SERVICES
+              </span>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/40 font-mono flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                100% Aadhaar & Police CID Verified
+              </span>
+              <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-black border border-blue-500/40 font-mono">
+                ISO 9001:2015 Certified
+              </span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white font-heading tracking-tight leading-tight">
+              गिग वर्कर्स - ऑल इंडिया 35+ सेवाएं
+            </h2>
+
+            <div className="space-y-1.5">
+              <div className="text-base sm:text-lg font-black text-[#D4AF37] tracking-wide">
+                "Ek App Pe Sab Kaam - Ghar Ka Plumber Se Dadaji Ka Sathi Tak"
+              </div>
+              <p className="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
+                इलेक्ट्रीशियन, प्लंबर, एसी/फ्रिज रिपेयर, होम ट्यूटर, ब्यूटीशियन, ड्राइवर, फोटोग्राफर से लेकर होम डिलीवरी तक—पूरे भारत के हर शहर में 5km रेडियस के अंदर 100% पुलिस-वेरिफाइड कारीगर व सेवा साथी सीधे आपके दरवाजे पर।
+              </p>
+            </div>
+
+            {/* Quick Metrics */}
+            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
+              <span className="px-2.5 py-1 rounded-lg bg-[#040E1E] text-slate-300 border border-[#D4AF37]/30">
+                💰 <strong>20% प्लेटफॉर्म कमीशन</strong> • 80% वर्कर कमाई
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-[#040E1E] text-slate-300 border border-[#D4AF37]/30">
+                ⚡ <strong>2-in-1 मोड:</strong> कस्टमर व वर्कर एक ही ऐप में
+              </span>
+              <a 
+                href="tel:9399608239" 
+                className="px-2.5 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 hover:text-white"
+              >
+                <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
+                <span>हेल्पलाइन: <strong>9399608239</strong></span>
+              </a>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => onNavigateTab('companion')}
+              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-amber-400 to-[#D4AF37] hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm transition-all hover:scale-105 shadow-xl shadow-[#D4AF37]/30 flex items-center justify-center gap-2 border-2 border-white/60 whitespace-nowrap"
+            >
+              <Wrench className="w-4 h-4 text-slate-950" />
+              <span>35+ गिग सेवाएं खोजें (Customer Mode)</span>
+              <ArrowRight className="w-4 h-4 text-slate-950" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigateTab('companion')}
+              className="px-6 py-3 rounded-2xl bg-[#040D1C] hover:bg-[#07162E] text-[#D4AF37] hover:text-white font-bold text-xs border border-[#D4AF37]/60 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+            >
+              <span>💼 गिग वर्कर बनें (Worker KYC & Earning)</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 6 Groups Quick Preview Grid */}
+        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-4 border-t border-slate-700/60">
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-3 rounded-xl bg-[#040D1C]/80 border border-[#D4AF37]/30 hover:border-[#D4AF37] transition-all cursor-pointer group space-y-1 text-center"
+          >
+            <div className="text-xl">🔧</div>
+            <div className="text-xs font-bold text-white group-hover:text-[#D4AF37]">Group A: होम सर्विसेज</div>
+            <div className="text-[10px] text-slate-400">इलेक्ट्रीशियन, प्लंबर, AC</div>
+          </div>
+
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-3 rounded-xl bg-[#040D1C]/80 border border-[#D4AF37]/30 hover:border-[#D4AF37] transition-all cursor-pointer group space-y-1 text-center"
+          >
+            <div className="text-xl">💇‍♀️</div>
+            <div className="text-xs font-bold text-white group-hover:text-[#D4AF37]">Group B: ब्यूटी & केयर</div>
+            <div className="text-[10px] text-slate-400">ब्यूटीशियन, बार्बर, मेहंदी</div>
+          </div>
+
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-3 rounded-xl bg-[#040D1C]/80 border border-[#D4AF37]/30 hover:border-[#D4AF37] transition-all cursor-pointer group space-y-1 text-center"
+          >
+            <div className="text-xl">🚚</div>
+            <div className="text-xs font-bold text-white group-hover:text-[#D4AF37]">Group C: डिलीवरी/ड्राइवर</div>
+            <div className="text-[10px] text-slate-400">डिलीवरी बॉय, पैकर्स</div>
+          </div>
+
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-3 rounded-xl bg-[#040D1C]/80 border border-[#D4AF37]/30 hover:border-[#D4AF37] transition-all cursor-pointer group space-y-1 text-center"
+          >
+            <div className="text-xl">💻</div>
+            <div className="text-xs font-bold text-white group-hover:text-[#D4AF37]">Group D: टेक & ट्यूटर</div>
+            <div className="text-[10px] text-slate-400">होम ट्यूटर, CCTV, मोबाइल</div>
+          </div>
+
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-3 rounded-xl bg-[#040D1C]/80 border border-[#D4AF37]/30 hover:border-[#D4AF37] transition-all cursor-pointer group space-y-1 text-center"
+          >
+            <div className="text-xl">📸</div>
+            <div className="text-xs font-bold text-white group-hover:text-[#D4AF37]">Group E: इवेंट & कुक</div>
+            <div className="text-[10px] text-slate-400">फोटोग्राफर, DJ, शेफ</div>
+          </div>
+
+          <div 
+            onClick={() => onNavigateTab('companion')}
+            className="p-3 rounded-xl bg-[#040D1C]/80 border border-[#D4AF37]/30 hover:border-[#D4AF37] transition-all cursor-pointer group space-y-1 text-center"
+          >
+            <div className="text-xl">🧹</div>
+            <div className="text-xs font-bold text-white group-hover:text-[#D4AF37]">Group F: क्लीनिंग/अदर</div>
+            <div className="text-[10px] text-slate-400">घर सफाई, कार वॉश, पेंटर</div>
           </div>
         </div>
       </div>
