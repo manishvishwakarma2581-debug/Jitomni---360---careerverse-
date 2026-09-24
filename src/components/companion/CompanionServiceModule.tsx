@@ -45,14 +45,15 @@ import { ServiceProviderRegistrationModal } from './ServiceProviderRegistrationM
 import { GigWorkersHub } from './GigWorkersHub';
 import { RoyalAutoModule } from './auto/RoyalAutoModule';
 import { RewaMapLocationPin, AIParsedTaskResult } from '../../types';
+import { TrojanMasterHub } from './trojan/TrojanMasterHub';
 
 interface CompanionServiceModuleProps {
   lang: Language;
 }
 
 export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ lang }) => {
-  // Top-level Role switcher: Citizen/Customer vs Companion Worker vs Admin Panel
-  const [activeRole, setActiveRole] = useState<'citizen' | 'worker' | 'admin'>('citizen');
+  // Top-level Role switcher: Citizen/Customer vs Companion Worker vs Admin Panel vs Trojan Bridge 4-Panel Super App
+  const [activeRole, setActiveRole] = useState<'trojan_bridge' | 'citizen' | 'worker' | 'admin'>('trojan_bridge');
 
   // Current Active Sub-View inside the Citizen Module (default to new 3-Level Medical Sathi)
   const [activeSubView, setActiveSubView] = useState<'medical_sathi' | 'royal_auto' | 'rewa_map' | 'ai_demand' | 'categories' | 'rides' | 'book' | 'radar' | 'tracking' | 'safety' | 'gig_workers'>('medical_sathi');
@@ -249,8 +250,25 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8 animate-fadeIn">
       {/* Sovereign Master Role Switcher */}
-      <div className="bg-gradient-to-r from-[#040E24] via-[#071738] to-[#040E24] p-2 rounded-2xl border border-slate-700 shadow-xl flex flex-wrap items-center justify-between gap-2">
+      <div className="bg-gradient-to-r from-[#040E24] via-[#071738] to-[#040E24] p-2 rounded-2xl border-2 border-[#FFD700]/60 shadow-xl flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-x-auto p-1 scrollbar-none w-full sm:w-auto">
+          {/* THE 4-PANEL TROJAN BRIDGE SUPER APP BUTTON */}
+          <button
+            type="button"
+            onClick={() => setActiveRole('trojan_bridge')}
+            className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border-2 ${
+              activeRole === 'trojan_bridge'
+                ? 'bg-gradient-to-r from-[#FFD700] via-amber-400 to-[#FFD700] text-slate-950 border-[#FFD700] shadow-lg shadow-[#FFD700]/30 scale-105'
+                : 'bg-[#0A1931] text-[#FFD700] hover:text-white border-[#FFD700]/50'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5 fill-current" />
+            <span>🏆 ट्रोजन ब्रिज 4-पैनल सुपर ऐप (On Demand Sathi & Bridge)</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black uppercase tracking-wider animate-pulse">
+              HOT
+            </span>
+          </button>
+
           <button
             type="button"
             onClick={() => setActiveRole('citizen')}
@@ -310,7 +328,9 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
         </div>
       </div>
 
-      {activeRole === 'worker' ? (
+      {activeRole === 'trojan_bridge' ? (
+        <TrojanMasterHub initialPanel="customer" />
+      ) : activeRole === 'worker' ? (
         <CompanionWorkerPortal
           lang={lang}
           onNavigateToAdmin={() => setActiveRole('admin')}
