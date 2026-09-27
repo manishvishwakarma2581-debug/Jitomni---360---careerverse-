@@ -44,6 +44,7 @@ import { AIDemandTaskEngine } from './AIDemandTaskEngine';
 import { ServiceProviderRegistrationModal } from './ServiceProviderRegistrationModal';
 import { GigWorkersHub } from './GigWorkersHub';
 import { RoyalAutoModule } from './auto/RoyalAutoModule';
+import { HotelBookingHub } from './HotelBookingHub';
 import { RewaMapLocationPin, AIParsedTaskResult } from '../../types';
 import { TrojanMasterHub } from './trojan/TrojanMasterHub';
 
@@ -56,8 +57,11 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
   const [activeRole, setActiveRole] = useState<'trojan_bridge' | 'citizen' | 'worker' | 'admin'>('trojan_bridge');
 
   // Current Active Sub-View inside the Citizen Module (default to new 3-Level Medical Sathi)
-  const [activeSubView, setActiveSubView] = useState<'medical_sathi' | 'royal_auto' | 'rewa_map' | 'ai_demand' | 'categories' | 'rides' | 'book' | 'radar' | 'tracking' | 'safety' | 'gig_workers'>('medical_sathi');
+  const [activeSubView, setActiveSubView] = useState<'medical_sathi' | 'royal_auto' | 'hotels' | 'rewa_map' | 'ai_demand' | 'categories' | 'rides' | 'book' | 'radar' | 'tracking' | 'safety' | 'gig_workers'>('medical_sathi');
   
+  // Selected Hotel ID for deep link from live map or search
+  const [selectedHotelId, setSelectedHotelId] = useState<string | undefined>(undefined);
+
   // Registration Modal for local providers/vendors/sathis
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false);
   
@@ -307,6 +311,15 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Open Register Modal Quick Button */}
+          <button
+            type="button"
+            onClick={() => setIsRegisterModalOpen(true)}
+            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
+          >
+            <span>+ पार्टनर ऑनबोर्डिंग / Register</span>
+          </button>
+
           {/* Global Notification Bell Trigger */}
           <button
             type="button"
@@ -329,7 +342,10 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
       </div>
 
       {activeRole === 'trojan_bridge' ? (
-        <TrojanMasterHub initialPanel="customer" />
+        <TrojanMasterHub
+          initialPanel="customer"
+          onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
+        />
       ) : activeRole === 'worker' ? (
         <CompanionWorkerPortal
           lang={lang}
@@ -420,8 +436,25 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
             }`}
           >
             <span className="text-base">🛺</span>
-            <span>रॉयल ऑटो (Rapido स्टाइल • Unique Royal ID)</span>
+            <span>रॉयल ऑटो (Rapido स्टाइल • 0% Surge)</span>
             <span className="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black uppercase tracking-wider animate-pulse">
+              LIVE
+            </span>
+          </button>
+
+          {/* PAN-INDIA HOTEL & STAY BOOKING (100% WORKING ENGINE) */}
+          <button
+            type="button"
+            onClick={() => { setSelectedHotelId(undefined); setActiveSubView('hotels'); }}
+            className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 whitespace-nowrap border-2 ${
+              activeSubView === 'hotels'
+                ? 'bg-gradient-to-r from-[#FFD700] via-amber-400 to-[#FFD700] text-slate-950 border-[#FFD700] shadow-lg shadow-[#FFD700]/30 scale-105'
+                : 'bg-[#071938] text-[#FFD700] hover:text-white border-[#FFD700]/60'
+            }`}
+          >
+            <span className="text-base">🏨</span>
+            <span>होटल व लॉज बुकिंग (Pan-India 500+ Stays)</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[9px] font-black uppercase tracking-wider animate-pulse">
               0% SURGE
             </span>
           </button>
@@ -570,9 +603,20 @@ export const CompanionServiceModule: React.FC<CompanionServiceModuleProps> = ({ 
             setActiveSubView('rides');
           }}
           onReserveHotel={(hotel) => {
-            alert(`होटल ${hotel.name} से संपर्क साधा जा रहा है (फोन: ${hotel.phone})`);
+            setSelectedHotelId(hotel.id);
+            setActiveSubView('hotels');
           }}
           onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
+        />
+      )}
+
+      {/* VIEW: PAN-INDIA HOTEL & STAY BOOKING (100% OPERATIONAL ENGINE) */}
+      {activeSubView === 'hotels' && (
+        <HotelBookingHub
+          lang={lang}
+          initialSelectedCity="Rewa"
+          initialSelectedHotelId={selectedHotelId}
+          onOpenSOSModal={() => setIsSOSModalOpen(true)}
         />
       )}
 

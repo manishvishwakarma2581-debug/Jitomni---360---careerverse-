@@ -81,6 +81,8 @@ const DEFAULT_COMMISSIONS: CategoryCommissionSetting[] = [
   { category: 'ride_transport', title: 'ऑटो व टैक्सी (Ola/Uber Replacement)', defaultCommissionPercent: 12, minPercent: 8, maxPercent: 18 },
   { category: 'medical_pharma', title: 'दवाई व मेडिकल स्टोर (Pharmeasy Replacement)', defaultCommissionPercent: 15, minPercent: 10, maxPercent: 20 },
   { category: 'courier_logistics', title: 'लोकल पार्सल व कुरियर (Dunzo Replacement)', defaultCommissionPercent: 15, minPercent: 10, maxPercent: 20 },
+  { category: 'hotel_stay_lodge', title: 'होटल व विश्रामालय (Hotel & Lodge Stays)', defaultCommissionPercent: 10, minPercent: 5, maxPercent: 15 },
+  { category: 'tour_travel_operator', title: 'टूर व ट्रेवल ऑपरेटर (Outstation & Tour Cabs)', defaultCommissionPercent: 10, minPercent: 8, maxPercent: 15 },
 ];
 
 // Seed Royal Sathis (Our Internal Pool - 90/10 Model)

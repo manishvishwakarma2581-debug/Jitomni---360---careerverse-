@@ -931,10 +931,12 @@ export interface CompanionSOSEvent {
 export type VehicleCategoryType = 
   | 'bike' 
   | 'scooter' 
+  | 'auto_rickshaw'
   | 'car_hatchback' 
   | 'car_sedan' 
   | 'car_suv' 
-  | 'electric_ev';
+  | 'electric_ev'
+  | 'travel_tempo';
 
 export interface RideVehiclePartner {
   id: string;
@@ -1346,8 +1348,13 @@ export interface FeaturePriorityItem {
 export type ServiceProviderCategory = 
   | 'hospital_helper' 
   | 'elderly_care' 
+  | 'bike_sathi'
+  | 'bina_bike_sathi'
+  | 'auto_rickshaw'
   | 'cab_vendor' 
-  | 'hotel_partner';
+  | 'hotel_partner'
+  | 'travel_operator'
+  | 'gig_worker';
 
 export interface ServiceProviderRegistration {
   id: string;

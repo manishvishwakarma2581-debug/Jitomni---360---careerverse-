@@ -22,10 +22,12 @@ type TrojanActivePanel = 'customer' | 'worker' | 'provider' | 'admin';
 
 interface TrojanMasterHubProps {
   initialPanel?: TrojanActivePanel;
+  onOpenRegisterModal?: () => void;
 }
 
 export const TrojanMasterHub: React.FC<TrojanMasterHubProps> = ({
   initialPanel = 'customer',
+  onOpenRegisterModal,
 }) => {
   const [activePanel, setActivePanel] = useState<TrojanActivePanel>(initialPanel);
   const [lastCreatedOrder, setLastCreatedOrder] = useState<TrojanOrder | null>(null);
@@ -123,6 +125,17 @@ export const TrojanMasterHub: React.FC<TrojanMasterHubProps> = ({
               <span>4. सुपर एडमिन कंसोल</span>
             </button>
           </div>
+
+          {/* Quick Partner Registration Button */}
+          {onOpenRegisterModal && (
+            <button
+              type="button"
+              onClick={onOpenRegisterModal}
+              className="w-full md:w-auto py-2 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
+            >
+              <span>🚀 + पार्टनर बनें (Register Sathi/Hotel/Auto)</span>
+            </button>
+          )}
         </div>
 
         {/* Live Status Hint Bar */}

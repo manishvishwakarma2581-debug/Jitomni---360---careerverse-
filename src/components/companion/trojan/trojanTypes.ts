@@ -4,7 +4,13 @@
 // Tagline: "6 App Delete Karo, 1 App Rakho"
 // ============================================================================
 
-export type ServiceMainCategory = 'hourly_sathi' | 'task_based' | 'quick_commerce';
+export type ServiceMainCategory = 
+  | 'hourly_sathi' 
+  | 'task_based' 
+  | 'quick_commerce'
+  | 'hotel_stay'
+  | 'bike_auto_ride'
+  | 'travel_outstation';
 
 export type SubCategoryType = 
   | 'sathi_senior'
@@ -12,6 +18,8 @@ export type SubCategoryType =
   | 'sathi_bank_govt'
   | 'sathi_shopping'
   | 'sathi_chaperone'
+  | 'sathi_bike_errand'
+  | 'sathi_walking_attendant'
   | 'task_bill_pay'
   | 'task_delivery'
   | 'task_senior_help'
@@ -21,7 +29,12 @@ export type SubCategoryType =
   | 'quick_kirana'
   | 'quick_dairy_veggies'
   | 'quick_medicine'
-  | 'quick_food_meal';
+  | 'quick_food_meal'
+  | 'hotel_room_booking'
+  | 'hotel_transit_stay'
+  | 'ride_bike_rapido'
+  | 'ride_city_auto'
+  | 'travel_outstation_cab';
 
 export type ProviderCategory = 
   | 'food_restaurant' 
@@ -29,7 +42,9 @@ export type ProviderCategory =
   | 'ride_transport' 
   | 'home_service' 
   | 'medical_pharma' 
-  | 'courier_logistics';
+  | 'courier_logistics'
+  | 'hotel_stay_lodge'
+  | 'tour_travel_operator';
 
 export type OrderStatus = 
   | 'pending_routing'      // Looking for Royal Sathi or Provider

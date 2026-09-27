@@ -346,6 +346,164 @@ export const CustomerAppPanel: React.FC<CustomerAppPanelProps> = ({
         </div>
       )}
 
+      {/* 7 SOVEREIGN CORE SERVICES — ZERO CONFUSION INSTANT LAUNCHER */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>सीधे 1-क्लिक सेवा चुनें (All-India Zero-Confusion Services):</span>
+          </span>
+          <span className="text-[10px] font-mono text-[#FFD700]">0% SURGE • 100% VERIFIED</span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+          {/* Tile 1: Bike Sathi */}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedTab('task_based');
+              setTaskSubtype('ride_bike_rapido');
+              setTaskFixedPrice(49);
+              setFlowStep('fill_details');
+            }}
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#0F224A] to-[#0A1931] border border-amber-500/40 hover:border-[#FFD700] hover:scale-105 transition-all text-left flex flex-col justify-between group cursor-pointer shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl group-hover:scale-110 transition-transform">🏍️</span>
+              <span className="text-[9px] font-mono px-1 rounded bg-amber-400/20 text-amber-300 font-bold">RAPIDO</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-black text-white leading-tight">बाइक साथी</div>
+              <div className="text-[10px] text-amber-400 font-mono font-bold">₹49 बेस + ₹8/km</div>
+            </div>
+          </button>
+
+          {/* Tile 2: Bina Bike Sathi */}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedTab('hourly_sathi');
+              setHourlySubtype('sathi_medical');
+              setHourlyHours(2);
+              setFlowStep('fill_details');
+            }}
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#0F224A] to-[#0A1931] border border-blue-500/40 hover:border-blue-400 hover:scale-105 transition-all text-left flex flex-col justify-between group cursor-pointer shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl group-hover:scale-110 transition-transform">🚶</span>
+              <span className="text-[9px] font-mono px-1 rounded bg-blue-400/20 text-blue-300 font-bold">CARE</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-black text-white leading-tight">बिना बाइक साथी</div>
+              <div className="text-[10px] text-blue-300 font-mono font-bold">₹120/hr (अस्पताल/कतार)</div>
+            </div>
+          </button>
+
+          {/* Tile 3: City Auto */}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedTab('task_based');
+              setTaskSubtype('ride_city_auto');
+              setTaskFixedPrice(45);
+              setFlowStep('fill_details');
+            }}
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#0F224A] to-[#0A1931] border border-emerald-500/40 hover:border-emerald-400 hover:scale-105 transition-all text-left flex flex-col justify-between group cursor-pointer shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl group-hover:scale-110 transition-transform">🛺</span>
+              <span className="text-[9px] font-mono px-1 rounded bg-emerald-400/20 text-emerald-300 font-bold">AUTO</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-black text-white leading-tight">शहर का ऑटो</div>
+              <div className="text-[10px] text-emerald-300 font-mono font-bold">₹30 बेस + ₹14/km</div>
+            </div>
+          </button>
+
+          {/* Tile 4: Hotel & Lodge */}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedTab('task_based');
+              setTaskSubtype('hotel_room_booking');
+              setTaskFixedPrice(599);
+              setFlowStep('fill_details');
+            }}
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#0F224A] to-[#0A1931] border border-purple-500/40 hover:border-purple-400 hover:scale-105 transition-all text-left flex flex-col justify-between group cursor-pointer shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl group-hover:scale-110 transition-transform">🏨</span>
+              <span className="text-[9px] font-mono px-1 rounded bg-purple-400/20 text-purple-300 font-bold">STAY</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-black text-white leading-tight">होटल व लॉज</div>
+              <div className="text-[10px] text-purple-300 font-mono font-bold">₹350 से (अस्पताल पास)</div>
+            </div>
+          </button>
+
+          {/* Tile 5: Travel & Tours */}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedTab('task_based');
+              setTaskSubtype('travel_outstation_cab');
+              setTaskFixedPrice(1200);
+              setFlowStep('fill_details');
+            }}
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#0F224A] to-[#0A1931] border border-cyan-500/40 hover:border-cyan-400 hover:scale-105 transition-all text-left flex flex-col justify-between group cursor-pointer shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl group-hover:scale-110 transition-transform">🚗</span>
+              <span className="text-[9px] font-mono px-1 rounded bg-cyan-400/20 text-cyan-300 font-bold">TOURS</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-black text-white leading-tight">आउटस्टेशन कैब</div>
+              <div className="text-[10px] text-cyan-300 font-mono font-bold">₹14/km (तीर्थ दर्शन)</div>
+            </div>
+          </button>
+
+          {/* Tile 6: Gig Workers */}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedTab('task_based');
+              setTaskSubtype('task_repair_plumber');
+              setTaskFixedPrice(249);
+              setFlowStep('fill_details');
+            }}
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#0F224A] to-[#0A1931] border border-yellow-500/40 hover:border-yellow-400 hover:scale-105 transition-all text-left flex flex-col justify-between group cursor-pointer shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl group-hover:scale-110 transition-transform">⚡</span>
+              <span className="text-[9px] font-mono px-1 rounded bg-yellow-400/20 text-yellow-300 font-bold">GIGS</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-black text-white leading-tight">गिग वर्कर्स</div>
+              <div className="text-[10px] text-yellow-300 font-mono font-bold">₹249 फिक्स्ड (35+ काम)</div>
+            </div>
+          </button>
+
+          {/* Tile 7: 10-Min Kirana / Food */}
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedTab('quick_commerce');
+              setFlowStep('select_service');
+            }}
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#0F224A] to-[#0A1931] border border-pink-500/40 hover:border-pink-400 hover:scale-105 transition-all text-left flex flex-col justify-between group cursor-pointer shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-2xl group-hover:scale-110 transition-transform">🛒</span>
+              <span className="text-[9px] font-mono px-1 rounded bg-pink-400/20 text-pink-300 font-bold">10-MIN</span>
+            </div>
+            <div className="mt-2">
+              <div className="text-xs font-black text-white leading-tight">किराना व भोजन</div>
+              <div className="text-[10px] text-pink-300 font-mono font-bold">Blinkit/Zomato कट</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
       {/* BIG SEARCH BAR */}
       <div className="relative">
         <input
@@ -373,12 +531,14 @@ export const CustomerAppPanel: React.FC<CustomerAppPanelProps> = ({
       {/* QUICK SUGGESTION PILLS */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
         {[
-          { label: '🛺 ऑटो/सवारी', action: () => setSelectedTab('task_based') },
+          { label: '🏨 होटल व लॉज बुकिंग', action: () => { setSelectedTab('task_based'); setTaskSubtype('hotel_room_booking'); setTaskFixedPrice(599); } },
+          { label: '🏍️ बाइक साथी (Rapido)', action: () => { setSelectedTab('task_based'); setTaskSubtype('ride_bike_rapido'); setTaskFixedPrice(49); } },
+          { label: '🛺 शहर का ऑटो (0% Surge)', action: () => { setSelectedTab('task_based'); setTaskSubtype('ride_city_auto'); setTaskFixedPrice(45); } },
+          { label: '🚗 टूर व आउटस्टेशन कैब', action: () => { setSelectedTab('task_based'); setTaskSubtype('travel_outstation_cab'); setTaskFixedPrice(1200); } },
           { label: '🍱 शुद्ध भोजन (Zomato)', action: () => setSelectedTab('quick_commerce') },
           { label: '🛒 10-मिनट किराना (Blinkit)', action: () => setSelectedTab('quick_commerce') },
           { label: '👨‍🔧 प्लंबर/इलेक्ट्रीशियन (UC)', action: () => { setSelectedTab('task_based'); setTaskSubtype('task_repair_plumber'); setTaskFixedPrice(249); } },
           { label: '🏥 अस्पताल साथी (Hourly)', action: () => { setSelectedTab('hourly_sathi'); setHourlySubtype('sathi_medical'); } },
-          { label: '🧾 बिल भुगतान (₹149)', action: () => { setSelectedTab('task_based'); setTaskSubtype('task_bill_pay'); setTaskFixedPrice(149); } },
         ].map((chip, idx) => (
           <button
             key={idx}
@@ -543,6 +703,10 @@ export const CustomerAppPanel: React.FC<CustomerAppPanelProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
+                  { id: 'ride_bike_rapido' as const, title: '🏍️ बाइक साथी (Rapido राइड व सामान)', price: 49, icon: '🏍️', desc: 'हेलमेट सहित तीव्र बाइक टैक्सी + ₹8/km अथवा जरूरी सामान/दवा लाना' },
+                  { id: 'ride_city_auto' as const, title: '🛺 शहर का ऑटो (0% सर्ज किराया)', price: 45, icon: '🛺', desc: 'मीटर आधारित पारदर्शी ऑटो बुकिंग + ₹14/km (0% कमीशन लूट)' },
+                  { id: 'hotel_room_booking' as const, title: '🏨 होटल व लॉज कमरा बुकिंग', price: 599, icon: '🏨', desc: 'अस्पताल व रेलवे स्टेशन के पास 100% वेरिफाइड एसी कमरा रिजर्व' },
+                  { id: 'travel_outstation_cab' as const, title: '🚗 टूर व आउटस्टेशन ट्रेवल कैब', price: 1200, icon: '🚗', desc: 'मैहर, चित्रकूट, प्रयागराज संगम, काशी आउटस्टेशन यात्रा बुकिंग' },
                   { id: 'task_bill_pay' as const, title: 'बिजली / पानी बिल जमा कराना', price: 149, icon: '🧾', desc: 'दफ्तर जाकर बिल भरना व रसीद लाना' },
                   { id: 'task_delivery' as const, title: 'दवाई व आवश्यक वस्तु डिलीवरी', price: 99, icon: '💊', desc: 'मेडिकल स्टोर से दवा खरीदकर घर लाना' },
                   { id: 'task_senior_help' as const, title: 'सीनियर सिटीजन तात्कालिक मदद', price: 199, icon: '🤝', desc: 'घर का जरूरी काम, फॉर्म या सहारा' },

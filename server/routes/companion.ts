@@ -2367,17 +2367,20 @@ companionRouter.post('/api/companion/providers/register', (req, res) => {
   const lat = location?.lat || 24.5362;
   const lng = location?.lng || 81.3037;
 
+  const cityName = location?.city ? String(location.city).trim() : 'Rewa';
+  const cityCode = cityName.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) || 'IND';
+
   const newProvider: InMemProviderRegistration = {
-    id: `PRV-REWA-${Math.floor(1000 + Math.random() * 9000)}`,
+    id: `PRV-${cityCode}-${Math.floor(1000 + Math.random() * 9000)}`,
     fullNameOrBusiness: String(fullNameOrBusiness).trim(),
     serviceType,
     phone: String(phone).trim(),
     aadhaarNumber: maskedAadhaar,
     aadhaarStatus: 'pending',
     location: {
-      address: location?.address || 'Rewa City Center',
-      landmark: location?.landmark || 'Rewa',
-      city: 'Rewa',
+      address: location?.address || `${cityName} City Center`,
+      landmark: location?.landmark || cityName,
+      city: cityName,
       lat,
       lng
     },

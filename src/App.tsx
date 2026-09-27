@@ -91,8 +91,10 @@ export default function App() {
       if (path === '/admin') return 'admin';
       if (path === '/super-admin') return 'super-admin';
       if (path === '/krishi-admin') return 'krishi-admin';
+      if (path === '/home') return 'home';
     }
-    return 'home';
+    // Launch default: On-Demand Sovereign Services & Companion Super App
+    return 'companion';
   });
 
   // Modal states

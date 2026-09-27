@@ -261,12 +261,12 @@ export const USER_PERSONAS: PersonaConfig[] = [
     color: 'text-orange-400',
     borderColor: 'border-orange-500/50 hover:border-orange-400',
     bgGradient: 'from-orange-950/40 via-[#0A1931] to-[#040C1A]',
-    defaultTab: 'labour',
+    defaultTab: 'companion',
     allowedTabs: [
-      'labour',
       'companion',
-      'iti',
+      'labour',
       'verifiedjobs',
+      'iti',
     ],
     highlights: {
       hi: [
@@ -383,7 +383,7 @@ export function isTabAllowedForPersona(tab: MainTab, personaId: UserPersona): bo
 }
 
 export function getPersonaFromUrlOrStorage(): UserPersona {
-  if (typeof window === 'undefined') return 'student';
+  if (typeof window === 'undefined') return 'worker';
   const urlParams = new URLSearchParams(window.location.search);
   const roleParam = urlParams.get('role') || urlParams.get('persona');
   if (roleParam && USER_PERSONAS.some((p) => p.id === roleParam)) {
@@ -393,7 +393,7 @@ export function getPersonaFromUrlOrStorage(): UserPersona {
   if (saved && USER_PERSONAS.some((p) => p.id === saved)) {
     return saved;
   }
-  return 'student'; // Clean zero-distraction student default
+  return 'worker'; // Clean On-Demand Companion & Services launch default
 }
 
 export function saveUserPersona(personaId: UserPersona): void {

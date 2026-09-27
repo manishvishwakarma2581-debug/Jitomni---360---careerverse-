@@ -129,6 +129,10 @@ export const RideTravelBookingHub: React.FC<RideTravelBookingHubProps> = ({
           if (partner.vehicleType !== 'car_sedan') return false;
         } else if (selectedVehicleType === 'car_suv') {
           if (partner.vehicleType !== 'car_suv') return false;
+        } else if (selectedVehicleType === 'auto_rickshaw') {
+          if (partner.vehicleType !== 'auto_rickshaw') return false;
+        } else if (selectedVehicleType === 'travel_tempo') {
+          if (partner.vehicleType !== 'travel_tempo') return false;
         } else if (selectedVehicleType === 'electric_ev') {
           if (partner.vehicleType !== 'electric_ev') return false;
         }
@@ -547,6 +551,32 @@ export const RideTravelBookingHub: React.FC<RideTravelBookingHubProps> = ({
 
                 <button
                   type="button"
+                  onClick={() => setSelectedVehicleType('auto_rickshaw')}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1 ${
+                    selectedVehicleType === 'auto_rickshaw'
+                      ? 'bg-amber-400 text-slate-950 font-black shadow'
+                      : 'bg-black/40 text-amber-300 hover:text-white border border-amber-500/50'
+                  }`}
+                >
+                  <span className="text-sm">🛺</span>
+                  <span>शहर का ऑटो (0% Surge)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedVehicleType('travel_tempo')}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1 ${
+                    selectedVehicleType === 'travel_tempo'
+                      ? 'bg-amber-400 text-slate-950 font-black shadow'
+                      : 'bg-black/40 text-blue-300 hover:text-white border border-blue-500/50'
+                  }`}
+                >
+                  <span className="text-sm">🚐</span>
+                  <span>टूर व ट्रेवल ऑपरेटर</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setSelectedVehicleType('women_safe')}
                   className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1 ${
                     selectedVehicleType === 'women_safe'
@@ -580,6 +610,69 @@ export const RideTravelBookingHub: React.FC<RideTravelBookingHubProps> = ({
                   <option value="price_low">क्रम: सबसे कम किराया (₹/km)</option>
                   <option value="km_max">क्रम: अधिकतम किलोमीटर रेंज</option>
                 </select>
+              </div>
+            </div>
+          </div>
+
+          {/* SATHI MULTI-SKILLED & DUAL-MODE GUARANTEE CARD */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#031533] via-[#071F42] to-[#031533] border-2 border-[#FFD700]/50 shadow-xl space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700/60 pb-2.5">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-[#FFD700] text-slate-950 font-black text-xs">
+                  🛡️ ऑल-टास्क रेडी
+                </span>
+                <h3 className="text-xs sm:text-sm font-black text-white">
+                  जितोमनी साथी मानक: बाइक वाले व बिना बाइक वाले साथी — हर कार्य हेतु 100% तैयार!
+                </h3>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/40">
+                MULTI-SKILL VERIFIED
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
+              {/* Card 1: Bike Sathi */}
+              <div className="p-3 rounded-xl bg-slate-950/80 border border-amber-500/40 space-y-1">
+                <div className="flex items-center gap-1.5 text-amber-400 font-black">
+                  <Bike className="w-4 h-4" />
+                  <span>1. बाइक साथी (Rapido राइड)</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-snug">
+                  हेलमेट सहित तीव्र बाइक टैक्सी, पार्सल, दवा खरीद व इमरजेंसी काम। ₹6-8/किमी पारदर्शी दर।
+                </p>
+              </div>
+
+              {/* Card 2: Bina Bike Sathi */}
+              <div className="p-3 rounded-xl bg-slate-950/80 border border-blue-500/40 space-y-1">
+                <div className="flex items-center gap-1.5 text-blue-400 font-black">
+                  <Users className="w-4 h-4" />
+                  <span>2. बिना बाइक साथी (पैदल/केयर)</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-snug">
+                  अस्पताल OPD लाइन, डॉक्टर पर्ची, बुजुर्गों का हाथ पकड़ना, बैंक व सरकारी फॉर्म सहायता।
+                </p>
+              </div>
+
+              {/* Card 3: City Auto */}
+              <div className="p-3 rounded-xl bg-slate-950/80 border border-emerald-500/40 space-y-1">
+                <div className="flex items-center gap-1.5 text-emerald-400 font-black">
+                  <span className="text-sm">🛺</span>
+                  <span>3. शहर के ऑटो (0% सर्ज)</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-snug">
+                  शहर के सभी रजिस्टर्ड ऑटो सीधे कनेक्ट। ₹30 बेस + ₹14/किमी फेयर, बिना किसी कमीशन लूट के।
+                </p>
+              </div>
+
+              {/* Card 4: Travel & Tours */}
+              <div className="p-3 rounded-xl bg-slate-950/80 border border-purple-500/40 space-y-1">
+                <div className="flex items-center gap-1.5 text-purple-400 font-black">
+                  <Car className="w-4 h-4" />
+                  <span>4. टूर व ट्रेवल सर्विस</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-snug">
+                  आउटस्टेशन सेडान, 7-सीटर अर्टिगा, टेम्पो ट्रैवलर। मैहर, चित्रकूट, प्रयागराज संगम यात्रा बुकिंग।
+                </p>
               </div>
             </div>
           </div>
